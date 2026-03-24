@@ -1,0 +1,70 @@
+
+From the previous GitHub commit, do the following:
+1. Generate a description of all the changes from the previous commit to this one and write it in the provided example format below. 
+2. Write it in markdown. 
+3. Do NOT remove/modify any older parts of the document. Only ADD to it. 
+4. Use all the documents for informational context but only write to DTO-Project\Logs\changelogs.md
+
+
+
+Example:
+# Changelogs
+
+
+
+## Version 0.1.1
+
+Summary of all the changes. 
+
+### New Features
+**DTO-Project/Computation/**
+- Added this description
+- Added that description
+
+**DTO-Project/Controller/**
+- ...
+
+### Changes
+**DTO-Project/Computation/**
+- Changed this description
+- Changed that description
+
+**DTO-Project/Controller/**
+- ...
+
+### Removed
+**DTO-Project/Computation/**
+- Removed this description
+- Removed that description
+
+**DTO-Project/Controller/**
+- ...
+
+
+
+## Version 0.1.0
+Summary of all the changes. 
+
+### New Features
+**DTO-Project/Computation/**
+- Added this description
+- Added that description
+
+**DTO-Project/Controller/**
+- ...
+
+### Changes
+**DTO-Project/Computation/**
+- Changed this description
+- Changed that description
+
+**DTO-Project/Controller/**
+- ...
+
+### Removed
+**DTO-Project/Computation/**
+- Removed this description
+- Removed that description
+
+**DTO-Project/Controller/**
+- ...
