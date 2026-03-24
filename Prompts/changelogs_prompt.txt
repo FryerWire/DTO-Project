@@ -1,70 +1,30 @@
 
 From the previous GitHub commit, do the following:
-1. Generate a description of all the changes from the previous commit to this one and write it in the provided example format below. 
-2. Write it in markdown. 
-3. Do NOT remove/modify any older parts of the document. Only ADD to it. 
-4. Use all the documents for informational context but only write to DTO-Project\Logs\changelogs.md
-
-
+1. Write in markdown. 
+2. Do NOT remove or modify any current existing content. Only write to DTO-Project\Logs\changelogs.md with the newest and latest version update. 
+3. Use all of the documents in the directory to gather informational changes. 
+4. Use the 'Example' below as an idea of how I want it to look like. 
+5. Keep one line of whitespace for the first line and the very last line. 
+6. Write a description of all of the changes that have happened since the last commit.
+7. Update this as the newest verion. vx.x.x+1
 
 Example:
 # Changelogs
 
-
-
-## Version 0.1.1
-
-Summary of all the changes. 
+## Version X.X.X
+Overall summary of all the additions and changes.  
 
 ### New Features
-**DTO-Project/Computation/**
-- Added this description
-- Added that description
-
-**DTO-Project/Controller/**
-- ...
+- Added **computation.py** file in **DTO-Project/Computation/** folder. 
+- Created **function name** in **computation.py** that has the following input and output, and a description of what it does. 
+- Important variables (No minor variables like x = 3 + user_inut) and what they do. 
 
 ### Changes
-**DTO-Project/Computation/**
-- Changed this description
-- Changed that description
-
-**DTO-Project/Controller/**
-- ...
+- Changed **function name** in **computation.py** from having x inputs to y inputs, and w outputs to z ouputs. Modified what the function does...
+- Changed **name** to **name** in **computation.py**
 
 ### Removed
-**DTO-Project/Computation/**
-- Removed this description
-- Removed that description
+- Removed **function name** in **computation.py** for simplicity
 
-**DTO-Project/Controller/**
-- ...
-
-
-
-## Version 0.1.0
-Summary of all the changes. 
-
-### New Features
-**DTO-Project/Computation/**
-- Added this description
-- Added that description
-
-**DTO-Project/Controller/**
-- ...
-
-### Changes
-**DTO-Project/Computation/**
-- Changed this description
-- Changed that description
-
-**DTO-Project/Controller/**
-- ...
-
-### Removed
-**DTO-Project/Computation/**
-- Removed this description
-- Removed that description
-
-**DTO-Project/Controller/**
-- ...
+### Bug Fixes
+- Fixed output value error in **function name** in **computation.py** to have a correct unit now. 

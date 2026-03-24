@@ -11,4 +11,4 @@ DTO-Project/
 
 ## File Tree Description
 - **README.md** General overview of project folder.
-- **simulator.py** Runs the simulation for the project.
+- **simulator.py** EMPTY DOCUMENT.

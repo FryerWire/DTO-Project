@@ -1,5 +1,9 @@
+
+
 # Overview
-The DTO-Project/Computations folder is responsible for performing all main computations for the project. 
+The DTO-Project/Computations folder is responsible for providing all post data analysis. 
+
+# Info (Such as current information like links, description, notes, ...)
 
 # File Tree
 ```
@@ -10,5 +14,6 @@ DTO-Project/
 ```
 
 ## File Tree Description
-- **compuation.py** Performs all main computations for the project. 
-- **README.md** General overview of project folder.
+- **compuation.py** EMPTY DOCUMENT.
+- **README.md** General overview of project folder. 
+
