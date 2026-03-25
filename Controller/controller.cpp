@@ -1,316 +1,175 @@
-// GPIO Simple Toggle
+
 /*
- * Simple GPIO call to Raspberry Pi 5 
- * GPIOs using libgpiod (C++ Wrapper around C API)
- * This simply calls GPIO0, which is the first
- * switch on the board and toggles it.
- */
-#include <gpiod.h>
-#include <cstdio>   // C++ version of stdio.h
-#include <cstdlib>  // C++ version of stdlib.h
-#include <unistd.h>  // For sleep()
+    12-Thruster Desktop Simulator & Logger
 
-int main() 
-{
-    // Define the path to the GPIO chip and the line offsets
-    const char *chip_path = "/dev/gpiochip0";
-    const unsigned int sw1 = 0;  // GPIO0
-    const unsigned int sw2 = 1;  // GPIO1
-    const unsigned int sw3 = 2;  // GPIO2
-    const unsigned int sw4 = 3;  // GPIO3
-    
-    const char *consumer = "relay-demo";
+    Standard C++ (Windows) simulator for testing WASD thruster control logic.
+    Monitors real-time keypresses (W, A, S, D) to simulate activating specific 
+    groups of 3 thrusters per direction. 
+    Logs the active thrusters every second to 'thruster_log.txt'.
+    Press 'Q' to trigger a graceful shutdown and save the log file.
+*/
 
-    // Initialize pointers for libgpiod objects to NULL
-    struct gpiod_chip *chip = nullptr;
-    struct gpiod_request_config *req_cfg = nullptr;
-    struct gpiod_line_config *line_cfg = nullptr;
-    struct gpiod_line_settings *settings = nullptr;
-    struct gpiod_line_request *request = nullptr;
 
-    // Open the GPIO chip
-    chip = gpiod_chip_open(chip_path);
-    if (!chip) {
-        perror("gpiod_chip_open");
-        return 1;
-    }
 
-    // Allocate necessary configuration objects
-    req_cfg = gpiod_request_config_new();
-    line_cfg = gpiod_line_config_new();
-    settings = gpiod_line_settings_new();
-    
-    // Check if allocation failed
-    if (!req_cfg || !line_cfg || !settings) {
-        fprintf(stderr, "Failed to allocate libgpiod objects\n");
-        goto cleanup;
-    }
+#include <iostream>   // For standard console input/output (std::cout, std::cerr)
+#include <fstream>    // For file stream operations to write the log file (std::ofstream)
+#include <chrono>     // For high-resolution time tracking (std::chrono::steady_clock)
+#include <thread>     // For sleeping the execution thread to reduce CPU usage (std::this_thread::sleep_for)
+#include <windows.h>  // Required for GetAsyncKeyState to read real-time keyboard state non-blockingly
 
-    // Set the consumer name (useful for debugging in gpioinfo)
-    gpiod_request_config_set_consumer(req_cfg, consumer);
 
-    // Set the line direction to output
-    if (gpiod_line_settings_set_direction(settings, GPIOD_LINE_DIRECTION_OUTPUT) < 0) {
-        perror("gpiod_line_settings_set_direction");
-        goto cleanup;
-    }
 
-    // Initialize the line to be inactive (usually 0V)
-    gpiod_line_settings_set_output_value(settings, GPIOD_LINE_VALUE_INACTIVE);
+// Function Prototypes ============================================================================
+bool setup_logger();
+void cleanup_logger();
+void log_current_state();
+void check_state_changes();
 
-    // Add settings for each specific GPIO pin
-    gpiod_line_config_add_line_settings(line_cfg, &sw1, 1, settings);
-    gpiod_line_config_add_line_settings(line_cfg, &sw2, 1, settings);
-    gpiod_line_config_add_line_settings(line_cfg, &sw3, 1, settings);
-    gpiod_line_config_add_line_settings(line_cfg, &sw4, 1, settings);
 
-    // Request the lines from the chip to gain control
-    request = gpiod_chip_request_lines(chip, req_cfg, line_cfg);
-    if (!request) {
-        perror("gpiod_chip_request_lines");
-        goto cleanup;
-    }
 
-    // Infinite loop to toggle pins ON and OFF
-    while (true) {
-        // Set all pins to ACTIVE (Logic High/ON)
-        gpiod_line_request_set_value(request, sw1, GPIOD_LINE_VALUE_ACTIVE);
-        gpiod_line_request_set_value(request, sw2, GPIOD_LINE_VALUE_ACTIVE);
-        gpiod_line_request_set_value(request, sw3, GPIOD_LINE_VALUE_ACTIVE);
-        gpiod_line_request_set_value(request, sw4, GPIOD_LINE_VALUE_ACTIVE);
-        printf("ON\n");
-        sleep(1);
+// Global Variables ===============================================================================
+bool keep_running = true;                          // Flag to ensure the main loop continues running until 'Q' is pressed
+bool prev_w = false;                               // Track the previous state of the 'W' key to avoid spamming the console
+bool prev_a = false;                               // Track the previous state of the 'A' key to avoid spamming the console
+bool prev_s = false;                               // Track the previous state of the 'S' key to avoid spamming the console
+bool prev_d = false;                               // Track the previous state of the 'D' key to avoid spamming the console
+bool is_w_held = false;                            // Track the current real-time state of the 'W' key
+bool is_a_held = false;                            // Track the current real-time state of the 'A' key
+bool is_s_held = false;                            // Track the current real-time state of the 'S' key
+bool is_d_held = false;                            // Track the current real-time state of the 'D' key
+int next_second = 0;                               // Counter to track the next second interval for logging
+std::ofstream log_file;                            // Global file stream object for writing to the log file
+std::chrono::steady_clock::time_point start_time;  // Global variable to store the exact time the simulation started
 
-        // Set all pins to INACTIVE (Logic Low/OFF)
-        gpiod_line_request_set_value(request, sw1, GPIOD_LINE_VALUE_INACTIVE);
-        gpiod_line_request_set_value(request, sw2, GPIOD_LINE_VALUE_INACTIVE);
-        gpiod_line_request_set_value(request, sw3, GPIOD_LINE_VALUE_INACTIVE);
-        gpiod_line_request_set_value(request, sw4, GPIOD_LINE_VALUE_INACTIVE);
-        printf("OFF\n");
-        sleep(1);
-    }
-    
-cleanup:
-    // Free resources in reverse order of allocation
-    if (request) gpiod_line_request_release(request);
-    if (settings) gpiod_line_settings_free(settings);
-    if (line_cfg) gpiod_line_config_free(line_cfg);
-    if (req_cfg) gpiod_request_config_free(req_cfg);
-    if (chip) gpiod_chip_close(chip);
 
-    return 0;
-}
 
-// Relay Cylee, can iterate through 24 relays and handle clean shutown via SIGINT
 /*
- * Cycle all GPIOs on relay board to Raspberry Pi 5 
- * This ensures all are off at start and end.
- */
-#include <gpiod.h>
-#include <cstdio>
-#include <cstdlib>
-#include <unistd.h>
-#include <csignal> // C++ version of signal.h
-
-#define CHIP_PATH "/dev/gpiochip0"
-#define NUM_RELAYS 24
-#define DELAY_S 1
-#define ACTIVE_LOW 0
-
-// Atomic flag to ensure thread-safe signal handling for loop exit
-static volatile std::sig_atomic_t keep_running = 1;
-
-// Signal handler to catch Ctrl+C
-static void handle_sigint(int sig) {
-    (void)sig; // Suppress unused parameter warning
-    keep_running = 0;
-}
-
-// Helper: Returns what "ON" means based on relay polarity
-static enum gpiod_line_value relay_on_value() {
-    return ACTIVE_LOW ? GPIOD_LINE_VALUE_INACTIVE : GPIOD_LINE_VALUE_ACTIVE;
-}
-
-// Helper: Returns what "OFF" means based on relay polarity
-static enum gpiod_line_value relay_off_value() {
-    return ACTIVE_LOW ? GPIOD_LINE_VALUE_ACTIVE : GPIOD_LINE_VALUE_INACTIVE;
-}
-
-// Helper: Bulk set values for a group of offsets
-static int set_all(struct gpiod_line_request *req, const unsigned int *offsets, size_t n, enum gpiod_line_value val) {
-    for (size_t i = 0; i < n; i++) {
-        if (gpiod_line_request_set_value(req, offsets[i], val) < 0) {
-            perror("gpiod_line_request_set_value");
-            return -1;
-        }
-    }
-    return 0;
-}
-
+    main() - Initializes the log file and starts the simulation timer.
+             Enters a continuous loop that checks for the 'Q' quit command,
+             reads the real-time state of the WASD keys, prints any state changes to the console,
+             and logs the currently held keys exactly once per second.
+             Safely closes the log file upon exit.
+*/
 int main() {
-    // Register the Ctrl+C signal handler
-    std::signal(SIGINT, handle_sigint);
-
-    // Initialize array of GPIO offsets (0 through 23)
-    unsigned int offsets[NUM_RELAYS];
-    for (unsigned int i = 0; i < NUM_RELAYS; i++) offsets[i] = i;
-
-    // Open the chip
-    struct gpiod_chip *chip = gpiod_chip_open(CHIP_PATH);
-    if (!chip) { perror("gpiod_chip_open"); return 1; }
-
-    // Allocate configuration objects
-    struct gpiod_request_config *req_cfg = gpiod_request_config_new();
-    struct gpiod_line_config *line_cfg = gpiod_line_config_new();
-    struct gpiod_line_settings *settings = gpiod_line_settings_new();
-
-    if (!req_cfg || !line_cfg || !settings) {
-        fprintf(stderr, "Failed to allocate objects\n");
+    if (!setup_logger()) {                                            // Attempt to open the log file, and if it fails, exit immediately
+        std::cerr << "Error: Could not open log file." << std::endl;
+        
         return 1;
     }
 
-    // Configure request and line settings
-    gpiod_request_config_set_consumer(req_cfg, "relay-cycle");
-    gpiod_line_settings_set_direction(settings, GPIOD_LINE_DIRECTION_OUTPUT);
-    gpiod_line_settings_set_output_value(settings, relay_off_value());
+    std::cout << "--- Desktop Thruster Simulator ---" << std::endl;
+    std::cout << "Hold W/A/S/D to activate thruster groups." << std::endl;
+    std::cout << "Press 'Q' to quit and save the log." << std::endl;
+    std::cout << "Logging started...\n" << std::endl;
 
-    // Apply settings to all 24 offsets
-    if (gpiod_line_config_add_line_settings(line_cfg, offsets, NUM_RELAYS, settings) < 0) {
-        perror("gpiod_line_config_add_line_settings");
-        return 1;
-    }
+    while (keep_running) {                                                        // Loop indefinitely to read keystrokes until 'Q' is pressed
+        if (GetAsyncKeyState('Q') & 0x8000) {                                     // Check if the 'Q' key is currently being pressed (0x8000 checks the most significant bit)
+            std::cout << "\nShutdown command received. Exiting..." << std::endl;
+            keep_running = false;                                                 // Set flag to false to safely break the main execution loop
 
-    // Finalize the request
-    struct gpiod_line_request *req = gpiod_chip_request_lines(chip, req_cfg, line_cfg);
-    if (!req) { perror("gpiod_chip_request_lines"); return 1; }
-
-    // Safety: Ensure everything starts OFF
-    set_all(req, offsets, NUM_RELAYS, relay_off_value());
-    printf("Startup reset: all relays OFF\n");
-
-    // Loop until user hits Ctrl+C
-    while (keep_running) {
-        for (unsigned int i = 0; i < NUM_RELAYS && keep_running; i++) {
-            gpiod_line_request_set_value(req, offsets[i], relay_on_value());
-            printf("Relay %u ON\n", i);
-            sleep(DELAY_S);
-
-            gpiod_line_request_set_value(req, offsets[i], relay_off_value());
+            break;
         }
+
+        is_w_held = GetAsyncKeyState('W') & 0x8000;  // Read the real-time state of the 'W' key
+        is_a_held = GetAsyncKeyState('A') & 0x8000;  // Read the real-time state of the 'A' key
+        is_s_held = GetAsyncKeyState('S') & 0x8000;  // Read the real-time state of the 'S' key
+        is_d_held = GetAsyncKeyState('D') & 0x8000;  // Read the real-time state of the 'D' key
+
+        check_state_changes();                                       // Compare current keys against previous keys to print console updates only when a change occurs
+        log_current_state();                                         // Check if a full second has passed, and if so, write the currently held keys to the text file
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));  // Sleep for 10 milliseconds to prevent the loop from consuming 100% of the CPU
     }
 
-    // Safety: Ensure everything is OFF before exiting
-    set_all(req, offsets, NUM_RELAYS, relay_off_value());
-    printf("\nShutdown complete.\n");
-
-    // Cleanup
-    gpiod_line_request_release(req);
-    gpiod_line_settings_free(settings);
-    gpiod_line_config_free(line_cfg);
-    gpiod_request_config_free(req_cfg);
-    gpiod_chip_close(chip);
+    cleanup_logger();                                                // Ensure the log file is properly closed and saved before the program terminates
 
     return 0;
 }
 
-// Relay WASD Toggle
+
+
 /*
- * Simple WASD Example using RPI5 
- * W - GPIO0, A - GPIO1, S - GPIO2, D - GPIO3
- */
-#include <gpiod.h>
-#include <cstdio>
-#include <cstdlib>
-#include <unistd.h>
-#include <termios.h> // For terminal I/O control
-#include <fcntl.h>   // For file control (non-blocking)
-#include <csignal>
-
-#define CHIP_PATH "/dev/gpiochip0"
-#define NUM_RELAYS 24
-#define ACTIVE_LOW 0
-
-static volatile std::sig_atomic_t keep_running = 1;
-
-static void handle_sigint(int sig) {
-    (void)sig;
-    keep_running = 0;
+    check_state_changes() - Compares the current state of the WASD keys against their state during the previous loop iteration.
+                            If a key has been pressed or released, it prints a status update to the console simulating
+                            which thrusters are firing. Updates the tracking variables for the next loop.
+*/
+void check_state_changes() {
+    if (is_w_held != prev_w) {                                                                    // If the state of 'W' has changed since the last check
+        std::cout << "Thrusters [0,1,2] " << (is_w_held ? "ON (Forward)" : "OFF") << std::endl;
+        prev_w = is_w_held;                                                                       // Update the tracking variable to the new state
+    }
+    
+    if (is_a_held != prev_a) {                                                                    // If the state of 'A' has changed since the last check
+        std::cout << "Thrusters [3,4,5] " << (is_a_held ? "ON (Left)" : "OFF") << std::endl;
+        prev_a = is_a_held;                                                                       // Update the tracking variable to the new state
+    }
+    
+    if (is_s_held != prev_s) {                                                                    // If the state of 'S' has changed since the last check
+        std::cout << "Thrusters [6,7,8] " << (is_s_held ? "ON (Backward)" : "OFF") << std::endl;
+        prev_s = is_s_held;                                                                       // Update the tracking variable to the new state
+    }
+    
+    if (is_d_held != prev_d) {                                                                    // If the state of 'D' has changed since the last check
+        std::cout << "Thrusters [9,10,11] " << (is_d_held ? "ON (Right)" : "OFF") << std::endl;
+        prev_d = is_d_held;                                                                       // Update the tracking variable to the new state
+    }
 }
 
-static enum gpiod_line_value relay_on_value() {
-    return ACTIVE_LOW ? GPIOD_LINE_VALUE_INACTIVE : GPIOD_LINE_VALUE_ACTIVE;
+
+
+/*
+    log_current_state() - Calculates the elapsed time since the simulation started.
+                          If the elapsed time (in seconds) meets or exceeds the next target second, 
+                          it formats a string with the currently active keys and writes it to the log file.
+*/
+void log_current_state() {
+    auto now = std::chrono::steady_clock::now();                                                // Get the current precise time
+    auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - start_time).count();  // Calculate the total elapsed seconds since the program started
+
+    if (elapsed >= next_second) {                            // If the elapsed time has reached the next logging interval
+        std::string log_line = std::to_string(next_second);  // Start the log line with the current second timestamp
+        
+        if (is_w_held) log_line += " W";  // Append 'W' if the forward thrusters are active
+        if (is_a_held) log_line += " A";  // Append 'A' if the left thrusters are active
+        if (is_s_held) log_line += " S";  // Append 'S' if the backward thrusters are active
+        if (is_d_held) log_line += " D";  // Append 'D' if the right thrusters are active
+
+        log_file << log_line << "\n";  // Write the formatted line to the log file
+        log_file.flush();              // Force save to disk immediately in case the program crashes unexpectedly
+        
+        next_second++;                 // Increment the target second for the next logging event
+    }
 }
 
-static enum gpiod_line_value relay_off_value() {
-    return ACTIVE_LOW ? GPIOD_LINE_VALUE_ACTIVE : GPIOD_LINE_VALUE_INACTIVE;
-}
 
-int main() {
-    std::signal(SIGINT, handle_sigint);
 
-    unsigned int offsets[NUM_RELAYS];
-    for (unsigned int i = 0; i < NUM_RELAYS; i++) offsets[i] = i;
-
-    // Array to track if relay is currently ON (1) or OFF (0)
-    int state[NUM_RELAYS] = {0};
-
-    struct gpiod_chip *chip = gpiod_chip_open(CHIP_PATH);
-    if (!chip) return 1;
-
-    struct gpiod_request_config *req_cfg = gpiod_request_config_new();
-    struct gpiod_line_config *line_cfg = gpiod_line_config_new();
-    struct gpiod_line_settings *settings = gpiod_line_settings_new();
-
-    gpiod_request_config_set_consumer(req_cfg, "relay-wasd");
-    gpiod_line_settings_set_direction(settings, GPIOD_LINE_DIRECTION_OUTPUT);
-    gpiod_line_settings_set_output_value(settings, relay_off_value());
-
-    gpiod_line_config_add_line_settings(line_cfg, offsets, NUM_RELAYS, settings);
-    struct gpiod_line_request *req = gpiod_chip_request_lines(chip, req_cfg, line_cfg);
-
-    // --- TERMINAL CONFIGURATION ---
-    // Change terminal mode so we can read single keys without hitting 'Enter'
-    struct termios oldt, newt;
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO); // Disable buffering and echoing
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-
-    // Set stdin to non-blocking mode so the loop doesn't pause to wait for keys
-    int oldflags = fcntl(STDIN_FILENO, F_GETFL, 0);
-    fcntl(STDIN_FILENO, F_SETFL, oldflags | O_NONBLOCK);
-
-    printf("WASD toggles GPIO0..GPIO3. Ctrl+C to exit.\n");
-
-    while (keep_running) {
-        char ch;
-        // Read 1 byte from standard input
-        int n = static_cast<int>(read(STDIN_FILENO, &ch, 1));
-
-        if (n > 0) {
-            int idx = -1;
-            // Map keys to GPIO index
-            if (ch == 'w' || ch == 'W') idx = 0;
-            else if (ch == 'a' || ch == 'A') idx = 1;
-            else if (ch == 's' || ch == 'S') idx = 2;
-            else if (ch == 'd' || ch == 'D') idx = 3;
-
-            if (idx >= 0) {
-                state[idx] = !state[idx]; // Flip the state
-                enum gpiod_line_value v = state[idx] ? relay_on_value() : relay_off_value();
-                gpiod_line_request_set_value(req, offsets[idx], v);
-                printf("Relay %d %s\n", idx, state[idx] ? "ON" : "OFF");
-                fflush(stdout);
-            }
-        }
-        usleep(5000); // 5ms sleep to prevent 100% CPU usage
+/*
+    setup_logger() - Attempts to create and open 'thruster_log.txt'. 
+                     If successful, initializes the start time for the simulation timer.
+                     Returns true if the file opened successfully, false otherwise.
+*/
+bool setup_logger() {
+    log_file.open("thruster_log.txt");  // Attempt to open or create the log file in the current directory
+    
+    if (!log_file.is_open()) {  // Check if the file failed to open (e.g., due to permission issues)
+        return false;
     }
 
-    // Restore original terminal settings
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    start_time = std::chrono::steady_clock::now();  // Record the exact time the simulation started to use as baseline for logging
 
-    // Cleanup and close
-    gpiod_line_request_release(req);
-    gpiod_chip_close(chip);
-    return 0;
+    return true;
+}
+
+
+
+/*
+    cleanup_logger() - Safely closes the log file to ensure all data is written to disk
+                       and prints a confirmation message to the console.
+*/
+void cleanup_logger() {
+    if (log_file.is_open()) {  // Ensure the file is actually open before attempting to close it
+        log_file.close();      // Close the file stream to release the system resource
+    }
+    
+    std::cout << "Log saved to thruster_log.txt. Safe shutdown complete." << std::endl;
 }

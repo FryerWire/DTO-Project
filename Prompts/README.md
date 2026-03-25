@@ -1,4 +1,3 @@
-
 # Overview
 The DTO-Project/Prompts folder is responsible for holding all prompts for the project. 
 
@@ -10,10 +9,12 @@ DTO-Project/
 └── Prompts/
     ├── changelogs_prompt.txt
     ├── GEMINI.md
+    ├── README.md
     └── READMEs_prompt.txt
 ```
 
 ## File Tree Description
--**changelogs_prompt.txt** Prompt for generating changelogs.
-- **GEMINI.md** Previous prompts for Gemini.
-- **READMEs_prompt.txt** Prompt for generating READMEs.
+- **changelogs_prompt.txt**: Prompt for generating changelogs.
+- **GEMINI.md**: Instructions for the Gemini model to follow.
+- **README.md**: General overview of project folder.
+- **READMEs_prompt.txt**: Prompt for generating READMEs.

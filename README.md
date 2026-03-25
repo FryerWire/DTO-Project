@@ -1,4 +1,3 @@
-
 # DTO Project
 Spring Semester Senior Design GOAT Drone Design Test Objective Code Repository
 
@@ -59,53 +58,86 @@ lib_deps =
 ### File Tree
 ```
 DTO-Project/
-├── Computation/
-│   ├── TEXT
-│   └── README.md
-├── Controller/
-│   ├── TEXT
-│   └── README.md
-├── Documentation/
-│   ├── TEXT
-│   └── README.md
-├── Images/
-│   ├── TEXT
-│   └── README.md
-├── Logs/
-│   ├── TEXT
-│   └── README.md
-└── Simulator/
-│   ├── TEXT
-│   └── README.md
-└── README.md
+├───Computations/
+│   ├───compuation.py
+│   └───README.md
+├───Controller/
+│   ├───controller.cpp
+│   ├───GPIO_Example.cpp
+│   ├───README.md
+│   ├───Relay_Cyle_Example.cpp
+│   └───Relay_WASD_Example.cpp
+├───Documentation/
+│   └───README.md
+├───Images/
+│   └───README.md
+├───Lecture/
+│   ├───DTO_Lecture.pdf
+│   ├───GPIO_Lecture.pdf
+│   ├───Harness_Build_Procedure.pdf
+│   └───README.md
+├───Logs/
+│   ├───changelogs.md
+│   └───README.md
+├───Notes/
+│   ├───code_examples.md
+│   ├───DTO_notes.md
+│   ├───README.md
+│   └───RPi5_notes.md
+├───Prompts/
+│   ├───changelogs_prompt.txt
+│   ├───GEMINI.md
+│   ├───README.md
+│   └───READMEs_prompt.txt
+├───Simulator/
+│   ├───README.md
+│   └───simulator.py
+└───README.md
 ```
 
 
 
 ### File Descriptions
-#### Data/
-- `live_serial_monitoring.py`: Real-time serial monitor for incoming sensor data.
-- `post_data_processing.py`: Reads CSV logs, computes statistics, and generates graphs.
-- `static_data_test.csv`: Sample test data for post-processing validation.
-- `dynamic_data_test.csv`: Sample test data for post-processing validation.
-- `README.md`: Explains the purpose and usage of the `Data/` folder.
+#### Computations/
+- **compuation.py**: EMPTY DOCUMENT.
+- **README.md**: General overview of project folder.
+
+#### Controller/
+- **controller.cpp**: A C++ program that simulates thruster control and logs keypresses.
+- **GPIO_Example.cpp**: Example C++ code for GPIO control on a Raspberry Pi.
+- **README.md**: General overview of project folder.
+- **Relay_Cyle_Example.cpp**: A C++ program to cycle through 24 GPIOs on a Raspberry Pi.
+- **Relay_WASD_Example.cpp**: A C++ program to toggle GPIOs on a Raspberry Pi using WASD keyboard input.
 
 #### Documentation/
-- `LaTeX/docs.tex`: Primary LaTeX source file for full project report.
-- `LaTeX/docs.pdf`: Compiled report document.
-- `LaTeX/*.aux, *.fdb_latexmk, *.fls, *.log, *.synctex.gz`: Auxiliary LaTeX files.
-- `changelog.txt`: Chronological list of project changes and additions.
-- `README.md`: Overview and compilation instructions for documentation.
+- **README.md**: General overview of project folder.
 
 #### Images/
-- `image.png`: Output graph generated from data processing.
-- `README.md`: Explains the origin and purpose of included images.
+- **README.md**: General overview of project folder.
 
-#### src/
-- `main.cpp`: Core embedded software written for the Clue board.
-- `testing.exe`: Executable simulation for data testing without hardware.
-- `README.md`: Overview and usage for the source folder.
+#### Lecture/
+- **DTO_Lecture.pdf**: Contains information about the DTO project.
+- **GPIO_Lecture.pdf**: Contains information about GPIO.
+- **Harness_Build_Procedure.pdf**: Contains information about the harness build procedure.
+- **README.md**: General overview of project folder.
 
-#### Utilities/
-- `adafruit-circuitpython-clue_nrf52840_express-en_US-9.2.7.uf2`: CircuitPython firmware for Clue board (used for formatting internal flash).
-- `README.md`: Documentation for firmware and board configuration.
+#### Logs/
+- **changelogs.md**: Contains all changelogs for the project.
+- **README.md**: General overview of project folder.
+
+#### Notes/
+- **code_examples.md**: Contains links to relevant GitHub repositories.
+- **DTO_notes.md**: Detailed notes on the Design Test Objective (DTO).
+- **README.md**: General overview of project folder.
+- **RPi5_notes.md**: Notes on the Raspberry Pi 5 and GPIO control.
+
+#### Prompts/
+- **changelogs_prompt.txt**: Prompt for generating changelogs.
+- **GEMINI.md**: Instructions for the Gemini model to follow.
+- **README.md**: General overview of project folder.
+- **READMEs_prompt.txt**: Prompt for generating READMEs.
+
+#### Simulator/
+- **README.md**: General overview of project folder.
+- **simulator.py**: EMPTY DOCUMENT.
+

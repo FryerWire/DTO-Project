@@ -5,9 +5,11 @@ Do the following:
 2. Updated the README with any new changes within the folder. 
 2.a If the folder has a file in it with no content yet, make the description: 
 	- **controller.cpp** EMPTY DOCUMENT.
-2. Do NOT ever modify the README.md in DTO-Project/README.md
-3. If the existing folder does not have a README in it, add one. 
-4. Keep one line of whitespace for the first line and the very last line. 
+3. Do NOT ever modify the README.md in DTO-Project/README.md
+3.a Exception 1, add to the ### File Tree in ## File Structure
+3.b Exception 2, add to the ### File Descriptions in ## File Structure
+4. If the existing folder does not have a README in it, add one. 
+5. Keep one line of whitespace for the first line and the very last line. 
 
 Example:
 # Overview
