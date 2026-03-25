@@ -3,17 +3,10 @@ Spring Semester Senior Design GOAT Drone Design Test Objective Code Repository
 
 **Code Written By:** Maxwell Seery and Stren
 
-## Note
-Most of this info is copied from 361 so some files and info are wrong for this project. 
-
 
 
 ## Overview  
-Text
-
-The project is divided into two primary parts:
-- **Data Acquisition**: Text
-- **Post-Processing**: Text
+- Text
 
 
 
@@ -23,34 +16,12 @@ The project is divided into two primary parts:
 
 
 ## Hardware Info
-- **Microcontroller**: Adafruit Clue nRF52840 (Cortex-M4, 64 MHz, 1MB code flash)
-- **Sensors**:
-  - BMP280 – Altitude, Pressure, and Temperature
-  - LSM6DS33 – Accelerometer and Gyroscope (6-DoF)
-- **Power Supply**: USB or 3x AAA batteries
-- **Onboard Storage**: 2MB QSPI flash (formatted to FAT32)
-- **Outputs**: NeoPixel RGB LED, white illumination LEDs
+- Text
 
 
 
 ## Software Info
-### Requirements
-- **Text** 
-- **Python 3.8+** 
-
-
-
-## Libraries Used
-### PlatformIO (C++)
-```ini
-lib_deps =
-  adafruit/Adafruit Unified Sensor
-  adafruit/Adafruit BMP280 Library
-  adafruit/Adafruit LSM6DS
-  adafruit/Adafruit NeoPixel@^1.12.5
-  adafruit/SdFat - Adafruit Fork@^2.2.54
-  adafruit/Adafruit SPIFlash@^5.1.1
-```
+- Text
 
 
 
@@ -140,4 +111,3 @@ DTO-Project/
 #### Simulator/
 - **README.md**: General overview of project folder.
 - **simulator.py**: EMPTY DOCUMENT.
-
