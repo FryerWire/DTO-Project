@@ -31,8 +31,7 @@ The system must demonstrate stable command over the following:
 - **Male Pins**: [Mouser (RM)](https://www.mouser.com/ProductDetail/souriau/rm20m12k)
 
 ## Critical Design Factors
-> [!CAUTION]
-> **Drag & Balance**: High-pressure air systems are sensitive to fluid resistance. Ensure the center of gravity aligns with thruster vectors to prevent unintended tumbling.
+- **Drag & Balance**: High-pressure air systems are sensitive to fluid resistance. Ensure the center of gravity aligns with thruster vectors to prevent unintended tumbling.
 
 
 

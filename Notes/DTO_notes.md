@@ -19,9 +19,8 @@ The following control parameters are required for a successful test:
 - **Operating Pressure**: Approximately 100 psi.
 
 ### Critical Considerations
-> [!IMPORTANT]
-> **Drag**: High-pressure air systems can be sensitive to aerodynamic or fluid resistance.
-> **Buoyancy and Balance**: Ensure the center of mass is aligned with thrust vectors to prevent unintended rotation.
+- **Drag**: High-pressure air systems can be sensitive to aerodynamic or fluid resistance.
+- **Buoyancy and Balance**: Ensure the center of mass is aligned with thrust vectors to prevent unintended rotation.
 
 
 
