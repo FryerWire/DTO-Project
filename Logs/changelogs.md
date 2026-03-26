@@ -1,6 +1,27 @@
 
 # Changelogs
 
+## Version 0.3.0 - Physical Controls and Data Logging Update
+This is the Physical Controls and Data Logging Update where all of the keyboard keybinds have now been linked to each thruster. Logs are now estabilished for Error and Keybinds. Lastly, custom keyboard commands are now a feature to help manuever the drone easier. 
+
+### New Features
+**Controller (`controller.cpp`)**
+- Added keybinds for translation and rotational controls.
+- Added the CapsLk key being a Continuous and Pulsating custom command. 
+- Added Keybind and Error Logs that are stored in `Logs/` folder. 
+- All keybinds are linked to specified thrusters. 
+
+### Changes
+**Examples (`Controller/Examples`)**
+- Moved all the Professors code examples to `Examples/`.
+
+
+### Removed
+**Prompts (`Prompts/`)**
+- Removed the `changelogs_prompt.txt` as making the changelogs automated proved to be unfeasible. 
+
+
+
 ## Version 0.2.0
 This update introduces new lecture materials, hardware specifications, and code examples, alongside the initial framework for the controller.
 

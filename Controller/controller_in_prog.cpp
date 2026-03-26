@@ -51,6 +51,7 @@ using namespace std;
 // Global Variables ===============================================================================
 double time_counter = 0.0;
 string last_key_fired = ""; // Tracks the key name to prevent repeat firing in Pulse mode
+const string LOG_PATH = "C:\\Users\\maxwe\\OneDrive\\Desktop\\GitHub Repos\\DTO-Project\\Logs\\";
 
 
 
@@ -62,7 +63,7 @@ string last_key_fired = ""; // Tracks the key name to prevent repeat firing in P
     - title (string)     : A brief description of the error for context.
 */
 void logError(string errorCode, string title) {
-    ofstream errFile("Error_Log_Test.txt", ios_base::app);
+    ofstream errFile(LOG_PATH + "Error_Log_Test.txt", ios_base::app);
     if (errFile.is_open()) {
         errFile << fixed << setprecision(2) << time_counter << " " << errorCode << ": " << title << endl;
         errFile.close();
@@ -115,7 +116,7 @@ void logData(char type, string direction, string keyname, char status, char mode
          << time_counter << ", " << mode << ", " << type << ", " << direction << ", " << keyname << ", " << status << endl;
 
     // Log to CSV file ----------------------------------------------------------------------------
-    ofstream outFile("Keybind-Log-Test.csv", ios_base::app);
+    ofstream outFile(LOG_PATH + "Keybind-Log-Test.csv", ios_base::app);
     if (outFile.is_open()) {  
         outFile << fixed << setprecision(2)
                 << time_counter << "," << mode << "," << type << "," << direction << "," << keyname << "," << status << endl;
@@ -176,11 +177,11 @@ void processAction(int vkCode, char mode) {
 */
 int main() {
     // Reset the log files and add CSV header -----------------------------------------------------
-    ofstream resetFile("Keybind-Log-Test.csv", ios::trunc);
-    ofstream resetErr("Error_Log_Test.txt", ios::trunc);
+    ofstream resetFile(LOG_PATH + "Keybind-Log-Test.csv", ios::trunc);
+    ofstream resetErr(LOG_PATH + "Error_Log_Test.txt", ios::trunc);
 
     if (!resetFile.is_open() || !resetErr.is_open()) {
-        cerr << "Error-01: Failed Startup. Check file permissions." << endl;
+        cerr << "Error-01: Failed Startup. Check file path: " << LOG_PATH << endl;
         return 1;
     }
 
@@ -189,7 +190,7 @@ int main() {
     resetErr.close();
 
     // User Instructions --------------------------------------------------------------------------
-    cout << "Logging Active (0.10s intervals). Saving to Keybind-Log-Test.csv" << endl;
+    cout << "Logging Active (0.10s intervals). Saving to: " << LOG_PATH << endl;
     cout << "CapsLK OFF: Continuous ('C') | CapsLK ON: Pulse ('P')" << endl;
     cout << "Press Keys (ESC to exit)..." << endl;
     cout << "------------------------------------------------------------" << endl;
@@ -266,7 +267,7 @@ int main() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     
-    cout << "\nLogging complete. File saved as Keybind-Log-Test.csv" << endl;
+    cout << "\nLogging complete. Files saved in: " << LOG_PATH << endl;
 
     return 0;
 }
