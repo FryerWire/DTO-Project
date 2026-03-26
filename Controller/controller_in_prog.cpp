@@ -1,6 +1,9 @@
 
 /*
-    File Name
+    DTO Controller
+    Features:
+    - Logs keybinds for translation and rotation in a CSV file with timestamps.
+    - Uses a simple console interface for real-time feedback.
 */
 
 
@@ -43,13 +46,13 @@
 
 
 
-#include <iostream>
-#include <fstream>   
-#include <conio.h>   
-#include <chrono>    
-#include <thread>    
-#include <string>
-#include <iomanip> 
+#include <iostream>  // For console output
+#include <fstream>   // For file handling
+#include <conio.h>   // For _kbhit() and _getch() to handle keyboard input without blocking
+#include <chrono>    // For high-resolution timing
+#include <thread>    // For sleep functionality to prevent high CPU usage
+#include <string>    // For string handling
+#include <iomanip>   // For output formatting (e.g., fixed and setprecision)
 
 
 
@@ -61,15 +64,24 @@ double time_counter = 0.0;
 
 
 
+/*
+    logData() - Logs the provided key event data to both the console and a CSV file.
+
+    Parameters:
+    - type: 'T' for translation, 'R' for rotation, 'F' for error/invalid input
+    - direction: A string indicating the direction of movement or rotation (e.g., "+X", "-Y", etc.)
+    - keybind: The character representing the key that was pressed
+    - status: 'N' for normal event, 'E' for error event
+*/
 void logData(char type, string direction, char keybind, char status) {
-    // We keep the spaces for the terminal output so it stays readable for you
+    // Log to console -----------------------------------------------------------------------------
     cout << fixed << setprecision(2) 
          << time_counter << ", C, " << type << ", " << direction << ", " << keybind << ", " << status << endl;
 
-    // We remove extra spaces for the CSV file to ensure clean data parsing
+    // Log to CSV file ----------------------------------------------------------------------------
     ofstream outFile("Keybind-Log-Test.csv", ios_base::app);
-    if (outFile.is_open()) {
-        outFile << fixed << setprecision(2) 
+    if (outFile.is_open()) {  
+        outFile << fixed << setprecision(2)
                 << time_counter << ",C," << type << "," << direction << "," << keybind << "," << status << endl;
         outFile.close();
     }
@@ -77,9 +89,16 @@ void logData(char type, string direction, char keybind, char status) {
 
 
 
+/*
+    processInput() - Takes a character input, determines the corresponding action based on predefined keybinds,
+    and calls logData() with the appropriate parameters to log the event.
+
+    Parameters:
+    - key: The character input from the user that represents a key press
+*/
 void processInput(char key) {
     char upperKey = toupper(key);
-    switch (upperKey) {
+    switch (upperKey) {  
         // Translation ----------------------------------------------------------------------------
         case 'A': logData('T', "+X", upperKey, 'N'); break;  // A1, A2 | 0, 8
         case 'D': logData('T', "-X", upperKey, 'N'); break;  // F1, F2 | 5, 11
@@ -105,26 +124,32 @@ void processInput(char key) {
 
 
 
+/*
+    main() - The entry point of the program. It initializes the log file, provides user instructions,
+    and enters a loop to continuously check for keyboard input. When a key is pressed, it processes the input
+    and logs the event. The loop can be exited by pressing the ESC key.
+*/
 int main() {
-    // Reset the log file and add CSV header
+    // Reset the log file and add CSV header ------------------------------------------------------
     ofstream resetFile("Keybind-Log-Test.csv", ios::trunc);
     resetFile << "Time(s),Constant,Type,Direction,Key,Status" << endl;
     resetFile.close();
 
+    // User Instructions --------------------------------------------------------------------------
     cout << "Logging Active (0.25s intervals). Saving to Keybind-Log-Test.csv" << endl;
     cout << "Press Keys (ESC to exit)..." << endl;
     cout << "------------------------------------------------------------" << endl;
 
+    // Main Loop ----------------------------------------------------------------------------------
     while (true) {
-        if (_kbhit()) {
+        if (_kbhit()) {                     // Check for keyboard input without blocking the program flow
             char input = _getch();
-            if (input == 27) break; // ESC to exit
+            if (input == 27) break;         // ESC to exit
 
-            // Buffer Flush: Eats extra key repeats to prevent time lag
-            while (_kbhit()) { _getch(); }
+            while (_kbhit()) { _getch(); }  // Clear the input buffer to prevent multiple logs for a single key press
 
             processInput(input);
-        } else {
+        } else {                            // If no key is pressed, log a normal event with no keybind to maintain a consistent time series in the CSV
             logData('F', "--", '-', 'N');
         }
 
@@ -133,9 +158,12 @@ int main() {
     }
     
     cout << "\nLogging complete. File saved as Keybind-Log-Test.csv" << endl;
+
     return 0;
 }
 
 
 
+
+// Compilation Instructions:
 // cd Controller; g++ controller_in_prog.cpp -o controller_in_prog; ./controller_in_prog
