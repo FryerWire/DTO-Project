@@ -1,51 +1,39 @@
 
 /*
     DTO Controller
+
     Features:
-    - Logs keybinds for translation and rotation in a CSV file with timestamps.
-    - Uses a simple console interface for real-time feedback.
+    - Logs key events with timestamps, types, directions, and statuses to both console and CSV.
+    - Supports Continuous (Caps Lock OFF) and Pulse (Caps Lock ON) modes.
+    - Maps specific keys to translation and rotation movements, with error handling for unmapped keys.
+
+    Key Mappings:
+    Translation:
+    - Forward  (+X) : W
+    - Backward (-X) : S
+    - Left     (+Y) : D
+    - Right    (-Y) : A
+    - Up       (+Z) : Space
+    - Down     (-Z) : Shift
+
+    Rotation:
+    - CW Pitch  : Ctrl + Right
+    - CCW Pitch : Ctrl + Left
+    - CC Roll   : Up Arrow
+    - CCW Roll  : Down Arrow
+    - CW Yaw    : Right Arrow
+    - CCW Yaw   : Left Arrow
+
+    Error Codes:
+    - Error-01: Failed Startup - Occurs if the program cannot initialize the log files.
+    - Error-02: Write Failure - Occurs if the log file is locked or unavailable during a log attempt.
+    - Error-03: Incorrect Keybind - Occurs when a key is pressed that has no mapped movement function.
+    - Error-04: System Ghosting - Occurs when non-printable or system scan codes leak into the buffer.
 */
 
 
 
-// Pins ===========================================================================================
-// Rack Connector 1 -------------------------------------------------------------------------------
-// GPIO-00 | U1 | A1
-// GPIO-01 | U2 | S1
-// GPIO-02 | U3 | P1
-// GPIO-03 | U4 | T1
-
-// Rack Connector 2 -------------------------------------------------------------------------------
-// GPIO-04 | U5 | B1
-// GPIO-05 | U6 | F1
-// GPIO-06 | U7 | P2
-// GPIO-07 | U8 | S2
-
-// Rack Connector 3 -------------------------------------------------------------------------------
-// GPIO-08 | U9 | A1
-// GPIO-09 | U10| T2
-// GPIO-10 | U11| B2
-// GPIO-11 | U12| F2
-
-// Translation and Rotation Mapping ===============================================================
-// Translation ------------------------------------------------------------------------------------
-// Forward  (+X) : A1, A2 | 0, 8
-// Backward (-X) : F1, F2 | 5, 11
-// Left     (+Y) : S1, S2 | 1, 7
-// Right    (-Y) : P1, P2 | 2, 6
-// Up       (+Z) : B1, B2 | 4, 10
-// Down     (-Z) : T1, T2 | 3, 9
-
-// Rotation ---------------------------------------------------------------------------------------
-// CW Pitch  : T2, B1 | 9, 4
-// CCW Pitch : T1, B2 | 3, 10
-// CC Roll   : P2, S1 | 6, 1
-// CCW Roll  : P1, S2 | 2, 7
-// CW Yaw    : A1, F2 | 0, 5
-// CCW Yaw   : A2, F1 | 8, 11
-
-
-
+#include <windows.h> // Required for GetKeyState and GetAsyncKeyState
 #include <iostream>  // For console output
 #include <fstream>   // For file handling
 #include <conio.h>   // For _kbhit() and _getch() to handle keyboard input without blocking
@@ -60,97 +48,218 @@ using namespace std;
 
 
 
+// Global Variables ===============================================================================
 double time_counter = 0.0;
+string last_key_fired = ""; // Tracks the key name to prevent repeat firing in Pulse mode
 
 
 
 /*
-    logData() - Logs the provided key event data to both the console and a CSV file.
+    logError() - Logs error messages with timestamps to a separate error log file.
 
     Parameters:
-    - type: 'T' for translation, 'R' for rotation, 'F' for error/invalid input
-    - direction: A string indicating the direction of movement or rotation (e.g., "+X", "-Y", etc.)
-    - keybind: The character representing the key that was pressed
-    - status: 'N' for normal event, 'E' for error event
+    - errorCode (string) : A string representing the specific error code (e.g., "Error-01").
+    - title (string)     : A brief description of the error for context.
 */
-void logData(char type, string direction, char keybind, char status) {
+void logError(string errorCode, string title) {
+    ofstream errFile("Error_Log_Test.txt", ios_base::app);
+    if (errFile.is_open()) {
+        errFile << fixed << setprecision(2) << time_counter << " " << errorCode << ": " << title << endl;
+        errFile.close();
+    }
+}
+
+
+
+/*
+    getVirtualKeyName() - Converts a virtual key code to a human-readable string for logging purposes.
+
+    Parameters:
+    - vkCode (int) : The virtual key code to be converted.
+*/
+string getVirtualKeyName(int vkCode) {
+    // Common keys with special names -------------------------------------------------------------
+    if (vkCode == VK_SPACE) return "Space";
+    if (vkCode == VK_SHIFT || vkCode == VK_LSHIFT || vkCode == VK_RSHIFT) return "Shift";
+    if (vkCode == VK_UP) return "UpArrow";
+    if (vkCode == VK_DOWN) return "DownArrow";
+    if (vkCode == VK_LEFT) return "LeftArrow";
+    if (vkCode == VK_RIGHT) return "RightArrow";
+    if (vkCode == VK_CONTROL) return "Control";
+    if (vkCode == VK_MENU) return "Alt";
+    if (vkCode == VK_RETURN) return "Enter";
+
+    // Alphanumeric keys (A-Z, 0-9) ---------------------------------------------------------------
+    if ((vkCode >= '0' && vkCode <= '9') || (vkCode >= 'A' && vkCode <= 'Z')) {
+        return string(1, (char)vkCode);
+    }
+    return "Key_" + to_string(vkCode);
+}
+
+
+
+/*
+    logData() - Logs key event data to both the console and a CSV file with a consistent format.
+
+    Parameters:
+    - type (char)        : 'T' for Translation, 'R' for Rotation, 'F' for Failed/Other
+    - direction (string) : A string representing the direction or action (e.g., "+X", "-Y", "CW Pitch")
+    - keyname (string)   : The name of the key that triggered the event (e.g., "W", "Ctrl+RightArrow")
+    - status (char)      : 'N' for Normal, 'E' for Error
+    - mode (char)        : 'C' for Continuous, 'P' for Pulse
+
+*/
+void logData(char type, string direction, string keyname, char status, char mode = 'C') {
     // Log to console -----------------------------------------------------------------------------
     cout << fixed << setprecision(2) 
-         << time_counter << ", C, " << type << ", " << direction << ", " << keybind << ", " << status << endl;
+         << time_counter << ", " << mode << ", " << type << ", " << direction << ", " << keyname << ", " << status << endl;
 
     // Log to CSV file ----------------------------------------------------------------------------
     ofstream outFile("Keybind-Log-Test.csv", ios_base::app);
     if (outFile.is_open()) {  
         outFile << fixed << setprecision(2)
-                << time_counter << ",C," << type << "," << direction << "," << keybind << "," << status << endl;
+                << time_counter << "," << mode << "," << type << "," << direction << "," << keyname << "," << status << endl;
         outFile.close();
+    } else {
+        logError("Error-02", "Failed to log to document");
     }
 }
 
 
 
 /*
-    processInput() - Takes a character input, determines the corresponding action based on predefined keybinds,
-    and calls logData() with the appropriate parameters to log the event.
+    processAction() - Map Virtual Keys/Combinations to Directions and Names
 
     Parameters:
-    - key: The character input from the user that represents a key press
+    - vkCode (int) : The virtual key code of the pressed key.
+    - mode (char)  : 'C' for Continuous mode, 'P' for Pulse mode
 */
-void processInput(char key) {
-    char upperKey = toupper(key);
-    switch (upperKey) {  
+void processAction(int vkCode, char mode) {
+    bool ctrl = (GetAsyncKeyState(VK_CONTROL) & 0x8000);
+
+    switch (vkCode) {  
         // Translation ----------------------------------------------------------------------------
-        case 'A': logData('T', "+X", upperKey, 'N'); break;  // A1, A2 | 0, 8
-        case 'D': logData('T', "-X", upperKey, 'N'); break;  // F1, F2 | 5, 11
-        case 'E': logData('T', "+Y", upperKey, 'N'); break;  // S1, S2 | 1, 7
-        case 'Q': logData('T', "-Y", upperKey, 'N'); break;  // P1, P2 | 2, 6
-        case 'W': logData('T', "+Z", upperKey, 'N'); break;  // B1, B2 | 4, 10
-        case 'S': logData('T', "-Z", upperKey, 'N'); break;  // T1, T2 | 3, 9
+        case 'W':            logData('T', "+X", "W", 'N', mode); break;
+        case 'S':            logData('T', "-X", "S", 'N', mode); break;
+        case 'D':            logData('T', "+Y", "D", 'N', mode); break;
+        case 'A':            logData('T', "-Y", "A", 'N', mode); break;
+        case VK_SPACE:       logData('T', "+Z", "Space", 'N', mode); break;
+        case VK_SHIFT:       logData('T', "-Z", "Shift", 'N', mode); break;
 
         // Rotation -------------------------------------------------------------------------------
-        case 'O': logData('R', "+R", upperKey, 'N'); break;  // T2, B1 | 9, 4
-        case 'U': logData('R', "-R", upperKey, 'N'); break;  // T1, B2 | 3, 10
-        case 'K': logData('R', "+P", upperKey, 'N'); break;  // P2, S1 | 6, 1
-        case 'I': logData('R', "-P", upperKey, 'N'); break;  // P1, S2 | 2, 7
-        case 'J': logData('R', "+Y", upperKey, 'N'); break;  // A1, F2 | 0, 5
-        case 'L': logData('R', "-Y", upperKey, 'N'); break;  // A2, F1 | 8, 11
+        case VK_RIGHT: 
+            if (ctrl)        logData('R', "+R", "Ctrl+RightArrow", 'N', mode); 
+            else             logData('R', "+Y", "RightArrow", 'N', mode); 
+            break;
+        case VK_LEFT:  
+            if (ctrl)        logData('R', "-R", "Ctrl+LeftArrow", 'N', mode); 
+            else             logData('R', "-Y", "LeftArrow", 'N', mode); 
+            break;
+        case VK_UP:          logData('R', "+P", "UpArrow", 'N', mode); break;
+        case VK_DOWN:        logData('R', "-P", "DownArrow", 'N', mode); break;
+
+        // Intentional Error Keys -----------------------------------------------------------------
+        case 'Q':            logData('F', "--", "Q", 'E', mode); logError("Error-03", "Incorrect Keybind"); break;
+        case 'E':            logData('F', "--", "E", 'E', mode); logError("Error-03", "Incorrect Keybind"); break;
+        case 'G':            logData('F', "--", "G", 'E', mode); logError("Error-03", "Incorrect Keybind"); break; 
+        case 'F':            logData('F', "--", "F", 'E', mode); logError("Error-03", "Incorrect Keybind"); break;
 
         // Error Handling -------------------------------------------------------------------------
-        default:  logData('F', "--", upperKey, 'E'); break;
-
-        // Add error handling and Error Log CSV
+        default:             logData('F', "--", getVirtualKeyName(vkCode), 'E', mode); logError("Error-03", "Incorrect Keybind"); break;
     }
 }
 
 
 
 /*
-    main() - The entry point of the program. It initializes the log file, provides user instructions,
-    and enters a loop to continuously check for keyboard input. When a key is pressed, it processes the input
-    and logs the event. The loop can be exited by pressing the ESC key.
+    main() - The entry point of the program.
 */
 int main() {
-    // Reset the log file and add CSV header ------------------------------------------------------
+    // Reset the log files and add CSV header -----------------------------------------------------
     ofstream resetFile("Keybind-Log-Test.csv", ios::trunc);
+    ofstream resetErr("Error_Log_Test.txt", ios::trunc);
+
+    if (!resetFile.is_open() || !resetErr.is_open()) {
+        cerr << "Error-01: Failed Startup. Check file permissions." << endl;
+        return 1;
+    }
+
     resetFile << "Time(s),Constant,Type,Direction,Key,Status" << endl;
     resetFile.close();
+    resetErr.close();
 
     // User Instructions --------------------------------------------------------------------------
-    cout << "Logging Active (0.25s intervals). Saving to Keybind-Log-Test.csv" << endl;
+    cout << "Logging Active (0.10s intervals). Saving to Keybind-Log-Test.csv" << endl;
+    cout << "CapsLK OFF: Continuous ('C') | CapsLK ON: Pulse ('P')" << endl;
     cout << "Press Keys (ESC to exit)..." << endl;
     cout << "------------------------------------------------------------" << endl;
 
     // Main Loop ----------------------------------------------------------------------------------
     while (true) {
-        if (_kbhit()) {                     // Check for keyboard input without blocking the program flow
-            char input = _getch();
-            if (input == 27) break;         // ESC to exit
+        bool isCapsOn = (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
+        char currentMode = isCapsOn ? 'P' : 'C';
 
-            while (_kbhit()) { _getch(); }  // Clear the input buffer to prevent multiple logs for a single key press
+        if (GetAsyncKeyState(VK_ESCAPE)) break; // Exit on ESC
 
-            processInput(input);
-        } else {                            // If no key is pressed, log a normal event with no keybind to maintain a consistent time series in the CSV
-            logData('F', "--", '-', 'N');
+        int active_vk = 0;
+        string current_key_id = "";
+
+        // Check all virtual keys for activity ----------------------------------------------------
+        for (int i = 0x08; i <= 0xFE; i++) {
+            if (GetAsyncKeyState(i) & 0x8000) {
+                // Skip modifier keys to prevent them from being logged as primary keys -----------
+                if (i == VK_CONTROL || i == VK_MENU || i == VK_CAPITAL || 
+                    i == VK_LCONTROL || i == VK_RCONTROL) continue;
+
+                active_vk = i;
+                
+                // Handle Ctrl + Arrow combinations for rotation ----------------------------------
+                bool ctrl = (GetAsyncKeyState(VK_CONTROL) & 0x8000);
+                if (i == VK_RIGHT && ctrl) current_key_id = "Ctrl+Right";
+                else if (i == VK_LEFT && ctrl) current_key_id = "Ctrl+Left";
+                else current_key_id = to_string(i);
+                break; 
+            }
+        }
+
+        // Process the active key if detected -----------------------------------------------------
+        if (active_vk != 0) {
+            if (currentMode == 'C') {
+                processAction(active_vk, 'C');
+            } 
+            else if (currentMode == 'P') {
+                if (current_key_id != last_key_fired) {
+                    processAction(active_vk, 'P');
+                    last_key_fired = current_key_id;
+                } else {
+                    logData('F', "--", "-", 'N', 'P');
+                }
+            }
+            while (_kbhit()) { _getch(); }
+        } 
+        // Handle unmapped keys and system ghosting -----------------------------------------------
+        else if (_kbhit()) {
+            int key_raw = _getch();
+            char error_char = (char)toupper(key_raw);
+            
+            string mapped = "WASDQEGFT R L C";
+            if (mapped.find(error_char) != string::npos || key_raw == 'H' || key_raw == 'P' || key_raw == 'K' || key_raw == 'M') {
+                logData('F', "--", "-", 'N', currentMode);
+            } 
+            else if (key_raw >= 32 && key_raw <= 126) {
+                logData('F', "--", string(1, (char)key_raw), 'E', currentMode);
+                logError("Error-03", "Incorrect Keybind");
+            } 
+            else {
+                logData('F', "--", "-", 'N', currentMode);
+                logError("Error-04", "System Ghosting");
+            }
+            last_key_fired = "";
+        }
+        // No key activity detected, reset last_key_fired for Pulse mode --------------------------
+        else {
+            last_key_fired = "";
+            logData('F', "--", "-", 'N', currentMode);
         }
 
         time_counter += 0.10;
@@ -163,7 +272,5 @@ int main() {
 }
 
 
-
-
-// Compilation Instructions:
+// Compilation Instructions =======================================================================
 // cd Controller; g++ controller_in_prog.cpp -o controller_in_prog; ./controller_in_prog
