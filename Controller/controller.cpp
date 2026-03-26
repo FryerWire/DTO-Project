@@ -45,10 +45,10 @@ std::chrono::steady_clock::time_point start_time;  // Global variable to store t
 
 /*
     main() - Initializes the log file and starts the simulation timer.
-             Enters a continuous loop that checks for the 'Q' quit command,
-             reads the real-time state of the WASD keys, prints any state changes to the console,
-             and logs the currently held keys exactly once per second.
-             Safely closes the log file upon exit.
+    Enters a continuous loop that checks for the 'Q' quit command,
+    reads the real-time state of the WASD keys, prints any state changes to the console,
+    and logs the currently held keys exactly once per second.
+    Safely closes the log file upon exit.
 */
 int main() {
     if (!setup_logger()) {                                            // Attempt to open the log file, and if it fails, exit immediately
@@ -90,8 +90,8 @@ int main() {
 
 /*
     check_state_changes() - Compares the current state of the WASD keys against their state during the previous loop iteration.
-                            If a key has been pressed or released, it prints a status update to the console simulating
-                            which thrusters are firing. Updates the tracking variables for the next loop.
+    If a key has been pressed or released, it prints a status update to the console simulating
+    which thrusters are firing. Updates the tracking variables for the next loop.
 */
 void check_state_changes() {
     if (is_w_held != prev_w) {                                                                    // If the state of 'W' has changed since the last check
@@ -119,8 +119,8 @@ void check_state_changes() {
 
 /*
     log_current_state() - Calculates the elapsed time since the simulation started.
-                          If the elapsed time (in seconds) meets or exceeds the next target second, 
-                          it formats a string with the currently active keys and writes it to the log file.
+    If the elapsed time (in seconds) meets or exceeds the next target second, 
+    it formats a string with the currently active keys and writes it to the log file.
 */
 void log_current_state() {
     auto now = std::chrono::steady_clock::now();                                                // Get the current precise time
@@ -145,8 +145,8 @@ void log_current_state() {
 
 /*
     setup_logger() - Attempts to create and open 'thruster_log.txt'. 
-                     If successful, initializes the start time for the simulation timer.
-                     Returns true if the file opened successfully, false otherwise.
+    If successful, initializes the start time for the simulation timer.
+    Returns true if the file opened successfully, false otherwise.
 */
 bool setup_logger() {
     log_file.open("thruster_log.txt");  // Attempt to open or create the log file in the current directory
@@ -164,7 +164,7 @@ bool setup_logger() {
 
 /*
     cleanup_logger() - Safely closes the log file to ensure all data is written to disk
-                       and prints a confirmation message to the console.
+    and prints a confirmation message to the console.
 */
 void cleanup_logger() {
     if (log_file.is_open()) {  // Ensure the file is actually open before attempting to close it
