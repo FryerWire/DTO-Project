@@ -1,20 +1,20 @@
-
 /*
     DTO Controller
 
     Features:
-    - Logs key events with timestamps, types, directions, and statuses to both console and CSV.
+    - Logs key events with timestamps, types, directions, and modes to Keybind_Log.csv.
     - Supports Continuous (Caps Lock OFF) and Pulse (Caps Lock ON) modes.
-    - Maps specific keys to translation and rotation movements, with error handling for unmapped keys.
+    - Maps specific keys to translation and rotation movements.
+    - Activity_Log.csv tracks high-level Application Codes (STATUS and FAULT).
 
     Key Mappings:
     Translation:
     - Forward  (+X) : W
     - Backward (-X) : S
-    - Left     (+Y) : D
-    - Right    (-Y) : A
-    - Up       (+Z) : Space
-    - Down     (-Z) : Shift
+    - Left      (+Y) : D
+    - Right     (-Y) : A
+    - Up        (+Z) : Space
+    - Down      (-Z) : Shift
 
     Rotation:
     - CW Pitch  : Ctrl + Right
@@ -24,11 +24,21 @@
     - CW Yaw    : Right Arrow
     - CCW Yaw   : Left Arrow
 
-    Error Codes:
-    - Error-01: Failed Startup - Occurs if the program cannot initialize the log files.
-    - Error-02: Write Failure - Occurs if the log file is locked or unavailable during a log attempt.
-    - Error-03: Incorrect Keybind - Occurs when a key is pressed that has no mapped movement function.
-    - Error-04: System Ghosting - Occurs when non-printable or system scan codes leak into the buffer.
+    Application Codes (Logged to Activity_Log.csv):
+    Status Codes:
+    - STATUS-00: Startup Successful     - System initialized and files opened.
+    - STATUS-01: Session Ended          - Main loop exited.
+    - STATUS-02: Session Started        - Main loop entered.
+    - STATUS-03: Key Registered         - A valid movement key was processed.
+    - STATUS-04: Shutdown Successful    - Program exited and cleaned up without error.
+
+    Fault Codes:
+    - FAULT-00: Startup Failure         - Occurs if the program cannot initialize logs or paths.
+    - FAULT-01: File Failed to Close    - Occurs if a file handle remains locked at exit.
+    - FAULT-02: Write Failure           - Occurs if the log file is locked during a log attempt.
+    - FAULT-03: Incorrect Keybind       - Occurs when a key is pressed that has no mapped function.
+    - FAULT-04: System Ghosting         - Occurs when non-printable scan codes leak into the buffer.
+    - FAULT-05: Shutdown Failed         - Occurs if resources fail to release during exit.
 */
 
 
@@ -56,18 +66,28 @@ const string LOG_PATH = "C:\\Users\\maxwe\\OneDrive\\Desktop\\GitHub Repos\\DTO-
 
 
 /*
-    logError() - Logs error messages with timestamps to a separate error log file.
+    logActivity() - Writes Application Codes (STATUS/FAULT) to the Activity Log CSV.
+    Format: Timestamp, Code, Description
+*/
+void logActivity(string code, string description) {
+    ofstream activityFile(LOG_PATH + "Activity_Log.csv", ios_base::app);
+    if (activityFile.is_open()) {
+        activityFile << fixed << setprecision(2) << time_counter << "," << code << "," << description << endl;
+        activityFile.close();
+    }
+}
+
+
+
+/*
+    logFault() - Redirects Fault messages to the unified Activity Log CSV.
 
     Parameters:
-    - errorCode (string) : A string representing the specific error code (e.g., "Error-01").
-    - title (string)     : A brief description of the error for context.
+    - faultCode (string) : A string representing the specific fault code (e.g., "FAULT-03").
+    - title (string)     : A brief description of the fault for context.
 */
-void logError(string errorCode, string title) {
-    ofstream errFile(LOG_PATH + "Error_Log_Test.txt", ios_base::app);
-    if (errFile.is_open()) {
-        errFile << fixed << setprecision(2) << time_counter << " " << errorCode << ": " << title << endl;
-        errFile.close();
-    }
+void logFault(string faultCode, string title) {
+    logActivity(faultCode, title);
 }
 
 
@@ -100,29 +120,34 @@ string getVirtualKeyName(int vkCode) {
 
 
 /*
-    logData() - Logs key event data to both the console and a CSV file with a consistent format.
+    logData() - Logs key event data to both the console and a CSV file.
 
     Parameters:
     - type (char)        : 'T' for Translation, 'R' for Rotation, 'F' for Failed/Other
-    - direction (string) : A string representing the direction or action (e.g., "+X", "-Y", "CW Pitch")
-    - keyname (string)   : The name of the key that triggered the event (e.g., "W", "Ctrl+RightArrow")
-    - status (char)      : 'N' for Normal, 'E' for Error
+    - direction (string) : A string representing the direction or action (e.g., "+X", "-Y")
+    - keyname (string)   : The name of the key that triggered the event (e.g., "W")
+    - statusChar (char)  : 'N' for Normal, 'E' for Error (Used for console/logic internal tracking)
     - mode (char)        : 'C' for Continuous, 'P' for Pulse
 
 */
-void logData(char type, string direction, string keyname, char status, char mode = 'C') {
+void logData(char type, string direction, string keyname, char statusChar, char mode = 'C') {
     // Log to console -----------------------------------------------------------------------------
     cout << fixed << setprecision(2) 
-         << time_counter << ", " << mode << ", " << type << ", " << direction << ", " << keyname << ", " << status << endl;
+         << time_counter << ", " << mode << ", " << type << ", " << direction << ", " << keyname << ", " << statusChar << endl;
 
-    // Log to CSV file ----------------------------------------------------------------------------
-    ofstream outFile(LOG_PATH + "Keybind-Log-Test.csv", ios_base::app);
+    // Log to Keybind_Log.csv ---------------------------------------------------------------------
+    ofstream outFile(LOG_PATH + "Keybind_Log.csv", ios_base::app);
     if (outFile.is_open()) {  
         outFile << fixed << setprecision(2)
-                << time_counter << "," << mode << "," << type << "," << direction << "," << keyname << "," << status << endl;
+                << time_counter << "," << mode << "," << type << "," << direction << "," << keyname << endl;
         outFile.close();
+        
+        // Log Status Code for successful key registration
+        if (statusChar == 'N' && keyname != "-") {
+            logActivity("STATUS-03", "Key Registered: " + keyname);
+        }
     } else {
-        logError("Error-02", "Failed to log to document");
+        logFault("FAULT-02", "Write Failure: Keybind CSV file locked");
     }
 }
 
@@ -159,14 +184,14 @@ void processAction(int vkCode, char mode) {
         case VK_UP:          logData('R', "+P", "UpArrow", 'N', mode); break;
         case VK_DOWN:        logData('R', "-P", "DownArrow", 'N', mode); break;
 
-        // Intentional Error Keys -----------------------------------------------------------------
-        case 'Q':            logData('F', "--", "Q", 'E', mode); logError("Error-03", "Incorrect Keybind"); break;
-        case 'E':            logData('F', "--", "E", 'E', mode); logError("Error-03", "Incorrect Keybind"); break;
-        case 'G':            logData('F', "--", "G", 'E', mode); logError("Error-03", "Incorrect Keybind"); break; 
-        case 'F':            logData('F', "--", "F", 'E', mode); logError("Error-03", "Incorrect Keybind"); break;
+        // Intentional Fault Trigger Keys ---------------------------------------------------------
+        case 'Q':            logData('F', "--", "Q", 'E', mode); logFault("FAULT-03", "Incorrect Keybind"); break;
+        case 'E':            logData('F', "--", "E", 'E', mode); logFault("FAULT-03", "Incorrect Keybind"); break;
+        case 'G':            logData('F', "--", "G", 'E', mode); logFault("FAULT-03", "Incorrect Keybind"); break; 
+        case 'F':            logData('F', "--", "F", 'E', mode); logFault("FAULT-03", "Incorrect Keybind"); break;
 
-        // Error Handling -------------------------------------------------------------------------
-        default:             logData('F', "--", getVirtualKeyName(vkCode), 'E', mode); logError("Error-03", "Incorrect Keybind"); break;
+        // General Fault Handling -----------------------------------------------------------------
+        default:             logData('F', "--", getVirtualKeyName(vkCode), 'E', mode); logFault("FAULT-03", "Incorrect Keybind"); break;
     }
 }
 
@@ -176,24 +201,31 @@ void processAction(int vkCode, char mode) {
     main() - The entry point of the program.
 */
 int main() {
-    // Reset the log files and add CSV header -----------------------------------------------------
-    ofstream resetFile(LOG_PATH + "Keybind-Log-Test.csv", ios::trunc);
-    ofstream resetErr(LOG_PATH + "Error_Log_Test.txt", ios::trunc);
+    // Reset the log files and add CSV headers ----------------------------------------------------
+    ofstream resetFile(LOG_PATH + "Keybind_Log.csv", ios::trunc);
+    ofstream resetActivity(LOG_PATH + "Activity_Log.csv", ios::trunc);
 
-    if (!resetFile.is_open() || !resetErr.is_open()) {
-        cerr << "Error-01: Failed Startup. Check file path: " << LOG_PATH << endl;
+    if (!resetFile.is_open() || !resetActivity.is_open()) {
+        cerr << "FAULT-00: Startup Failure. Check file path: " << LOG_PATH << endl;
         return 1;
     }
 
-    resetFile << "Time(s),Constant,Type,Direction,Key,Status" << endl;
+    // Initialize CSV Headers
+    resetFile << "Time(s),Mode,Type,Direction,Key" << endl;
+    resetActivity << "Time(s),Code,Description" << endl;
+
     resetFile.close();
-    resetErr.close();
+    resetActivity.close();
+
+    logActivity("STATUS-00", "Startup Successful: Files Ready");
 
     // User Instructions --------------------------------------------------------------------------
     cout << "Logging Active (0.10s intervals). Saving to: " << LOG_PATH << endl;
     cout << "CapsLK OFF: Continuous ('C') | CapsLK ON: Pulse ('P')" << endl;
     cout << "Press Keys (ESC to exit)..." << endl;
     cout << "------------------------------------------------------------" << endl;
+
+    logActivity("STATUS-02", "Session Started");
 
     // Main Loop ----------------------------------------------------------------------------------
     while (true) {
@@ -249,11 +281,11 @@ int main() {
             } 
             else if (key_raw >= 32 && key_raw <= 126) {
                 logData('F', "--", string(1, (char)key_raw), 'E', currentMode);
-                logError("Error-03", "Incorrect Keybind");
+                logFault("FAULT-03", "Incorrect Keybind");
             } 
             else {
                 logData('F', "--", "-", 'N', currentMode);
-                logError("Error-04", "System Ghosting");
+                logFault("FAULT-04", "System Ghosting");
             }
             last_key_fired = "";
         }
@@ -267,7 +299,17 @@ int main() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     
-    cout << "\nLogging complete. Files saved in: " << LOG_PATH << endl;
+    // Final exit sequence ------------------------------------------------------------------------
+    logActivity("STATUS-01", "Session Ended");
+    
+    ofstream finalize(LOG_PATH + "Activity_Log.csv", ios_base::app);
+    if (finalize.is_open()) {
+        finalize << fixed << setprecision(2) << time_counter << ",STATUS-04,Shutdown Successful" << endl;
+        finalize.close();
+        cout << "\nLogging complete. Files saved in: " << LOG_PATH << endl;
+    } else {
+        cerr << "FAULT-05: Shutdown Failed. Activity log could not be finalized." << endl;
+    }
 
     return 0;
 }
