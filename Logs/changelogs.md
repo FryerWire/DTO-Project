@@ -3,15 +3,15 @@
 
 ## Version 0.3.1
 
-## New Features
+### New Features
 **LaTeX (`Application Codes`)**
 - Added a new document called `Application Codes` with up to date status and fault codes. 
 
-## Changes
+### Changes
 **Logs (`Logs/`)**
 - Simplified the logging files to `Activity_log.csv` and `Keybind_Log.csv` which collect all the application codes and keybind triggers.
 
-**Controller `Controller_in_prog.cpp`**
+**Controller (`Controller_in_prog.cpp`)**
 - Modified the file writers to update to the new Application Codes. 
 
 
