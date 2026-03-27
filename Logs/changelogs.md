@@ -1,6 +1,21 @@
 
 # Changelogs
 
+## Version 0.3.1
+
+## New Features
+**LaTeX (`Application Codes`)**
+- Added a new document called `Application Codes` with up to date status and fault codes. 
+
+## Changes
+**Logs (`Logs/`)**
+- Simplified the logging files to `Activity_log.csv` and `Keybind_Log.csv` which collect all the application codes and keybind triggers.
+
+**Controller `Controller_in_prog.cpp`**
+- Modified the file writers to update to the new Application Codes. 
+
+
+
 ## Version 0.3.0 - Physical Controls and Data Logging Update
 This is the Physical Controls and Data Logging Update where all of the keyboard keybinds have now been linked to each thruster. Logs are now estabilished for Error and Keybinds. Lastly, custom keyboard commands are now a feature to help manuever the drone easier. 
 

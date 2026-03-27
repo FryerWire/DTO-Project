@@ -1,0 +1,5 @@
+Time(s),Code,Description
+0.00,APP-00,Startup Successful: Files Ready
+0.00,APP-02,Session Started
+2.50,APP-01,Session Ended
+2.50,APP-04,Shutdown Successful
