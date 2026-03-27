@@ -11,6 +11,9 @@ This is the Physical Controls and Data Logging Update where all of the keyboard 
 - Added Keybind and Error Logs that are stored in `Logs/` folder. 
 - All keybinds are linked to specified thrusters. 
 
+**Documentation (`README.md`)**
+- Added `Activity Codes`
+
 ### Changes
 **Examples (`Controller/Examples`)**
 - Moved all the Professors code examples to `Examples/`.
