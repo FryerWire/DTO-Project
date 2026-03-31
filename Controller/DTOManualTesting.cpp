@@ -17,6 +17,25 @@
     - logData(char type, string direction, string keyname, char statusChar, char mode): Logs key events to Keybind_Log.csv and the console, with status codes for successful registrations and errors.
     - processAction(int vkCode, char mode): Maps virtual key codes to specific translation and rotation actions based on the current mode (Continuous or Pulse).
     - main(): Initializes log files, handles mode toggling, processes key events, and manages the overall program flow.
+
+    Codes:
+    - STATUS-00: Startup Successful: Files Ready
+    - STATUS-01: Session Ended
+    - STATUS-02: Session Started
+    - STATUS-03: Key Registered: [KeyName]
+    - STATUS-04: Shutdown Successful
+    - STATUS-05: Mode Changed: [ModeName]
+    - STATUS-10: Sequence Initiated
+    - STATUS-11: Testing Rack Connector [Number]
+    - STATUS-12: Rack Connector [Number] PASS
+    - STATUS-13: GPIO [Number] ON/OFF (PULSE)
+    - STATUS-14: All GPIO Successfully Activated
+    - ERROR-00: Startup Failure. Check file path: [Path]
+    - ERROR-02: Write Failure: Keybind CSV file locked
+    - ERROR-03: Incorrect Keybind
+    - ERROR-04: System Ghosting
+    - ERROR-06: Mode Switch Denied: Exit [CurrentMode] first
+    - ERROR-10: Sequence Aborted by User
 */
 
 
