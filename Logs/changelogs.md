@@ -1,6 +1,44 @@
 
 # Changelogs
 
+
+
+## Version 0.4.0 - Startup Sequence and Mode Logic Update
+This update introduces the **Startup Sequence Mode (~S)** and **Operational Mode (~O)**, replacing the previous command structure. The Startup Sequence now includes automated thruster testing across three Rack Connectors with specific timing and GPIO logging. Additionally, logic has been implemented to prevent mode-switching during active tests and to ensure the 'Esc' key properly terminates the program and saves all logs.
+
+### New Features
+**Controller (`controller.cpp`)**
+- Added **Startup Sequence Mode (~S)**: Executes a timed test sequence for Rack Connectors 1, 2, and 3 (GPIO 0-11).
+- Added **Operational Mode (~O)**: Replaces the previous manual mode command (~C).
+- Implemented **Mode Locking**: Users cannot switch to Operational Mode until the Startup Sequence is fully completed.
+- Implemented **Sequence Reset**: Allows the user to re-run the Startup Sequence (~S) only after a successful completion.
+- Fixed **'Esc' Key Functionality**: The Escape key now interrupts active processes, exits the program immediately, and ensures all logging data is saved.
+
+**GPIO Logic**
+- Organized GPIO pins into `rackConnectors` (0-2) mapping to GPIO 0-11.
+- Added timestamped print statements for "On/Off" status during sequences (e.g., `0.00 GPIO 0 On`).
+
+### Changes
+**User Interface**
+- Updated the welcome message and command prompts to reflect the new DTO Program Commands.
+- Changed all `FAULT` log references to `ERROR` for consistency with project naming conventions.
+- Simplified the Startup Sequence activation message to a single placeholder before the full test logic was finalized.
+
+**Program Flow**
+- Restricted movement between ~O and ~S; users must now return to the main menu/exit state to switch contexts.
+
+### Fixed
+**Logging & Stability**
+- Resolved an issue where 'Esc' failed to trigger during the `~S` running loop.
+- Guaranteed log file closure and data persistence upon program exit.
+
+### DTO Program Commands
+- Enter `~S` for Startup Sequence Mode.
+- Enter `~O` for Operational Mode.
+- Enter `Esc` to exit either mode or the program.
+
+
+
 ## Version 0.3.1
 
 ### New Features
