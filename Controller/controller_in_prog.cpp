@@ -144,6 +144,10 @@ void logData(char type, string direction, string keyname, char statusChar, char 
 
 /*
     processAction() - Map Virtual Keys/Combinations to Directions and Names
+
+    Parameters:
+    - vkCode (int) : The virtual key code of the pressed key.
+    - mode (char)  : 'C' for Continuous mode, 'P' for Pulse mode
 */
 void processAction(int vkCode, char mode) {
     bool ctrl = (GetAsyncKeyState(VK_CONTROL) & 0x8000);
@@ -215,18 +219,70 @@ int main() {
 
     // Main Loop ----------------------------------------------------------------------------------
     while (true) {
-        if (GetAsyncKeyState(VK_ESCAPE)) break; // Exit on ESC
+        // Exit check
+        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) break; 
 
         // Check for Mode Changes (~ + S or ~ + O) ------------------------------------------------
         bool tildePressed = (GetAsyncKeyState(VK_OEM_3) & 0x8000);
         if (tildePressed) {
             if (GetAsyncKeyState('S') & 0x8000) {
-                if (!isStartupMode) {
+                if (!isStartupMode && !isOperationalMode) {
                     isStartupMode = true;
                     isOperationalMode = false;
                     cout << ">> MODE CHANGE: STARTUP SEQUENCE MODE ACTIVATED" << endl;
-                    cout << "FEATURE BEING ADDED SOON." << endl;
                     logActivity("STATUS-05", "Mode Changed: Startup Sequence Mode");
+
+                    // Startup Sequence Mode (~S) Variables & Testing -----------------------------
+                    int rackConnector0[4] = {0, 1, 2, 3};
+                    int rackConnector1[4] = {4, 5, 6, 7};
+                    int rackConnector2[4] = {8, 11, 12, 13}; 
+                    
+                    int* connectors[3] = {rackConnector0, rackConnector1, rackConnector2};
+
+                    // Label for jumping out of nested loops on Esc -------------------------------
+                    bool force_exit = false;
+
+                    for (int r = 0; r < 3; r++) {
+                        if (force_exit) break;
+                        double sequence_time = 0.00;
+                        cout << "Rack Connector " << r + 1 << " Test:" << endl;
+
+                        // Phase 1: 1.0s Pulses ---------------------------------------------------
+                        for (int g = 0; g < 4; g++) {
+                            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { force_exit = true; break; }
+                            cout << fixed << setprecision(2) << sequence_time << " GPIO " << connectors[r][g] << " On" << endl;
+                            this_thread::sleep_for(chrono::milliseconds(1000));
+                            sequence_time += 1.00;
+
+                            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { force_exit = true; break; }
+                            cout << fixed << setprecision(2) << sequence_time << " GPIO " << connectors[r][g] << " Off" << endl;
+                            this_thread::sleep_for(chrono::milliseconds(1000));
+                            sequence_time += 1.00;
+                        }
+
+                        // Phase 2: Double 0.5s Pulses --------------------------------------------
+                        for (int g = 0; g < 4; g++) {
+                            if (force_exit) break;
+                            for (int i = 0; i < 2; i++) {
+                                if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { force_exit = true; break; }
+                                cout << fixed << setprecision(2) << sequence_time << " GPIO " << connectors[r][g] << " On" << endl;
+                                this_thread::sleep_for(chrono::milliseconds(500));
+                                sequence_time += 0.50;
+
+                                if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { force_exit = true; break; }
+                                cout << fixed << setprecision(2) << sequence_time << " GPIO " << connectors[r][g] << " Off" << endl;
+                                this_thread::sleep_for(chrono::milliseconds(500));
+                                sequence_time += 0.50;
+                            }
+                        }
+                        if (!force_exit) cout << "Rack Connector " << r + 1 << " Test Successfully Completed." << endl << endl;
+                    }
+
+                    if (force_exit) break; // Break main while loop if Esc was hit
+
+                    cout << "All GPIO Successfully Activated." << endl;
+                    cout << "------------------------------------------------------------" << endl;
+                    isStartupMode = false; // Reset so ~S can be ran again
                 }
             }
             else if (GetAsyncKeyState('O') & 0x8000) {
@@ -239,11 +295,7 @@ int main() {
             }
         }
 
-        // Logic branching based on Mode ----------------------------------------------------------
-        if (isStartupMode) {
-            // Dormant State: No activity, just waiting for toggle or exit.
-        } 
-        else if (isOperationalMode) {
+        if (isOperationalMode) {
             // Operational Mode (~O) Logic 
             bool isCapsOn = (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
             char currentMode = isCapsOn ? 'P' : 'C';
@@ -251,16 +303,12 @@ int main() {
             int active_vk = 0;
             string current_key_id = "";
 
-            // Check all virtual keys for activity ------------------------------------------------
             for (int i = 0x08; i <= 0xFE; i++) {
                 if (GetAsyncKeyState(i) & 0x8000) {
-                    // Skip modifier keys to prevent them from being logged as primary keys -----------
                     if (i == VK_CONTROL || i == VK_MENU || i == VK_CAPITAL || 
                         i == VK_LCONTROL || i == VK_RCONTROL || i == VK_OEM_3) continue;
 
                     active_vk = i;
-                    
-                    // Handle Ctrl + Arrow combinations for rotation ----------------------------------
                     bool ctrl = (GetAsyncKeyState(VK_CONTROL) & 0x8000);
                     if (i == VK_RIGHT && ctrl) current_key_id = "Ctrl+Right";
                     else if (i == VK_LEFT && ctrl) current_key_id = "Ctrl+Left";
@@ -269,7 +317,6 @@ int main() {
                 }
             }
 
-            // Process the active key if detected -----------------------------------------------------
             if (active_vk != 0) {
                 if (currentMode == 'C') {
                     processAction(active_vk, 'C');
@@ -284,11 +331,9 @@ int main() {
                 }
                 while (_kbhit()) { _getch(); }
             } 
-            // Handle unmapped keys and system ghosting -----------------------------------------------
             else if (_kbhit()) {
                 int key_raw = _getch();
                 char error_char = (char)toupper(key_raw);
-                
                 string mapped = "WASDQEGFT R L C";
                 if (mapped.find(error_char) != string::npos || key_raw == 'H' || key_raw == 'P' || key_raw == 'K' || key_raw == 'M') {
                     logData('F', "--", "-", 'N', currentMode);
@@ -303,13 +348,11 @@ int main() {
                 }
                 last_key_fired = "";
             }
-            // No key activity detected, reset last_key_fired for Pulse mode --------------------------
             else {
                 last_key_fired = "";
                 logData('F', "--", "-", 'N', currentMode);
             }
 
-            // Only increment time in Operational Mode
             time_counter += 0.10;
         }
 
