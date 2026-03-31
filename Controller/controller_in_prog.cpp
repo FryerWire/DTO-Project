@@ -6,13 +6,14 @@
     - Supports Continuous (Caps Lock OFF) and Pulse (Caps Lock ON) modes.
     - Maps specific keys to translation and rotation movements.
     - Activity_Log.csv tracks high-level Application Codes (STATUS and FAULT).
+    - Toggle Modes: ~ + S (Startup Sequence) | ~ + O (Operational Mode).
 
     Key Mappings:
     Translation:
     - Forward  (+X) : W
     - Backward (-X) : S
     - Left      (+Y) : D
-    - Right     (-Y) : A
+    - Right      (-Y) : A
     - Up        (+Z) : Space
     - Down      (-Z) : Shift
 
@@ -29,16 +30,9 @@
     - STATUS-00: Startup Successful     - System initialized and files opened.
     - STATUS-01: Session Ended          - Main loop exited.
     - STATUS-02: Session Started        - Main loop entered.
-    - STATUS-03: Key Registered         - A valid movement key was processed.
+    - STATUS-03: Key Registered          - A valid movement key was processed.
     - STATUS-04: Shutdown Successful    - Program exited and cleaned up without error.
-
-    Fault Codes:
-    - FAULT-00: Startup Failure         - Occurs if the program cannot initialize logs or paths.
-    - FAULT-01: File Failed to Close    - Occurs if a file handle remains locked at exit.
-    - FAULT-02: Write Failure           - Occurs if the log file is locked during a log attempt.
-    - FAULT-03: Incorrect Keybind       - Occurs when a key is pressed that has no mapped function.
-    - FAULT-04: System Ghosting         - Occurs when non-printable scan codes leak into the buffer.
-    - FAULT-05: Shutdown Failed         - Occurs if resources fail to release during exit.
+    - STATUS-05: Mode Changed           - System switched between Startup and Operational modes.
 */
 
 
@@ -62,6 +56,8 @@ using namespace std;
 double time_counter = 0.0;
 string last_key_fired = ""; // Tracks the key name to prevent repeat firing in Pulse mode
 const string LOG_PATH = "C:\\Users\\maxwe\\OneDrive\\Desktop\\GitHub Repos\\DTO-Project\\Logs\\";
+bool isStartupMode = false;    // Tracks if the system is in Startup Sequence Mode (~S)
+bool isOperationalMode = false; // Tracks if the system is in Operational Mode (~O)
 
 
 
@@ -109,6 +105,7 @@ string getVirtualKeyName(int vkCode) {
     if (vkCode == VK_CONTROL) return "Control";
     if (vkCode == VK_MENU) return "Alt";
     if (vkCode == VK_RETURN) return "Enter";
+    if (vkCode == VK_OEM_3) return "~";
 
     // Alphanumeric keys (A-Z, 0-9) ---------------------------------------------------------------
     if ((vkCode >= '0' && vkCode <= '9') || (vkCode >= 'A' && vkCode <= 'Z')) {
@@ -121,14 +118,6 @@ string getVirtualKeyName(int vkCode) {
 
 /*
     logData() - Logs key event data to both the console and a CSV file.
-
-    Parameters:
-    - type (char)        : 'T' for Translation, 'R' for Rotation, 'F' for Failed/Other
-    - direction (string) : A string representing the direction or action (e.g., "+X", "-Y")
-    - keyname (string)   : The name of the key that triggered the event (e.g., "W")
-    - statusChar (char)  : 'N' for Normal, 'E' for Error (Used for console/logic internal tracking)
-    - mode (char)        : 'C' for Continuous, 'P' for Pulse
-
 */
 void logData(char type, string direction, string keyname, char statusChar, char mode = 'C') {
     // Log to console -----------------------------------------------------------------------------
@@ -155,10 +144,6 @@ void logData(char type, string direction, string keyname, char statusChar, char 
 
 /*
     processAction() - Map Virtual Keys/Combinations to Directions and Names
-
-    Parameters:
-    - vkCode (int) : The virtual key code of the pressed key.
-    - mode (char)  : 'C' for Continuous mode, 'P' for Pulse mode
 */
 void processAction(int vkCode, char mode) {
     bool ctrl = (GetAsyncKeyState(VK_CONTROL) & 0x8000);
@@ -219,83 +204,115 @@ int main() {
 
     logActivity("STATUS-00", "Startup Successful: Files Ready");
 
-    // User Instructions --------------------------------------------------------------------------
-    cout << "Logging Active (0.10s intervals). Saving to: " << LOG_PATH << endl;
-    cout << "CapsLK OFF: Continuous ('C') | CapsLK ON: Pulse ('P')" << endl;
-    cout << "Press Keys (ESC to exit)..." << endl;
+    // Welcome Message ----------------------------------------------------------------------------
+    cout << "DTO Program:" << endl;
+    cout << "- Enter '~S' Startup Sequence Mode" << endl;
+    cout << "- Enter '~O' Operational Mode" << endl;
+    cout << "- Enter 'Esc' Exit Mode/Program." << endl;
     cout << "------------------------------------------------------------" << endl;
 
     logActivity("STATUS-02", "Session Started");
 
     // Main Loop ----------------------------------------------------------------------------------
     while (true) {
-        bool isCapsOn = (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
-        char currentMode = isCapsOn ? 'P' : 'C';
-
         if (GetAsyncKeyState(VK_ESCAPE)) break; // Exit on ESC
 
-        int active_vk = 0;
-        string current_key_id = "";
-
-        // Check all virtual keys for activity ----------------------------------------------------
-        for (int i = 0x08; i <= 0xFE; i++) {
-            if (GetAsyncKeyState(i) & 0x8000) {
-                // Skip modifier keys to prevent them from being logged as primary keys -----------
-                if (i == VK_CONTROL || i == VK_MENU || i == VK_CAPITAL || 
-                    i == VK_LCONTROL || i == VK_RCONTROL) continue;
-
-                active_vk = i;
-                
-                // Handle Ctrl + Arrow combinations for rotation ----------------------------------
-                bool ctrl = (GetAsyncKeyState(VK_CONTROL) & 0x8000);
-                if (i == VK_RIGHT && ctrl) current_key_id = "Ctrl+Right";
-                else if (i == VK_LEFT && ctrl) current_key_id = "Ctrl+Left";
-                else current_key_id = to_string(i);
-                break; 
-            }
-        }
-
-        // Process the active key if detected -----------------------------------------------------
-        if (active_vk != 0) {
-            if (currentMode == 'C') {
-                processAction(active_vk, 'C');
-            } 
-            else if (currentMode == 'P') {
-                if (current_key_id != last_key_fired) {
-                    processAction(active_vk, 'P');
-                    last_key_fired = current_key_id;
-                } else {
-                    logData('F', "--", "-", 'N', 'P');
+        // Check for Mode Changes (~ + S or ~ + O) ------------------------------------------------
+        bool tildePressed = (GetAsyncKeyState(VK_OEM_3) & 0x8000);
+        if (tildePressed) {
+            if (GetAsyncKeyState('S') & 0x8000) {
+                if (!isStartupMode) {
+                    isStartupMode = true;
+                    isOperationalMode = false;
+                    cout << ">> MODE CHANGE: STARTUP SEQUENCE MODE ACTIVATED" << endl;
+                    cout << "FEATURE BEING ADDED SOON." << endl;
+                    logActivity("STATUS-05", "Mode Changed: Startup Sequence Mode");
                 }
             }
-            while (_kbhit()) { _getch(); }
-        } 
-        // Handle unmapped keys and system ghosting -----------------------------------------------
-        else if (_kbhit()) {
-            int key_raw = _getch();
-            char error_char = (char)toupper(key_raw);
-            
-            string mapped = "WASDQEGFT R L C";
-            if (mapped.find(error_char) != string::npos || key_raw == 'H' || key_raw == 'P' || key_raw == 'K' || key_raw == 'M') {
-                logData('F', "--", "-", 'N', currentMode);
-            } 
-            else if (key_raw >= 32 && key_raw <= 126) {
-                logData('F', "--", string(1, (char)key_raw), 'E', currentMode);
-                logFault("FAULT-03", "Incorrect Keybind");
-            } 
-            else {
-                logData('F', "--", "-", 'N', currentMode);
-                logFault("FAULT-04", "System Ghosting");
+            else if (GetAsyncKeyState('O') & 0x8000) {
+                if (!isOperationalMode) {
+                    isOperationalMode = true;
+                    isStartupMode = false;
+                    cout << ">> MODE CHANGE: OPERATIONAL MODE ACTIVATED" << endl;
+                    logActivity("STATUS-05", "Mode Changed: Operational Mode");
+                }
             }
-            last_key_fired = "";
-        }
-        // No key activity detected, reset last_key_fired for Pulse mode --------------------------
-        else {
-            last_key_fired = "";
-            logData('F', "--", "-", 'N', currentMode);
         }
 
-        time_counter += 0.10;
+        // Logic branching based on Mode ----------------------------------------------------------
+        if (isStartupMode) {
+            // Dormant State: No activity, just waiting for toggle or exit.
+        } 
+        else if (isOperationalMode) {
+            // Operational Mode (~O) Logic 
+            bool isCapsOn = (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
+            char currentMode = isCapsOn ? 'P' : 'C';
+
+            int active_vk = 0;
+            string current_key_id = "";
+
+            // Check all virtual keys for activity ------------------------------------------------
+            for (int i = 0x08; i <= 0xFE; i++) {
+                if (GetAsyncKeyState(i) & 0x8000) {
+                    // Skip modifier keys to prevent them from being logged as primary keys -----------
+                    if (i == VK_CONTROL || i == VK_MENU || i == VK_CAPITAL || 
+                        i == VK_LCONTROL || i == VK_RCONTROL || i == VK_OEM_3) continue;
+
+                    active_vk = i;
+                    
+                    // Handle Ctrl + Arrow combinations for rotation ----------------------------------
+                    bool ctrl = (GetAsyncKeyState(VK_CONTROL) & 0x8000);
+                    if (i == VK_RIGHT && ctrl) current_key_id = "Ctrl+Right";
+                    else if (i == VK_LEFT && ctrl) current_key_id = "Ctrl+Left";
+                    else current_key_id = to_string(i);
+                    break; 
+                }
+            }
+
+            // Process the active key if detected -----------------------------------------------------
+            if (active_vk != 0) {
+                if (currentMode == 'C') {
+                    processAction(active_vk, 'C');
+                } 
+                else if (currentMode == 'P') {
+                    if (current_key_id != last_key_fired) {
+                        processAction(active_vk, 'P');
+                        last_key_fired = current_key_id;
+                    } else {
+                        logData('F', "--", "-", 'N', 'P');
+                    }
+                }
+                while (_kbhit()) { _getch(); }
+            } 
+            // Handle unmapped keys and system ghosting -----------------------------------------------
+            else if (_kbhit()) {
+                int key_raw = _getch();
+                char error_char = (char)toupper(key_raw);
+                
+                string mapped = "WASDQEGFT R L C";
+                if (mapped.find(error_char) != string::npos || key_raw == 'H' || key_raw == 'P' || key_raw == 'K' || key_raw == 'M') {
+                    logData('F', "--", "-", 'N', currentMode);
+                } 
+                else if (key_raw >= 32 && key_raw <= 126) {
+                    logData('F', "--", string(1, (char)key_raw), 'E', currentMode);
+                    logFault("FAULT-03", "Incorrect Keybind");
+                } 
+                else {
+                    logData('F', "--", "-", 'N', currentMode);
+                    logFault("FAULT-04", "System Ghosting");
+                }
+                last_key_fired = "";
+            }
+            // No key activity detected, reset last_key_fired for Pulse mode --------------------------
+            else {
+                last_key_fired = "";
+                logData('F', "--", "-", 'N', currentMode);
+            }
+
+            // Only increment time in Operational Mode
+            time_counter += 0.10;
+        }
+
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     
