@@ -9,7 +9,23 @@
     - Activity_Log.csv tracks high-level Application Codes (STATUS and ERROR).
     - Toggle Modes: ~ + S (Startup Sequence) | ~ + O (Operational Mode).
 
-    Note: GPIO control uses libgpiod as per RPi 5 architecture[cite: 758, 918].
+    Code:
+    ERROR-00: Startup Failure - Cannot open/create log files.
+    ERROR-01: GPIO Chip Failure - Could not open /dev/gpiochip0.
+    ERROR-02: Write Failure - Keybind CSV file is locked or inaccessible.
+    ERROR-03: Incorrect Keybind - Key pressed is not mapped to an action.
+    ERROR-06: Mode Switch Denied - Attempted Startup (~S) while in Operational Mode.
+
+    STATUS-00: Startup Successful - Directories and file headers initialized.
+    STATUS-01: Session Ended - User exited the application loop.
+    STATUS-02: Session Started - User loop is active.
+    STATUS-03: Key Registered - Valid movement key processed and logged.
+    STATUS-04: Shutdown Successful - Cleanup complete, application closing.
+    STATUS-05: Operational Mode Active - System switched to Mode ~O.
+    STATUS-10: Sequence Initiated - Startup Sequence (~S) started.
+    STATUS-11: Testing Rack [N] - Diagnostic loop entering a specific rack.
+    STATUS-13: GPIO [N] ON/OFF - Specific pin state change during diagnostic.
+    STATUS-14: Sequence Complete - Diagnostic loop finished successfully.
 */
 
 
@@ -55,7 +71,7 @@ struct gpiod_line_bulk lines;
 void initGPIO() {
     chip = gpiod_chip_open(chip_path);
     if (!chip) {
-        cerr << "ERROR: Could not open GPIO chip" << endl;
+        cerr << "ERROR-01: Could not open GPIO chip" << endl;
     }
 }
 

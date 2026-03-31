@@ -1,102 +1,558 @@
 Time(s),Code,Description
 0.00,STATUS-00,Startup Successful: Files Ready
 0.00,STATUS-02,Session Started
-0.00,STATUS-05,Mode Changed: Startup Sequence Mode
-0.00,STATUS-10,Sequence Initiated
-0.00,STATUS-11,Testing Rack Connector 1
-0.00,STATUS-13,GPIO 0 ON
-0.00,STATUS-13,GPIO 0 OFF
-0.00,STATUS-13,GPIO 1 ON
-0.00,STATUS-13,GPIO 1 OFF
-0.00,STATUS-13,GPIO 2 ON
-0.00,STATUS-13,GPIO 2 OFF
-0.00,STATUS-13,GPIO 3 ON
-0.00,STATUS-13,GPIO 3 OFF
-0.00,STATUS-13,GPIO 0 ON (PULSE)
-0.00,STATUS-13,GPIO 0 OFF (PULSE)
-0.00,STATUS-13,GPIO 0 ON (PULSE)
-0.00,STATUS-13,GPIO 0 OFF (PULSE)
-0.00,STATUS-13,GPIO 1 ON (PULSE)
-0.00,STATUS-13,GPIO 1 OFF (PULSE)
-0.00,STATUS-13,GPIO 1 ON (PULSE)
-0.00,STATUS-13,GPIO 1 OFF (PULSE)
-0.00,STATUS-13,GPIO 2 ON (PULSE)
-0.00,STATUS-13,GPIO 2 OFF (PULSE)
-0.00,STATUS-13,GPIO 2 ON (PULSE)
-0.00,STATUS-13,GPIO 2 OFF (PULSE)
-0.00,STATUS-13,GPIO 3 ON (PULSE)
-0.00,STATUS-13,GPIO 3 OFF (PULSE)
-0.00,STATUS-13,GPIO 3 ON (PULSE)
-0.00,STATUS-13,GPIO 3 OFF (PULSE)
-0.00,STATUS-12,Rack Connector 1 PASS
-0.00,STATUS-11,Testing Rack Connector 2
-0.00,STATUS-13,GPIO 4 ON
-0.00,STATUS-13,GPIO 4 OFF
-0.00,STATUS-13,GPIO 5 ON
-0.00,STATUS-13,GPIO 5 OFF
-0.00,STATUS-13,GPIO 6 ON
-0.00,STATUS-13,GPIO 6 OFF
-0.00,STATUS-13,GPIO 7 ON
-0.00,STATUS-13,GPIO 7 OFF
-0.00,STATUS-13,GPIO 4 ON (PULSE)
-0.00,STATUS-13,GPIO 4 OFF (PULSE)
-0.00,STATUS-13,GPIO 4 ON (PULSE)
-0.00,STATUS-13,GPIO 4 OFF (PULSE)
-0.00,STATUS-13,GPIO 5 ON (PULSE)
-0.00,STATUS-13,GPIO 5 OFF (PULSE)
-0.00,STATUS-13,GPIO 5 ON (PULSE)
-0.00,STATUS-13,GPIO 5 OFF (PULSE)
-0.00,STATUS-13,GPIO 6 ON (PULSE)
-0.00,STATUS-13,GPIO 6 OFF (PULSE)
-0.00,STATUS-13,GPIO 6 ON (PULSE)
-0.00,STATUS-13,GPIO 6 OFF (PULSE)
-0.00,STATUS-13,GPIO 7 ON (PULSE)
-0.00,STATUS-13,GPIO 7 OFF (PULSE)
-0.00,STATUS-13,GPIO 7 ON (PULSE)
-0.00,STATUS-13,GPIO 7 OFF (PULSE)
-0.00,STATUS-12,Rack Connector 2 PASS
-0.00,STATUS-11,Testing Rack Connector 3
-0.00,STATUS-13,GPIO 8 ON
-0.00,STATUS-13,GPIO 8 OFF
-0.00,STATUS-13,GPIO 11 ON
-0.00,STATUS-13,GPIO 11 OFF
-0.00,STATUS-13,GPIO 12 ON
-0.00,STATUS-13,GPIO 12 OFF
-0.00,STATUS-13,GPIO 13 ON
-0.00,STATUS-13,GPIO 13 OFF
-0.00,STATUS-13,GPIO 8 ON (PULSE)
-0.00,STATUS-13,GPIO 8 OFF (PULSE)
-0.00,STATUS-13,GPIO 8 ON (PULSE)
-0.00,STATUS-13,GPIO 8 OFF (PULSE)
-0.00,STATUS-13,GPIO 11 ON (PULSE)
-0.00,STATUS-13,GPIO 11 OFF (PULSE)
-0.00,STATUS-13,GPIO 11 ON (PULSE)
-0.00,STATUS-13,GPIO 11 OFF (PULSE)
-0.00,STATUS-13,GPIO 12 ON (PULSE)
-0.00,STATUS-13,GPIO 12 OFF (PULSE)
-0.00,STATUS-13,GPIO 12 ON (PULSE)
-0.00,STATUS-13,GPIO 12 OFF (PULSE)
-0.00,STATUS-13,GPIO 13 ON (PULSE)
-0.00,STATUS-13,GPIO 13 OFF (PULSE)
-0.00,STATUS-13,GPIO 13 ON (PULSE)
-0.00,STATUS-13,GPIO 13 OFF (PULSE)
-0.00,STATUS-12,Rack Connector 3 PASS
-0.00,STATUS-14,All GPIO Successfully Activated
 0.00,STATUS-05,Mode Changed: Operational Mode
 0.00,STATUS-03,Key Registered: Shift
 0.10,STATUS-03,Key Registered: Shift
-1.40,STATUS-03,Key Registered: Shift
-1.50,STATUS-03,Key Registered: Shift
-1.60,STATUS-03,Key Registered: Shift
-1.70,ERROR-06,Mode Switch Denied: Exit ~O first
-1.70,STATUS-03,Key Registered: Shift
-1.80,STATUS-03,Key Registered: Shift
-1.90,STATUS-03,Key Registered: Shift
-2.40,STATUS-03,Key Registered: Shift
-2.50,STATUS-03,Key Registered: Shift
-2.60,ERROR-06,Mode Switch Denied: Exit ~O first
-2.60,STATUS-03,Key Registered: Shift
-2.70,STATUS-03,Key Registered: Shift
-2.80,STATUS-03,Key Registered: Shift
-11.00,STATUS-01,Session Ended
-11.00,STATUS-04,Shutdown Successful
+2.30,STATUS-03,Key Registered: S
+2.40,STATUS-03,Key Registered: S
+2.50,STATUS-03,Key Registered: S
+2.60,STATUS-03,Key Registered: S
+2.70,STATUS-03,Key Registered: S
+2.80,STATUS-03,Key Registered: S
+2.90,STATUS-03,Key Registered: S
+3.00,STATUS-03,Key Registered: S
+3.10,STATUS-03,Key Registered: S
+3.20,STATUS-03,Key Registered: S
+3.30,STATUS-03,Key Registered: S
+3.40,STATUS-03,Key Registered: S
+3.50,STATUS-03,Key Registered: S
+3.60,STATUS-03,Key Registered: S
+3.70,STATUS-03,Key Registered: S
+3.80,STATUS-03,Key Registered: S
+3.90,STATUS-03,Key Registered: S
+4.00,STATUS-03,Key Registered: S
+4.10,STATUS-03,Key Registered: S
+4.20,STATUS-03,Key Registered: S
+4.30,STATUS-03,Key Registered: S
+4.40,STATUS-03,Key Registered: S
+4.50,STATUS-03,Key Registered: S
+4.60,STATUS-03,Key Registered: S
+4.70,STATUS-03,Key Registered: S
+4.80,STATUS-03,Key Registered: S
+4.90,STATUS-03,Key Registered: S
+5.00,STATUS-03,Key Registered: S
+5.10,STATUS-03,Key Registered: S
+5.20,STATUS-03,Key Registered: S
+5.30,STATUS-03,Key Registered: S
+5.40,STATUS-03,Key Registered: S
+5.50,STATUS-03,Key Registered: S
+5.60,STATUS-03,Key Registered: S
+5.70,STATUS-03,Key Registered: A
+5.80,STATUS-03,Key Registered: A
+5.90,STATUS-03,Key Registered: A
+6.00,STATUS-03,Key Registered: A
+6.10,STATUS-03,Key Registered: A
+6.20,STATUS-03,Key Registered: A
+6.30,STATUS-03,Key Registered: A
+6.40,STATUS-03,Key Registered: A
+6.50,STATUS-03,Key Registered: A
+6.60,STATUS-03,Key Registered: A
+6.70,STATUS-03,Key Registered: A
+6.80,STATUS-03,Key Registered: A
+6.90,STATUS-03,Key Registered: A
+7.00,STATUS-03,Key Registered: A
+7.10,STATUS-03,Key Registered: A
+7.20,STATUS-03,Key Registered: A
+7.30,STATUS-03,Key Registered: A
+7.40,STATUS-03,Key Registered: A
+7.50,STATUS-03,Key Registered: A
+7.60,STATUS-03,Key Registered: A
+7.70,STATUS-03,Key Registered: A
+7.80,STATUS-03,Key Registered: A
+7.90,STATUS-03,Key Registered: A
+8.00,STATUS-03,Key Registered: A
+8.10,STATUS-03,Key Registered: A
+8.20,STATUS-03,Key Registered: A
+8.30,STATUS-03,Key Registered: A
+8.40,STATUS-03,Key Registered: A
+8.50,STATUS-03,Key Registered: A
+8.60,STATUS-03,Key Registered: A
+8.70,STATUS-03,Key Registered: A
+8.80,STATUS-03,Key Registered: A
+8.90,STATUS-03,Key Registered: A
+9.00,STATUS-03,Key Registered: A
+9.10,STATUS-03,Key Registered: A
+9.20,STATUS-03,Key Registered: A
+9.30,STATUS-03,Key Registered: A
+9.40,STATUS-03,Key Registered: A
+9.50,STATUS-03,Key Registered: A
+9.60,STATUS-03,Key Registered: A
+9.70,STATUS-03,Key Registered: A
+9.80,STATUS-03,Key Registered: A
+10.00,STATUS-03,Key Registered: W
+10.10,STATUS-03,Key Registered: W
+10.20,STATUS-03,Key Registered: W
+10.30,STATUS-03,Key Registered: W
+10.40,STATUS-03,Key Registered: W
+10.50,STATUS-03,Key Registered: W
+10.60,STATUS-03,Key Registered: W
+10.70,STATUS-03,Key Registered: W
+10.80,STATUS-03,Key Registered: W
+10.90,STATUS-03,Key Registered: W
+11.00,STATUS-03,Key Registered: W
+11.10,STATUS-03,Key Registered: W
+11.20,STATUS-03,Key Registered: W
+11.30,STATUS-03,Key Registered: W
+11.40,STATUS-03,Key Registered: W
+11.50,STATUS-03,Key Registered: W
+11.60,STATUS-03,Key Registered: W
+11.70,STATUS-03,Key Registered: W
+11.80,STATUS-03,Key Registered: W
+11.90,STATUS-03,Key Registered: W
+12.00,STATUS-03,Key Registered: W
+12.10,STATUS-03,Key Registered: W
+12.20,STATUS-03,Key Registered: W
+12.30,STATUS-03,Key Registered: W
+12.40,STATUS-03,Key Registered: W
+12.50,STATUS-03,Key Registered: W
+12.60,STATUS-03,Key Registered: W
+12.70,STATUS-03,Key Registered: W
+12.80,STATUS-03,Key Registered: W
+12.90,STATUS-03,Key Registered: W
+13.00,STATUS-03,Key Registered: W
+13.10,STATUS-03,Key Registered: W
+13.20,STATUS-03,Key Registered: W
+13.30,STATUS-03,Key Registered: W
+13.40,STATUS-03,Key Registered: W
+13.50,STATUS-03,Key Registered: W
+13.60,STATUS-03,Key Registered: W
+13.70,STATUS-03,Key Registered: W
+13.80,STATUS-03,Key Registered: W
+13.90,STATUS-03,Key Registered: W
+14.00,STATUS-03,Key Registered: W
+14.10,STATUS-03,Key Registered: W
+14.20,STATUS-03,Key Registered: W
+14.30,STATUS-03,Key Registered: W
+14.40,STATUS-03,Key Registered: Space
+14.50,STATUS-03,Key Registered: Space
+14.60,STATUS-03,Key Registered: Space
+14.70,STATUS-03,Key Registered: Space
+14.80,STATUS-03,Key Registered: Space
+14.90,STATUS-03,Key Registered: Space
+15.00,STATUS-03,Key Registered: Space
+15.10,STATUS-03,Key Registered: Space
+15.20,STATUS-03,Key Registered: Space
+15.30,STATUS-03,Key Registered: Space
+15.40,STATUS-03,Key Registered: Space
+15.50,STATUS-03,Key Registered: Space
+15.60,STATUS-03,Key Registered: Space
+15.70,STATUS-03,Key Registered: Space
+15.80,STATUS-03,Key Registered: Space
+15.90,STATUS-03,Key Registered: Space
+16.00,STATUS-03,Key Registered: Space
+16.10,STATUS-03,Key Registered: Space
+16.20,STATUS-03,Key Registered: Space
+16.30,STATUS-03,Key Registered: Space
+16.40,STATUS-03,Key Registered: Space
+16.50,STATUS-03,Key Registered: Space
+16.60,STATUS-03,Key Registered: Space
+16.70,STATUS-03,Key Registered: Space
+16.80,STATUS-03,Key Registered: Space
+16.90,STATUS-03,Key Registered: Space
+17.00,STATUS-03,Key Registered: Space
+17.10,STATUS-03,Key Registered: Space
+17.20,STATUS-03,Key Registered: Space
+17.30,STATUS-03,Key Registered: Space
+17.40,STATUS-03,Key Registered: Space
+17.50,STATUS-03,Key Registered: Space
+17.60,STATUS-03,Key Registered: Space
+17.70,STATUS-03,Key Registered: Space
+17.80,STATUS-03,Key Registered: Space
+17.90,STATUS-03,Key Registered: Space
+18.00,STATUS-03,Key Registered: Space
+18.10,STATUS-03,Key Registered: Space
+18.20,STATUS-03,Key Registered: Space
+18.30,STATUS-03,Key Registered: Space
+18.40,STATUS-03,Key Registered: Space
+18.50,STATUS-03,Key Registered: Space
+18.60,STATUS-03,Key Registered: Space
+18.70,STATUS-03,Key Registered: Space
+18.80,STATUS-03,Key Registered: Space
+18.90,STATUS-03,Key Registered: Space
+19.00,STATUS-03,Key Registered: Space
+19.10,STATUS-03,Key Registered: Space
+19.20,STATUS-03,Key Registered: Space
+19.30,STATUS-03,Key Registered: Space
+19.40,STATUS-03,Key Registered: Space
+19.50,STATUS-03,Key Registered: Space
+19.60,STATUS-03,Key Registered: Space
+19.70,STATUS-03,Key Registered: Space
+19.80,STATUS-03,Key Registered: Space
+19.90,STATUS-03,Key Registered: Space
+20.00,STATUS-03,Key Registered: Space
+20.10,STATUS-03,Key Registered: Space
+20.20,STATUS-03,Key Registered: Space
+20.30,STATUS-03,Key Registered: Space
+20.40,STATUS-03,Key Registered: Space
+20.50,STATUS-03,Key Registered: Space
+20.60,STATUS-03,Key Registered: Space
+20.70,STATUS-03,Key Registered: Space
+20.80,STATUS-03,Key Registered: Space
+20.90,STATUS-03,Key Registered: Space
+21.00,STATUS-03,Key Registered: Space
+21.10,STATUS-03,Key Registered: D
+21.20,STATUS-03,Key Registered: D
+21.30,STATUS-03,Key Registered: D
+21.40,STATUS-03,Key Registered: D
+21.50,STATUS-03,Key Registered: D
+21.60,STATUS-03,Key Registered: D
+21.70,STATUS-03,Key Registered: D
+21.80,STATUS-03,Key Registered: D
+21.90,STATUS-03,Key Registered: D
+22.00,STATUS-03,Key Registered: D
+22.10,STATUS-03,Key Registered: D
+22.20,STATUS-03,Key Registered: D
+22.30,STATUS-03,Key Registered: D
+22.40,STATUS-03,Key Registered: D
+22.50,STATUS-03,Key Registered: D
+22.60,STATUS-03,Key Registered: D
+22.70,STATUS-03,Key Registered: D
+22.80,STATUS-03,Key Registered: D
+22.90,STATUS-03,Key Registered: D
+23.00,STATUS-03,Key Registered: D
+23.10,STATUS-03,Key Registered: D
+23.20,STATUS-03,Key Registered: D
+23.30,STATUS-03,Key Registered: D
+23.40,STATUS-03,Key Registered: D
+23.50,STATUS-03,Key Registered: D
+23.60,STATUS-03,Key Registered: D
+23.70,STATUS-03,Key Registered: D
+23.80,STATUS-03,Key Registered: D
+23.90,STATUS-03,Key Registered: D
+24.00,STATUS-03,Key Registered: D
+24.10,STATUS-03,Key Registered: D
+24.20,STATUS-03,Key Registered: D
+24.30,STATUS-03,Key Registered: D
+24.40,STATUS-03,Key Registered: D
+24.50,STATUS-03,Key Registered: D
+24.60,STATUS-03,Key Registered: D
+24.70,STATUS-03,Key Registered: D
+24.80,STATUS-03,Key Registered: D
+24.90,STATUS-03,Key Registered: D
+25.00,STATUS-03,Key Registered: D
+25.10,STATUS-03,Key Registered: D
+25.20,STATUS-03,Key Registered: D
+25.30,STATUS-03,Key Registered: D
+25.50,STATUS-03,Key Registered: RightArrow
+25.60,STATUS-03,Key Registered: RightArrow
+25.70,STATUS-03,Key Registered: RightArrow
+25.80,STATUS-03,Key Registered: RightArrow
+25.90,STATUS-03,Key Registered: RightArrow
+26.00,STATUS-03,Key Registered: RightArrow
+26.10,STATUS-03,Key Registered: RightArrow
+26.20,STATUS-03,Key Registered: RightArrow
+26.30,STATUS-03,Key Registered: RightArrow
+26.40,STATUS-03,Key Registered: RightArrow
+26.50,STATUS-03,Key Registered: RightArrow
+26.60,STATUS-03,Key Registered: RightArrow
+26.70,STATUS-03,Key Registered: RightArrow
+26.80,STATUS-03,Key Registered: RightArrow
+26.90,STATUS-03,Key Registered: RightArrow
+27.00,STATUS-03,Key Registered: RightArrow
+27.10,STATUS-03,Key Registered: RightArrow
+27.20,STATUS-03,Key Registered: RightArrow
+27.30,STATUS-03,Key Registered: RightArrow
+27.40,STATUS-03,Key Registered: RightArrow
+27.50,STATUS-03,Key Registered: RightArrow
+27.60,STATUS-03,Key Registered: RightArrow
+27.70,STATUS-03,Key Registered: RightArrow
+27.80,STATUS-03,Key Registered: RightArrow
+27.90,STATUS-03,Key Registered: RightArrow
+28.00,STATUS-03,Key Registered: RightArrow
+28.10,STATUS-03,Key Registered: RightArrow
+28.20,STATUS-03,Key Registered: RightArrow
+28.30,STATUS-03,Key Registered: RightArrow
+28.40,STATUS-03,Key Registered: RightArrow
+28.50,STATUS-03,Key Registered: RightArrow
+28.60,STATUS-03,Key Registered: RightArrow
+28.70,STATUS-03,Key Registered: RightArrow
+28.80,STATUS-03,Key Registered: RightArrow
+28.90,STATUS-03,Key Registered: RightArrow
+29.00,STATUS-03,Key Registered: RightArrow
+29.10,STATUS-03,Key Registered: RightArrow
+29.20,STATUS-03,Key Registered: RightArrow
+29.30,STATUS-03,Key Registered: RightArrow
+29.40,STATUS-03,Key Registered: RightArrow
+29.50,STATUS-03,Key Registered: RightArrow
+29.60,STATUS-03,Key Registered: RightArrow
+29.70,STATUS-03,Key Registered: RightArrow
+29.80,STATUS-03,Key Registered: RightArrow
+29.90,STATUS-03,Key Registered: RightArrow
+30.00,STATUS-03,Key Registered: LeftArrow
+30.10,STATUS-03,Key Registered: LeftArrow
+30.20,STATUS-03,Key Registered: LeftArrow
+30.30,STATUS-03,Key Registered: LeftArrow
+30.40,STATUS-03,Key Registered: LeftArrow
+30.50,STATUS-03,Key Registered: LeftArrow
+30.60,STATUS-03,Key Registered: LeftArrow
+30.70,STATUS-03,Key Registered: LeftArrow
+30.80,STATUS-03,Key Registered: LeftArrow
+30.90,STATUS-03,Key Registered: LeftArrow
+31.00,STATUS-03,Key Registered: LeftArrow
+31.10,STATUS-03,Key Registered: LeftArrow
+31.20,STATUS-03,Key Registered: LeftArrow
+31.30,STATUS-03,Key Registered: LeftArrow
+31.40,STATUS-03,Key Registered: LeftArrow
+31.50,STATUS-03,Key Registered: LeftArrow
+31.60,STATUS-03,Key Registered: LeftArrow
+31.70,STATUS-03,Key Registered: LeftArrow
+31.80,STATUS-03,Key Registered: LeftArrow
+31.90,STATUS-03,Key Registered: LeftArrow
+32.00,STATUS-03,Key Registered: LeftArrow
+32.10,STATUS-03,Key Registered: LeftArrow
+32.20,STATUS-03,Key Registered: LeftArrow
+32.30,STATUS-03,Key Registered: LeftArrow
+32.40,STATUS-03,Key Registered: LeftArrow
+32.50,STATUS-03,Key Registered: LeftArrow
+32.60,STATUS-03,Key Registered: LeftArrow
+32.70,STATUS-03,Key Registered: LeftArrow
+32.80,STATUS-03,Key Registered: LeftArrow
+32.90,STATUS-03,Key Registered: LeftArrow
+33.00,STATUS-03,Key Registered: LeftArrow
+33.10,STATUS-03,Key Registered: LeftArrow
+33.20,STATUS-03,Key Registered: LeftArrow
+33.30,STATUS-03,Key Registered: LeftArrow
+33.40,STATUS-03,Key Registered: LeftArrow
+33.50,STATUS-03,Key Registered: LeftArrow
+33.60,STATUS-03,Key Registered: LeftArrow
+33.70,STATUS-03,Key Registered: LeftArrow
+33.80,STATUS-03,Key Registered: UpArrow
+33.90,STATUS-03,Key Registered: UpArrow
+34.00,STATUS-03,Key Registered: UpArrow
+34.10,STATUS-03,Key Registered: UpArrow
+34.20,STATUS-03,Key Registered: UpArrow
+34.30,STATUS-03,Key Registered: UpArrow
+34.40,STATUS-03,Key Registered: UpArrow
+34.50,STATUS-03,Key Registered: UpArrow
+34.60,STATUS-03,Key Registered: UpArrow
+34.70,STATUS-03,Key Registered: UpArrow
+34.80,STATUS-03,Key Registered: UpArrow
+34.90,STATUS-03,Key Registered: UpArrow
+35.00,STATUS-03,Key Registered: UpArrow
+35.10,STATUS-03,Key Registered: UpArrow
+35.20,STATUS-03,Key Registered: UpArrow
+35.30,STATUS-03,Key Registered: UpArrow
+35.40,STATUS-03,Key Registered: UpArrow
+35.50,STATUS-03,Key Registered: UpArrow
+35.60,STATUS-03,Key Registered: UpArrow
+35.70,STATUS-03,Key Registered: UpArrow
+35.80,STATUS-03,Key Registered: UpArrow
+35.90,STATUS-03,Key Registered: UpArrow
+36.00,STATUS-03,Key Registered: UpArrow
+36.10,STATUS-03,Key Registered: UpArrow
+36.20,STATUS-03,Key Registered: UpArrow
+36.30,STATUS-03,Key Registered: UpArrow
+36.40,STATUS-03,Key Registered: UpArrow
+36.50,STATUS-03,Key Registered: UpArrow
+36.60,STATUS-03,Key Registered: UpArrow
+36.70,STATUS-03,Key Registered: UpArrow
+36.80,STATUS-03,Key Registered: UpArrow
+36.90,STATUS-03,Key Registered: UpArrow
+37.00,STATUS-03,Key Registered: UpArrow
+37.10,STATUS-03,Key Registered: UpArrow
+37.20,STATUS-03,Key Registered: UpArrow
+37.30,STATUS-03,Key Registered: UpArrow
+37.40,STATUS-03,Key Registered: UpArrow
+37.50,STATUS-03,Key Registered: UpArrow
+37.60,STATUS-03,Key Registered: UpArrow
+37.70,STATUS-03,Key Registered: UpArrow
+37.80,STATUS-03,Key Registered: UpArrow
+37.90,ERROR-04,System Ghosting
+38.00,STATUS-03,Key Registered: DownArrow
+38.10,STATUS-03,Key Registered: DownArrow
+38.20,STATUS-03,Key Registered: DownArrow
+38.30,STATUS-03,Key Registered: DownArrow
+38.40,STATUS-03,Key Registered: DownArrow
+38.50,STATUS-03,Key Registered: DownArrow
+38.60,STATUS-03,Key Registered: DownArrow
+38.70,STATUS-03,Key Registered: DownArrow
+38.80,STATUS-03,Key Registered: DownArrow
+38.90,STATUS-03,Key Registered: DownArrow
+39.00,STATUS-03,Key Registered: DownArrow
+39.10,STATUS-03,Key Registered: DownArrow
+39.20,STATUS-03,Key Registered: DownArrow
+39.30,STATUS-03,Key Registered: DownArrow
+39.40,STATUS-03,Key Registered: DownArrow
+39.50,STATUS-03,Key Registered: DownArrow
+39.60,STATUS-03,Key Registered: DownArrow
+39.70,STATUS-03,Key Registered: DownArrow
+39.80,STATUS-03,Key Registered: DownArrow
+39.90,STATUS-03,Key Registered: DownArrow
+40.00,STATUS-03,Key Registered: DownArrow
+40.10,STATUS-03,Key Registered: DownArrow
+40.20,STATUS-03,Key Registered: DownArrow
+40.30,STATUS-03,Key Registered: DownArrow
+40.40,STATUS-03,Key Registered: DownArrow
+40.50,ERROR-04,System Ghosting
+40.60,STATUS-03,Key Registered: A
+40.70,STATUS-03,Key Registered: A
+40.80,STATUS-03,Key Registered: A
+40.90,STATUS-03,Key Registered: A
+41.00,STATUS-03,Key Registered: A
+41.10,STATUS-03,Key Registered: A
+41.20,STATUS-03,Key Registered: A
+41.30,STATUS-03,Key Registered: A
+41.40,STATUS-03,Key Registered: A
+41.50,STATUS-03,Key Registered: A
+41.60,STATUS-03,Key Registered: A
+41.70,STATUS-03,Key Registered: A
+41.80,STATUS-03,Key Registered: A
+41.90,STATUS-03,Key Registered: A
+42.00,STATUS-03,Key Registered: A
+42.10,STATUS-03,Key Registered: A
+42.20,STATUS-03,Key Registered: A
+42.30,STATUS-03,Key Registered: A
+42.40,STATUS-03,Key Registered: A
+42.50,STATUS-03,Key Registered: A
+42.60,STATUS-03,Key Registered: A
+42.70,STATUS-03,Key Registered: A
+42.80,STATUS-03,Key Registered: A
+42.90,STATUS-03,Key Registered: A
+43.00,STATUS-03,Key Registered: A
+43.10,STATUS-03,Key Registered: A
+43.20,STATUS-03,Key Registered: A
+43.30,STATUS-03,Key Registered: A
+43.40,STATUS-03,Key Registered: A
+43.50,STATUS-03,Key Registered: A
+43.60,STATUS-03,Key Registered: A
+43.70,STATUS-03,Key Registered: A
+43.80,STATUS-03,Key Registered: A
+43.90,STATUS-03,Key Registered: A
+44.00,STATUS-03,Key Registered: A
+44.10,STATUS-03,Key Registered: A
+44.20,STATUS-03,Key Registered: A
+44.30,STATUS-03,Key Registered: A
+44.40,STATUS-03,Key Registered: A
+44.50,STATUS-03,Key Registered: A
+44.60,STATUS-03,Key Registered: A
+44.70,STATUS-03,Key Registered: A
+44.80,STATUS-03,Key Registered: A
+44.90,STATUS-03,Key Registered: A
+45.00,STATUS-03,Key Registered: A
+45.10,STATUS-03,Key Registered: A
+45.20,STATUS-03,Key Registered: A
+45.30,STATUS-03,Key Registered: A
+45.40,STATUS-03,Key Registered: A
+45.50,STATUS-03,Key Registered: A
+45.60,STATUS-03,Key Registered: A
+45.70,ERROR-03,Incorrect Keybind
+45.80,ERROR-03,Incorrect Keybind
+45.90,ERROR-03,Incorrect Keybind
+46.00,ERROR-03,Incorrect Keybind
+46.10,ERROR-03,Incorrect Keybind
+46.20,ERROR-03,Incorrect Keybind
+46.30,ERROR-03,Incorrect Keybind
+46.40,ERROR-03,Incorrect Keybind
+46.50,ERROR-03,Incorrect Keybind
+46.60,ERROR-03,Incorrect Keybind
+46.70,ERROR-03,Incorrect Keybind
+46.80,ERROR-03,Incorrect Keybind
+46.90,ERROR-03,Incorrect Keybind
+47.00,ERROR-03,Incorrect Keybind
+47.10,ERROR-03,Incorrect Keybind
+47.20,ERROR-03,Incorrect Keybind
+47.30,ERROR-03,Incorrect Keybind
+47.40,ERROR-03,Incorrect Keybind
+47.50,ERROR-03,Incorrect Keybind
+47.60,ERROR-03,Incorrect Keybind
+47.70,ERROR-03,Incorrect Keybind
+47.80,ERROR-03,Incorrect Keybind
+47.90,ERROR-03,Incorrect Keybind
+48.00,ERROR-03,Incorrect Keybind
+48.10,STATUS-03,Key Registered: Space
+48.20,STATUS-03,Key Registered: Space
+48.30,STATUS-03,Key Registered: Space
+48.40,STATUS-03,Key Registered: Space
+48.50,STATUS-03,Key Registered: Space
+48.60,STATUS-03,Key Registered: Space
+48.70,STATUS-03,Key Registered: Space
+48.80,STATUS-03,Key Registered: Space
+48.90,STATUS-03,Key Registered: Space
+49.00,STATUS-03,Key Registered: Space
+49.10,STATUS-03,Key Registered: Space
+49.20,STATUS-03,Key Registered: Space
+49.30,STATUS-03,Key Registered: Space
+49.40,STATUS-03,Key Registered: Space
+49.50,STATUS-03,Key Registered: Space
+49.60,STATUS-03,Key Registered: Space
+49.70,STATUS-03,Key Registered: Space
+49.80,STATUS-03,Key Registered: Space
+49.90,STATUS-03,Key Registered: Space
+50.00,STATUS-03,Key Registered: Space
+50.10,STATUS-03,Key Registered: Space
+50.20,STATUS-03,Key Registered: Space
+50.30,STATUS-03,Key Registered: Space
+50.40,STATUS-03,Key Registered: Space
+50.50,STATUS-03,Key Registered: Space
+50.60,STATUS-03,Key Registered: Space
+50.70,STATUS-03,Key Registered: Space
+50.80,STATUS-03,Key Registered: Space
+50.90,STATUS-03,Key Registered: Space
+51.00,STATUS-03,Key Registered: Space
+51.10,STATUS-03,Key Registered: Space
+51.20,STATUS-03,Key Registered: Space
+51.30,STATUS-03,Key Registered: Space
+51.40,STATUS-03,Key Registered: Space
+51.50,STATUS-03,Key Registered: Space
+51.60,STATUS-03,Key Registered: Space
+51.70,STATUS-03,Key Registered: Space
+51.80,STATUS-03,Key Registered: Space
+51.90,STATUS-03,Key Registered: Space
+52.00,STATUS-03,Key Registered: Space
+52.10,STATUS-03,Key Registered: Space
+52.20,STATUS-03,Key Registered: Space
+52.30,STATUS-03,Key Registered: Space
+52.50,STATUS-03,Key Registered: Ctrl+LeftArrow
+52.60,STATUS-03,Key Registered: Ctrl+LeftArrow
+52.70,STATUS-03,Key Registered: Ctrl+LeftArrow
+52.80,STATUS-03,Key Registered: Ctrl+LeftArrow
+52.90,STATUS-03,Key Registered: Ctrl+LeftArrow
+53.00,STATUS-03,Key Registered: Ctrl+LeftArrow
+53.10,STATUS-03,Key Registered: Ctrl+LeftArrow
+53.20,STATUS-03,Key Registered: Ctrl+LeftArrow
+53.30,STATUS-03,Key Registered: Ctrl+LeftArrow
+53.40,STATUS-03,Key Registered: Ctrl+LeftArrow
+53.50,STATUS-03,Key Registered: Ctrl+LeftArrow
+53.60,STATUS-03,Key Registered: Ctrl+LeftArrow
+53.70,STATUS-03,Key Registered: Ctrl+LeftArrow
+53.80,STATUS-03,Key Registered: Ctrl+LeftArrow
+53.90,STATUS-03,Key Registered: Ctrl+LeftArrow
+54.00,STATUS-03,Key Registered: Ctrl+LeftArrow
+54.10,STATUS-03,Key Registered: Ctrl+LeftArrow
+54.20,STATUS-03,Key Registered: Ctrl+LeftArrow
+54.30,STATUS-03,Key Registered: Ctrl+LeftArrow
+54.40,STATUS-03,Key Registered: Ctrl+LeftArrow
+54.50,STATUS-03,Key Registered: Ctrl+LeftArrow
+54.60,STATUS-03,Key Registered: Ctrl+LeftArrow
+54.70,STATUS-03,Key Registered: Ctrl+LeftArrow
+54.80,STATUS-03,Key Registered: Ctrl+LeftArrow
+54.90,STATUS-03,Key Registered: Ctrl+LeftArrow
+55.00,STATUS-03,Key Registered: Ctrl+LeftArrow
+55.10,STATUS-03,Key Registered: Ctrl+LeftArrow
+55.20,STATUS-03,Key Registered: Ctrl+LeftArrow
+55.30,STATUS-03,Key Registered: Ctrl+LeftArrow
+55.40,STATUS-03,Key Registered: Ctrl+LeftArrow
+55.50,STATUS-03,Key Registered: Ctrl+LeftArrow
+55.60,STATUS-03,Key Registered: Ctrl+LeftArrow
+55.70,STATUS-03,Key Registered: Ctrl+LeftArrow
+55.80,STATUS-03,Key Registered: Ctrl+LeftArrow
+55.90,STATUS-03,Key Registered: Ctrl+LeftArrow
+56.00,STATUS-03,Key Registered: Ctrl+LeftArrow
+56.10,STATUS-03,Key Registered: Ctrl+LeftArrow
+56.20,STATUS-03,Key Registered: Ctrl+LeftArrow
+56.30,STATUS-03,Key Registered: Ctrl+LeftArrow
+56.40,STATUS-03,Key Registered: Ctrl+LeftArrow
+56.50,STATUS-03,Key Registered: Ctrl+LeftArrow
+56.60,STATUS-03,Key Registered: Ctrl+LeftArrow
+56.70,STATUS-03,Key Registered: Ctrl+LeftArrow
+56.80,STATUS-03,Key Registered: Ctrl+LeftArrow
+56.90,STATUS-03,Key Registered: Ctrl+LeftArrow
+57.00,STATUS-03,Key Registered: Ctrl+LeftArrow
+57.10,STATUS-03,Key Registered: Ctrl+LeftArrow
+57.20,STATUS-03,Key Registered: Ctrl+LeftArrow
+57.30,STATUS-03,Key Registered: Ctrl+LeftArrow
+57.40,STATUS-03,Key Registered: Ctrl+LeftArrow
+57.50,ERROR-04,System Ghosting
+58.90,STATUS-01,Session Ended
+58.90,STATUS-04,Shutdown Successful
