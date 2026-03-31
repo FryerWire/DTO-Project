@@ -1,5 +1,6 @@
+
 /*
-    DTO Controller
+    DTO Manual Testing Program
 
     Features:
     - Logs key events with timestamps, types, directions, and modes to Keybind_Log.csv.
@@ -7,59 +8,27 @@
     - Maps specific keys to translation and rotation movements.
     - Activity_Log.csv tracks high-level Application Codes (STATUS and ERROR).
     - Toggle Modes: ~ + S (Startup Sequence) | ~ + O (Operational Mode).
+      Note: GPIO control is simulated with console output for testing purposes. Actual GPIO implementation will be done in the RPi 5 environment using libgpiod as per architecture requirements[cite: 758, 918].
 
-    Key Mappings:
-    Translation:
-    - Forward  (+X) : W
-    - Backward (-X) : S
-    - Left      (+Y) : D
-    - Right      (-Y) : A
-    - Up        (+Z) : Space
-    - Down      (-Z) : Shift
-
-    Rotation:
-    - CW Pitch  : Ctrl + Right
-    - CCW Pitch : Ctrl + Left
-    - CC Roll   : Up Arrow
-    - CCW Roll  : Down Arrow
-    - CW Yaw    : Right Arrow
-    - CCW Yaw   : Left Arrow
-
-    Application Codes (Logged to Activity_Log.csv):
-    Status Codes:
-    - STATUS-00: Startup Successful     - System initialized and files opened.
-    - STATUS-01: Session Ended          - Main loop exited.
-    - STATUS-02: Session Started        - Main loop entered.
-    - STATUS-03: Key Registered         - A valid movement key was processed.
-    - STATUS-04: Shutdown Successful    - Program exited and cleaned up without error.
-    - STATUS-05: Mode Changed           - System switched between Startup and Operational modes.
-    - STATUS-10: Sequence Initiated     - Startup Sequence (~S) has begun execution.
-    - STATUS-11: Connector Test Start   - A specific Rack Connector (1-3) has started testing.
-    - STATUS-12: Connector Test Pass    - A specific Rack Connector (1-3) passed all pulse tests.
-    - STATUS-13: GPIO State Change      - A GPIO pin was successfully toggled (ON/OFF).
-    - STATUS-14: Sequence Complete      - All Startup tests finished without interruption.
-
-    Error Codes:
-    - ERROR-00: Startup Failure         - Occurs if the program cannot initialize logs or paths.
-    - ERROR-01: File Failed to Close    - Occurs if a file handle remains locked at exit.
-    - ERROR-02: Write Failure           - Occurs if the log file is locked during a log attempt.
-    - ERROR-03: Incorrect Keybind       - Occurs when a key is pressed that has no mapped function.
-    - ERROR-04: System Ghosting         - Occurs when non-printable scan codes leak into the buffer.
-    - ERROR-05: Shutdown Failed         - Occurs if resources fail to release during exit.
-    - ERROR-06: Mode Switch Denied      - User tried to switch to ~S while in ~O (Illegal Move).
-    - ERROR-10: Sequence Aborted        - User pressed ESC during a Startup Sequence test.
+    Functions:
+    - logActivity(string code, string description): Logs STATUS and ERROR codes to Activity_Log.csv.
+    - logError(string errorCode, string title): Helper function to log errors with specific codes and descriptions.
+    - getVirtualKeyName(int vkCode): Converts virtual key codes to human-readable names for logging.
+    - logData(char type, string direction, string keyname, char statusChar, char mode): Logs key events to Keybind_Log.csv and the console, with status codes for successful registrations and errors.
+    - processAction(int vkCode, char mode): Maps virtual key codes to specific translation and rotation actions based on the current mode (Continuous or Pulse).
+    - main(): Initializes log files, handles mode toggling, processes key events, and manages the overall program flow.
 */
 
 
 
-#include <windows.h> // Required for GetKeyState and GetAsyncKeyState
-#include <iostream>  // For console output
-#include <fstream>   // For file handling
-#include <conio.h>   // For _kbhit() and _getch() to handle keyboard input without blocking
-#include <chrono>    // For high-resolution timing
-#include <thread>    // For sleep functionality to prevent high CPU usage
-#include <string>    // For string handling
-#include <iomanip>   // For output formatting (e.g., fixed and setprecision)
+#include <windows.h>  // Required for GetKeyState and GetAsyncKeyState
+#include <iostream>   // For console output
+#include <fstream>    // For file handling
+#include <conio.h>    // For _kbhit() and _getch() to handle keyboard input without blocking
+#include <chrono>     // For high-resolution timing
+#include <thread>     // For sleep functionality to prevent high CPU usage
+#include <string>     // For string handling
+#include <iomanip>    // For output formatting (e.g., fixed and setprecision)
 
 
 
@@ -69,19 +38,23 @@ using namespace std;
 
 // Global Variables ===============================================================================
 double time_counter = 0.0;
-string last_key_fired = ""; // Tracks the key name to prevent repeat firing in Pulse mode
+string last_key_fired = "";      // Tracks the key name to prevent repeat firing in Pulse mode
+bool isStartupMode = false;      // Tracks if the system is in Startup Sequence Mode (~S)
+bool isOperationalMode = false;  // Tracks if the system is in Operational Mode (~O)
 const string LOG_PATH = "C:\\Users\\maxwe\\OneDrive\\Desktop\\GitHub Repos\\DTO-Project\\Logs\\";
-bool isStartupMode = false;    // Tracks if the system is in Startup Sequence Mode (~S)
-bool isOperationalMode = false; // Tracks if the system is in Operational Mode (~O)
 
 
 
 /*
-    logActivity() - Writes Application Codes (STATUS/ERROR) to the Activity Log CSV.
-    Format: Timestamp, Code, Description
+    logActivity() - Logs STATUS and ERROR codes to Activity_Log.csv.
+
+    Parameters:
+    - code (string)        : A string representing the specific status or error code (e.g., "STATUS-03" or "ERROR-02").
+    - description (string) : A brief description of the activity or error for context.
 */
 void logActivity(string code, string description) {
     ofstream activityFile(LOG_PATH + "Activity_Log.csv", ios_base::app);
+    // Log format: Time(s), Code, Description -----------------------------------------------------
     if (activityFile.is_open()) {
         activityFile << fixed << setprecision(2) << time_counter << "," << code << "," << description << endl;
         activityFile.close();
@@ -91,11 +64,11 @@ void logActivity(string code, string description) {
 
 
 /*
-    logError() - Redirects Error messages to the unified Activity Log CSV.
+    logError() - Helper function to log errors with specific codes and descriptions.
 
     Parameters:
     - errorCode (string) : A string representing the specific error code (e.g., "ERROR-03").
-    - title (string)     : A brief description of the error for context.
+    - title (string)     : A brief title or description of the error for context.
 */
 void logError(string errorCode, string title) {
     logActivity(errorCode, title);
@@ -104,10 +77,13 @@ void logError(string errorCode, string title) {
 
 
 /*
-    getVirtualKeyName() - Converts a virtual key code to a human-readable string for logging purposes.
+    getVirtualKeyName() - Converts virtual key codes to human-readable names for logging.
 
     Parameters:
-    - vkCode (int) : The virtual key code to be converted.
+    - vkCode (int) : The virtual key code of the pressed key.
+
+    Returns:
+    - A string representing the human-readable name of the key (e.g., "Space", "Enter", "A", etc.). For unmapped keys, it returns "Key_" followed by the vkCode.
 */
 string getVirtualKeyName(int vkCode) {
     // Common keys with special names -------------------------------------------------------------
@@ -132,7 +108,14 @@ string getVirtualKeyName(int vkCode) {
 
 
 /*
-    logData() - Logs key event data to both the console and a CSV file.
+    logData() - Logs key events to Keybind_Log.csv and the console, with status codes for successful registrations and errors.
+
+    Parameters:
+    - type (char)        : 'T' for Translation, 'R' for Rotation, 'F' for Fault/Error.
+    - direction (string) : A string representing the direction of movement (e.g., "+X", "-Y", "+P", etc.) or "--" for faults.
+    - keyname (string)   : The human-readable name of the key that triggered the event.
+    - statusChar (char)  : 'N' for Normal registration, 'E' for Error, used to determine if an activity log entry should be made for successful key registrations.
+    - mode (char)        : 'C' for Continuous mode, 'P' for Pulse mode. Defaults to 'C' if not specified.
 */
 void logData(char type, string direction, string keyname, char statusChar, char mode = 'C') {
     // Log to console -----------------------------------------------------------------------------
@@ -146,10 +129,11 @@ void logData(char type, string direction, string keyname, char statusChar, char 
                 << time_counter << "," << mode << "," << type << "," << direction << "," << keyname << endl;
         outFile.close();
         
-        // Log Status Code for successful key registration
+        // Log Status Code for successful key registration ----------------------------------------
         if (statusChar == 'N' && keyname != "-") {
             logActivity("STATUS-03", "Key Registered: " + keyname);
         }
+
     } else {
         logError("ERROR-02", "Write Failure: Keybind CSV file locked");
     }
@@ -209,12 +193,13 @@ int main() {
     ofstream resetFile(LOG_PATH + "Keybind_Log.csv", ios::trunc);
     ofstream resetActivity(LOG_PATH + "Activity_Log.csv", ios::trunc);
 
+    // Check if files opened successfully before writing headers ----------------------------------
     if (!resetFile.is_open() || !resetActivity.is_open()) {
         cerr << "ERROR-00: Startup Failure. Check file path: " << LOG_PATH << endl;
         return 1;
     }
 
-    // Initialize CSV Headers
+    // Initialize CSV Headers ---------------------------------------------------------------------
     resetFile << "Time(s),Mode,Type,Direction,Key" << endl;
     resetActivity << "Time(s),Code,Description" << endl;
 
@@ -234,7 +219,7 @@ int main() {
 
     // Main Loop ----------------------------------------------------------------------------------
     while (true) {
-        // Exit check
+        // Exit check -----------------------------------------------------------------------------
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) break; 
 
         // Check for Mode Changes (~ + S or ~ + O) ------------------------------------------------
@@ -318,6 +303,7 @@ int main() {
                     isStartupMode = false; // Reset so ~S can be ran again
                 }
             }
+
             else if (GetAsyncKeyState('O') & 0x8000) {
                 if (!isOperationalMode) {
                     isOperationalMode = true;
@@ -349,7 +335,7 @@ int main() {
 
                     active_vk = i;
                     
-                    // Handle Ctrl + Arrow combinations for rotation ----------------------------------
+                    // Handle Ctrl + Arrow combinations for rotation ------------------------------
                     bool ctrl = (GetAsyncKeyState(VK_CONTROL) & 0x8000);
                     if (i == VK_RIGHT && ctrl) current_key_id = "Ctrl+Right";
                     else if (i == VK_LEFT && ctrl) current_key_id = "Ctrl+Left";
@@ -358,7 +344,7 @@ int main() {
                 }
             }
 
-            // Process the active key if detected -----------------------------------------------------
+            // Process the active key if detected -------------------------------------------------
             if (active_vk != 0) {
                 if (currentMode == 'C') {
                     processAction(active_vk, 'C');
@@ -373,7 +359,7 @@ int main() {
                 }
                 while (_kbhit()) { _getch(); }
             } 
-            // Handle unmapped keys and system ghosting -----------------------------------------------
+            // Handle unmapped keys and system ghosting -------------------------------------------
             else if (_kbhit()) {
                 int key_raw = _getch();
                 char error_char = (char)toupper(key_raw);
@@ -392,13 +378,13 @@ int main() {
                 }
                 last_key_fired = "";
             }
-            // No key activity detected, reset last_key_fired for Pulse mode --------------------------
+            // No key activity detected, reset last_key_fired for Pulse mode ----------------------
             else {
                 last_key_fired = "";
                 logData('F', "--", "-", 'N', currentMode);
             }
 
-            // Only increment time in Operational Mode
+            // Only increment time in Operational Mode --------------------------------------------
             time_counter += 0.10;
         }
 
@@ -422,4 +408,4 @@ int main() {
 
 
 // Compilation Instructions =======================================================================
-// cd Controller; g++ controller_in_prog.cpp -o controller_in_prog; ./controller_in_prog
+// cd Controller; g++ DTOManualTesting.cpp -o DTOManualTesting; ./DTOManualTesting
