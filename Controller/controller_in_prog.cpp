@@ -5,7 +5,7 @@
     - Logs key events with timestamps, types, directions, and modes to Keybind_Log.csv.
     - Supports Continuous (Caps Lock OFF) and Pulse (Caps Lock ON) modes.
     - Maps specific keys to translation and rotation movements.
-    - Activity_Log.csv tracks high-level Application Codes (STATUS and FAULT).
+    - Activity_Log.csv tracks high-level Application Codes (STATUS and ERROR).
     - Toggle Modes: ~ + S (Startup Sequence) | ~ + O (Operational Mode).
 
     Key Mappings:
@@ -30,9 +30,24 @@
     - STATUS-00: Startup Successful     - System initialized and files opened.
     - STATUS-01: Session Ended          - Main loop exited.
     - STATUS-02: Session Started        - Main loop entered.
-    - STATUS-03: Key Registered          - A valid movement key was processed.
+    - STATUS-03: Key Registered         - A valid movement key was processed.
     - STATUS-04: Shutdown Successful    - Program exited and cleaned up without error.
     - STATUS-05: Mode Changed           - System switched between Startup and Operational modes.
+    - STATUS-10: Sequence Initiated     - Startup Sequence (~S) has begun execution.
+    - STATUS-11: Connector Test Start   - A specific Rack Connector (1-3) has started testing.
+    - STATUS-12: Connector Test Pass    - A specific Rack Connector (1-3) passed all pulse tests.
+    - STATUS-13: GPIO State Change      - A GPIO pin was successfully toggled (ON/OFF).
+    - STATUS-14: Sequence Complete      - All Startup tests finished without interruption.
+
+    Error Codes:
+    - ERROR-00: Startup Failure         - Occurs if the program cannot initialize logs or paths.
+    - ERROR-01: File Failed to Close    - Occurs if a file handle remains locked at exit.
+    - ERROR-02: Write Failure           - Occurs if the log file is locked during a log attempt.
+    - ERROR-03: Incorrect Keybind       - Occurs when a key is pressed that has no mapped function.
+    - ERROR-04: System Ghosting         - Occurs when non-printable scan codes leak into the buffer.
+    - ERROR-05: Shutdown Failed         - Occurs if resources fail to release during exit.
+    - ERROR-06: Mode Switch Denied      - User tried to switch to ~S while in ~O (Illegal Move).
+    - ERROR-10: Sequence Aborted        - User pressed ESC during a Startup Sequence test.
 */
 
 
@@ -62,7 +77,7 @@ bool isOperationalMode = false; // Tracks if the system is in Operational Mode (
 
 
 /*
-    logActivity() - Writes Application Codes (STATUS/FAULT) to the Activity Log CSV.
+    logActivity() - Writes Application Codes (STATUS/ERROR) to the Activity Log CSV.
     Format: Timestamp, Code, Description
 */
 void logActivity(string code, string description) {
@@ -76,14 +91,14 @@ void logActivity(string code, string description) {
 
 
 /*
-    logFault() - Redirects Fault messages to the unified Activity Log CSV.
+    logError() - Redirects Error messages to the unified Activity Log CSV.
 
     Parameters:
-    - faultCode (string) : A string representing the specific fault code (e.g., "FAULT-03").
-    - title (string)     : A brief description of the fault for context.
+    - errorCode (string) : A string representing the specific error code (e.g., "ERROR-03").
+    - title (string)     : A brief description of the error for context.
 */
-void logFault(string faultCode, string title) {
-    logActivity(faultCode, title);
+void logError(string errorCode, string title) {
+    logActivity(errorCode, title);
 }
 
 
@@ -136,7 +151,7 @@ void logData(char type, string direction, string keyname, char statusChar, char 
             logActivity("STATUS-03", "Key Registered: " + keyname);
         }
     } else {
-        logFault("FAULT-02", "Write Failure: Keybind CSV file locked");
+        logError("ERROR-02", "Write Failure: Keybind CSV file locked");
     }
 }
 
@@ -144,6 +159,10 @@ void logData(char type, string direction, string keyname, char statusChar, char 
 
 /*
     processAction() - Map Virtual Keys/Combinations to Directions and Names
+
+    Parameters:
+    - vkCode (int) : The virtual key code of the pressed key.
+    - mode (char)  : 'C' for Continuous mode, 'P' for Pulse mode
 */
 void processAction(int vkCode, char mode) {
     bool ctrl = (GetAsyncKeyState(VK_CONTROL) & 0x8000);
@@ -170,13 +189,13 @@ void processAction(int vkCode, char mode) {
         case VK_DOWN:        logData('R', "-P", "DownArrow", 'N', mode); break;
 
         // Intentional Fault Trigger Keys ---------------------------------------------------------
-        case 'Q':            logData('F', "--", "Q", 'E', mode); logFault("FAULT-03", "Incorrect Keybind"); break;
-        case 'E':            logData('F', "--", "E", 'E', mode); logFault("FAULT-03", "Incorrect Keybind"); break;
-        case 'G':            logData('F', "--", "G", 'E', mode); logFault("FAULT-03", "Incorrect Keybind"); break; 
-        case 'F':            logData('F', "--", "F", 'E', mode); logFault("FAULT-03", "Incorrect Keybind"); break;
+        case 'Q':            logData('F', "--", "Q", 'E', mode); logError("ERROR-03", "Incorrect Keybind"); break;
+        case 'E':            logData('F', "--", "E", 'E', mode); logError("ERROR-03", "Incorrect Keybind"); break;
+        case 'G':            logData('F', "--", "G", 'E', mode); logError("ERROR-03", "Incorrect Keybind"); break; 
+        case 'F':            logData('F', "--", "F", 'E', mode); logError("ERROR-03", "Incorrect Keybind"); break;
 
-        // General Fault Handling -----------------------------------------------------------------
-        default:             logData('F', "--", getVirtualKeyName(vkCode), 'E', mode); logFault("FAULT-03", "Incorrect Keybind"); break;
+        // General Error Handling -----------------------------------------------------------------
+        default:             logData('F', "--", getVirtualKeyName(vkCode), 'E', mode); logError("ERROR-03", "Incorrect Keybind"); break;
     }
 }
 
@@ -191,7 +210,7 @@ int main() {
     ofstream resetActivity(LOG_PATH + "Activity_Log.csv", ios::trunc);
 
     if (!resetFile.is_open() || !resetActivity.is_open()) {
-        cerr << "FAULT-00: Startup Failure. Check file path: " << LOG_PATH << endl;
+        cerr << "ERROR-00: Startup Failure. Check file path: " << LOG_PATH << endl;
         return 1;
     }
 
@@ -215,18 +234,88 @@ int main() {
 
     // Main Loop ----------------------------------------------------------------------------------
     while (true) {
-        if (GetAsyncKeyState(VK_ESCAPE)) break; // Exit on ESC
+        // Exit check
+        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) break; 
 
         // Check for Mode Changes (~ + S or ~ + O) ------------------------------------------------
         bool tildePressed = (GetAsyncKeyState(VK_OEM_3) & 0x8000);
         if (tildePressed) {
             if (GetAsyncKeyState('S') & 0x8000) {
-                if (!isStartupMode) {
+                // Constraint: Cannot enter ~S if already in ~O. Must Esc and restart.
+                if (isOperationalMode) {
+                    logError("ERROR-06", "Mode Switch Denied: Exit ~O first");
+                    cout << ">> ERROR: Cannot enter Startup Mode while Operational Mode is active." << endl;
+                }
+                else if (!isStartupMode) {
                     isStartupMode = true;
                     isOperationalMode = false;
                     cout << ">> MODE CHANGE: STARTUP SEQUENCE MODE ACTIVATED" << endl;
-                    cout << "FEATURE BEING ADDED SOON." << endl;
                     logActivity("STATUS-05", "Mode Changed: Startup Sequence Mode");
+                    logActivity("STATUS-10", "Sequence Initiated");
+
+                    // Startup Sequence Mode (~S) Variables & Testing -----------------------------
+                    int rackConnector0[4] = {0, 1, 2, 3};
+                    int rackConnector1[4] = {4, 5, 6, 7};
+                    int rackConnector2[4] = {8, 11, 12, 13}; 
+                    
+                    int* connectors[3] = {rackConnector0, rackConnector1, rackConnector2};
+
+                    // Label for jumping out of nested loops on Esc -------------------------------
+                    bool force_exit = false;
+
+                    for (int r = 0; r < 3; r++) {
+                        if (force_exit) break;
+                        double sequence_time = 0.00;
+                        cout << "Rack Connector " << r + 1 << " Test:" << endl;
+                        logActivity("STATUS-11", "Testing Rack Connector " + to_string(r + 1));
+
+                        // Phase 1: 1.0s Pulses with Real-Time Delay ------------------------------
+                        for (int g = 0; g < 4; g++) {
+                            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { force_exit = true; break; }
+                            cout << fixed << setprecision(2) << sequence_time << " GPIO " << connectors[r][g] << " On" << endl;
+                            logActivity("STATUS-13", "GPIO " + to_string(connectors[r][g]) + " ON");
+                            this_thread::sleep_for(chrono::milliseconds(1000));
+                            sequence_time += 1.00;
+
+                            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { force_exit = true; break; }
+                            cout << fixed << setprecision(2) << sequence_time << " GPIO " << connectors[r][g] << " Off" << endl;
+                            logActivity("STATUS-13", "GPIO " + to_string(connectors[r][g]) + " OFF");
+                            this_thread::sleep_for(chrono::milliseconds(1000));
+                            sequence_time += 1.00;
+                        }
+
+                        // Phase 2: Double 0.5s Pulses with Real-Time Delay -----------------------
+                        for (int g = 0; g < 4; g++) {
+                            if (force_exit) break;
+                            for (int i = 0; i < 2; i++) {
+                                if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { force_exit = true; break; }
+                                cout << fixed << setprecision(2) << sequence_time << " GPIO " << connectors[r][g] << " On" << endl;
+                                logActivity("STATUS-13", "GPIO " + to_string(connectors[r][g]) + " ON (PULSE)");
+                                this_thread::sleep_for(chrono::milliseconds(500));
+                                sequence_time += 0.50;
+
+                                if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { force_exit = true; break; }
+                                cout << fixed << setprecision(2) << sequence_time << " GPIO " << connectors[r][g] << " Off" << endl;
+                                logActivity("STATUS-13", "GPIO " + to_string(connectors[r][g]) + " OFF (PULSE)");
+                                this_thread::sleep_for(chrono::milliseconds(500));
+                                sequence_time += 0.50;
+                            }
+                        }
+                        if (!force_exit) {
+                            cout << "Rack Connector " << r + 1 << " Test Successfully Completed." << endl << endl;
+                            logActivity("STATUS-12", "Rack Connector " + to_string(r + 1) + " PASS");
+                        }
+                    }
+
+                    if (force_exit) {
+                        logError("ERROR-10", "Sequence Aborted by User");
+                        break; 
+                    }
+
+                    cout << "All GPIO Successfully Activated." << endl;
+                    logActivity("STATUS-14", "All GPIO Successfully Activated");
+                    cout << "------------------------------------------------------------" << endl;
+                    isStartupMode = false; // Reset so ~S can be ran again
                 }
             }
             else if (GetAsyncKeyState('O') & 0x8000) {
@@ -241,7 +330,7 @@ int main() {
 
         // Logic branching based on Mode ----------------------------------------------------------
         if (isStartupMode) {
-            // Dormant State: No activity, just waiting for toggle or exit.
+            // Sequence completed above; waiting for mode toggle or exit.
         } 
         else if (isOperationalMode) {
             // Operational Mode (~O) Logic 
@@ -295,11 +384,11 @@ int main() {
                 } 
                 else if (key_raw >= 32 && key_raw <= 126) {
                     logData('F', "--", string(1, (char)key_raw), 'E', currentMode);
-                    logFault("FAULT-03", "Incorrect Keybind");
+                    logError("ERROR-03", "Incorrect Keybind");
                 } 
                 else {
                     logData('F', "--", "-", 'N', currentMode);
-                    logFault("FAULT-04", "System Ghosting");
+                    logError("ERROR-04", "System Ghosting");
                 }
                 last_key_fired = "";
             }
@@ -325,7 +414,7 @@ int main() {
         finalize.close();
         cout << "\nLogging complete. Files saved in: " << LOG_PATH << endl;
     } else {
-        cerr << "FAULT-05: Shutdown Failed. Activity log could not be finalized." << endl;
+        cerr << "ERROR-05: Shutdown Failed. Activity log could not be finalized." << endl;
     }
 
     return 0;
