@@ -1,4 +1,3 @@
-
 /*
     DTO Controller - Raspberry Pi 5 Port
 
@@ -26,6 +25,65 @@
     STATUS-11: Testing Rack [N] - Diagnostic loop entering a specific rack.
     STATUS-13: GPIO [N] ON/OFF - Specific pin state change during diagnostic.
     STATUS-14: Sequence Complete - Diagnostic loop finished successfully.
+
+    ACRONYM DEFINITIONS:
+    - GPIO: General Purpose Input/Output
+    - SDA:  Serial Data (I2C)
+    - SCL:  Serial Clock (I2C)
+    - TXD:  Transmit Data (UART)
+    - RXD:  Receive Data (UART)
+    - PCM:  Pulse Code Modulation (Audio)
+    - MOSI: Master Out Slave In (SPI)
+    - SCLK: Serial Clock (SPI)
+    - CE:   Chip Enable (SPI)
+    - PWM:  Pulse Width Modulation
+    - ID_SD/SC: Identification System Data/Clock (EEPROM)
+
+    GPIO Pin Layout:
+    - Pin 3  : GPIO 2 (SDA)       : P1
+    - Pin 5  : GPIO 3 (SCL)       : T1
+    - Pin 7  : GPIO 4 (GPCLK0)    : B1
+    - Pin 8  : GPIO 14 (TXD)      :
+    - Pin 10 : GPIO 15 (RXD)      :
+    - Pin 11 : GPIO 17            : 
+    - Pin 12 : GPIO 18 (PCM_CLK)  : 
+    - Pin 13 : GPIO 27            :
+    - Pin 15 : GPIO 22            :
+    - Pin 16 : GPIO 23            :
+    - Pin 18 : GPIO 24            :
+    - Pin 19 : GPIO 10 (MOSI)     : B2
+    - Pin 21 : GPIO 9 (MISO)      : T2
+    - Pin 22 : GPIO 25            :
+    - Pin 23 : GPIO 11 (SCLK)     : F2
+    - Pin 24 : GPIO 8 (CE0)       : A2
+    - Pin 26 : GPIO 7 (CE1)       : P2
+    - Pin 27 : GPIO 0 (ID_SD)     : A1
+    - Pin 28 : GPIO 1 (ID_SC)     : S1
+    - Pin 29 : GPIO 5             : F1
+    - Pin 31 : GPIO 6             : P2
+    - Pin 32 : GPIO 12 (PWM0)     :
+    - Pin 33 : GPIO 13 (PWM1)     :
+    - Pin 35 : GPIO 19 (PCM_FS)   :
+    - Pin 36 : GPIO 16            :
+    - Pin 37 : GPIO 26            :
+    - Pin 38 : GPIO 20 (PCM_DIN)  :
+    - Pin 40 : GPIO 21 (PCM_DOUT) :
+
+    Translation Thrusters:
+    - FWD (+X)   : A1, A2
+    - Back (-X)  : F1, F2
+    - Left (+Y)  : S1, S2
+    - Right (-Y) : P1, P2
+    - Up (+Z)    : B1, B2
+    - Down (-Z)  : T1, T2
+
+    Rotation Thruster:
+    - CW P  : T2, B1
+    - CCW P : T1, B2
+    - CCW R : P1, S2
+    - CW R  : P2, S1
+    - CW Y  : A1, F2
+    - CCW Y : A2, F1
 */
 
 
@@ -220,11 +278,58 @@ void logData(char type, string direction, string keyname, char statusChar, char 
 */
 void processAction(char key, char mode) {
     switch (toupper(key)) {  
-        case 'W': logData('T', "+X", "W", 'N', mode); break;
-        case 'S': logData('T', "-X", "S", 'N', mode); break;
-        case 'D': logData('T', "+Y", "D", 'N', mode); break;
-        case 'A': logData('T', "-Y", "A", 'N', mode); break;
-        case ' ': logData('T', "+Z", "Space", 'N', mode); break;
+        // Translation Mappings
+        case 'W': 
+            logData('T', "+X", "W", 'N', mode); 
+            setGPIO(0, 1); setGPIO(8, 1); // A1, A2
+            break;
+        case 'S': 
+            logData('T', "-X", "S", 'N', mode); 
+            setGPIO(5, 1); setGPIO(11, 1); // F1, F2
+            break;
+        case 'A': 
+            logData('T', "-Y", "A", 'N', mode); 
+            setGPIO(2, 1); setGPIO(6, 1); // P1, P2
+            break;
+        case 'D': 
+            logData('T', "+Y", "D", 'N', mode); 
+            setGPIO(1, 1); setGPIO(9, 1); // S1, S2
+            break;
+        case ' ': 
+            logData('T', "+Z", "Space", 'N', mode); 
+            setGPIO(4, 1); setGPIO(10, 1); // B1, B2
+            break;
+        case 'X': // Assigned X to Shift-equivalent for Down (-Z)
+            logData('T', "-Z", "X", 'N', mode); 
+            setGPIO(3, 1); setGPIO(9, 1); // T1, T2
+            break;
+
+        // Rotation Mappings
+        case 'I': // Pitch Up (CW P)
+            logData('R', "CW P", "I", 'N', mode);
+            setGPIO(9, 1); setGPIO(4, 1); // T2, B1
+            break;
+        case 'K': // Pitch Down (CCW P)
+            logData('R', "CCW P", "K", 'N', mode);
+            setGPIO(3, 1); setGPIO(10, 1); // T1, B2
+            break;
+        case 'J': // Roll Left (CCW R)
+            logData('R', "CCW R", "J", 'N', mode);
+            setGPIO(2, 1); setGPIO(9, 1); // P1, S2
+            break;
+        case 'L': // Roll Right (CW R)
+            logData('R', "CW R", "L", 'N', mode);
+            setGPIO(6, 1); setGPIO(1, 1); // P2, S1
+            break;
+        case 'U': // Yaw Left (CW Y)
+            logData('R', "CW Y", "U", 'N', mode);
+            setGPIO(0, 1); setGPIO(11, 1); // A1, F2
+            break;
+        case 'O': // Yaw Right (CCW Y)
+            logData('R', "CCW Y", "O", 'N', mode);
+            setGPIO(8, 1); setGPIO(5, 1); // A2, F1
+            break;
+
         default:
              logData('F', "--", string(1, key), 'E', mode); logError("ERROR-03", "Incorrect Keybind"); break;
     }
@@ -276,9 +381,10 @@ int main() {
                         isStartupMode = true;
                         logActivity("STATUS-10", "Sequence Initiated");
                         
-                        // Startup Sequence logic -------------------------------------------------
-                        int connectors[3][4] = {{0,1,2,3}, {4,5,6,7}, {8,11,12,13}};
-                        // Phase 1: 1.0s Pulses with Real-Time Delay --------------------------------------
+                        // Startup Sequence logic based on your Pin Layout mapping ----------------
+                        // Rack 1: A1, T1, B1, S1 | Rack 2: A2, T2, B2, S2 | Rack 3: P1, P2, F1, F2
+                        int connectors[3][4] = {{0,3,4,1}, {8,9,10,9}, {2,6,5,11}};
+
                         for (int r = 0; r < 3; r++) {
                             logActivity("STATUS-11", "Testing Rack " + to_string(r+1));
                             // Phase 1: 1.0s Pulses with Real-Time Delay --------------------------
