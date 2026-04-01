@@ -35,7 +35,7 @@
     - PCM:  Pulse Code Modulation (Audio)
     - MOSI: Master Out Slave In (SPI)
     - SCLK: Serial Clock (SPI)
-    - CE:   Chip Enable (SPI)
+    - CE:    Chip Enable (SPI)
     - PWM:  Pulse Width Modulation
     - ID_SD/SC: Identification System Data/Clock (EEPROM)
 
@@ -117,9 +117,8 @@ string last_key_fired = "";
 const string LOG_PATH = "./Logs/";  // Path adjusted for Linux environment 
 bool isStartupMode = false;    
 bool isOperationalMode = false; 
-const char* chip_path = "/dev/gpiochip0";  // GPIO Setup for RPi 5
+const char* chip_path = "/dev/gpiochip4";  // RPi 5 RP1 controller is usually chip 4
 struct gpiod_chip* chip;
-struct gpiod_line_bulk lines;
 
 
 
@@ -129,25 +128,44 @@ struct gpiod_line_bulk lines;
 void initGPIO() {
     chip = gpiod_chip_open(chip_path);
     if (!chip) {
-        cerr << "ERROR-01: Could not open GPIO chip" << endl;
+        // Fallback for some OS versions where it might still be chip 0
+        chip = gpiod_chip_open("/dev/gpiochip0");
+        if (!chip) {
+            cerr << "ERROR-01: Could not open GPIO chip" << endl;
+        }
     }
 }
 
 
 
 /*
-    setGPIO() - Sets a specific GPIO pin to high (1) or low (0).
+    setGPIO() - Sets a specific GPIO pin to high (1) or low (0) using libgpiod v2.
 
     Parameters:
     - pin (int)   : The GPIO pin number to control.
     - value (int) : 1 to set the pin high, 0 to set it low.
 */
 void setGPIO(int pin, int value) {
-    struct gpiod_line* line = gpiod_chip_get_line(chip, pin);
-    if (line) {
-        gpiod_line_request_output(line, "DTO_Controller", value);
-        gpiod_line_release(line);
-    }
+    if (!chip) return;
+
+    struct gpiod_line_settings* settings = gpiod_line_settings_new();
+    gpiod_line_settings_set_direction(settings, GPIOD_LINE_DIRECTION_OUTPUT);
+    gpiod_line_settings_set_output_value(settings, value ? GPIOD_LINE_VALUE_ACTIVE : GPIOD_LINE_VALUE_INACTIVE);
+
+    struct gpiod_line_config* line_cfg = gpiod_line_config_new();
+    unsigned int offset = (unsigned int)pin;
+    gpiod_line_config_add_line_settings(line_cfg, &offset, 1, settings);
+
+    struct gpiod_request_config* req_cfg = gpiod_request_config_new();
+    gpiod_request_config_set_consumer(req_cfg, "DTO_Controller");
+
+    struct gpiod_line_request* request = gpiod_chip_request_lines(chip, req_cfg, line_cfg);
+
+    // Cleanup resources
+    if (request) gpiod_line_request_release(request);
+    gpiod_request_config_free(req_cfg);
+    gpiod_line_config_free(line_cfg);
+    gpiod_line_settings_free(settings);
 }
 
 
@@ -179,18 +197,18 @@ int kbhit() {
     getch_linux() - Linux implementation of _getch().
 */
 char getch_linux() {
-    char buf = 0;                                                        // Buffer to hold the read character
-    struct termios old = {0};                                            // Structure to hold old terminal settings
-    if (tcgetattr(0, &old) < 0) perror("tcsetattr()");                   // Get current terminal attributes and check for errors
-    old.c_lflag &= ~ICANON;                                              // Disable canonical mode to allow reading input without waiting for a newline
-    old.c_lflag &= ~ECHO;                                                // Disable echo to prevent the character from being displayed on the terminal
-    old.c_cc[VMIN] = 1;                                                  // Set minimum number of characters to read
-    old.c_cc[VTIME] = 0;                                                 // Set timeout to 0 (no timeout)
-    if (tcsetattr(0, TCSANOW, &old) < 0) perror("tcsetattr ICANON");     // Apply new terminal settings immediately and check for errors
-    if (read(0, &buf, 1) < 0) perror("read()");                          // Read a single character from stdin and check for errors
-    old.c_lflag |= ICANON;                                               // Restore canonical mode
-    old.c_lflag |= ECHO;                                                 // Restore echo
-    if (tcsetattr(0, TCSADRAIN, &old) < 0) perror("tcsetattr ~ICANON");  // Restore old terminal settings after reading input and check for errors
+    char buf = 0;                                                                        // Buffer to hold the read character
+    struct termios old = {0};                                                            // Structure to hold old terminal settings
+    if (tcgetattr(0, &old) < 0) perror("tcsetattr()");                                   // Get current terminal attributes and check for errors
+    old.c_lflag &= ~ICANON;                                                              // Disable canonical mode to allow reading input without waiting for a newline
+    old.c_lflag &= ~ECHO;                                                                // Disable echo to prevent the character from being displayed on the terminal
+    old.c_cc[VMIN] = 1;                                                                  // Set minimum number of characters to read
+    old.c_cc[VTIME] = 0;                                                                 // Set timeout to 0 (no timeout)
+    if (tcsetattr(0, TCSANOW, &old) < 0) perror("tcsetattr ICANON");                     // Apply new terminal settings immediately and check for errors
+    if (read(0, &buf, 1) < 0) perror("read()");                                          // Read a single character from stdin and check for errors
+    old.c_lflag |= ICANON;                                                               // Restore canonical mode
+    old.c_lflag |= ECHO;                                                                 // Restore echo
+    if (tcsetattr(0, TCSADRAIN, &old) < 0) perror("tcsetattr ~ICANON");                  // Restore old terminal settings after reading input and check for errors
     
     return buf;
 }
