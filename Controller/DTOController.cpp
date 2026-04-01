@@ -1,11 +1,8 @@
 /*
     DTO Controller - Raspberry Pi 5 Optimized Port
     
-    Features:
-    - Logs key events with timestamps, types, directions, and modes to Keybind_Log.csv.
-    - Supports Continuous (C) and Pulse (P) modes via Caps Lock.
-    - Activity_Log.csv and Keybind_Log.csv formatted for specific CSV requirements.
-    - Maps Shift (Down), Arrows (Rotation), and Ctrl+Arrows.
+    Architecture: Linux / libgpiod v2.x
+    Pin Controller: pinctrl-rp1
 */
 
 #include <iostream>
@@ -29,6 +26,7 @@ using namespace std;
 // Global Variables ===============================================================================
 double time_counter = 0.0;
 string last_key_fired = ""; 
+bool isKeyHeld = false;
 const string LOG_PATH = "./Logs/"; 
 bool isOperationalMode = false; 
 struct gpiod_chip* chip;
@@ -43,9 +41,9 @@ void logData(char type, string direction, string keyname, char statusChar, char 
 void initGPIO() {
     chip = gpiod_chip_open(chip_path);
     if (!chip) {
-        chip = gpiod_chip_open("/dev/gpiochip0");
+        chip = gpiod_chip_open("/dev/gpiochip0"); 
         if (!chip) {
-            cerr << "[ERROR-01] GPIO Chip Failure." << endl;
+            cerr << "[ERROR-000] GPIO Chip Failure." << endl;
             return;
         }
     }
@@ -108,7 +106,7 @@ void logActivity(string code, string description) {
         activityFile << fixed << setprecision(2) << time_counter << "," << code << "," << description << endl;
         activityFile.close();
     }
-    // Terminal Match Requirement
+    // Formatted Terminal Output
     cout << fixed << setprecision(2) << time_counter << "," << code << "," << description << endl;
 }
 
@@ -118,7 +116,7 @@ void logData(char type, string direction, string keyname, char statusChar, char 
         outFile << fixed << setprecision(2) << time_counter << "," << mode << "," << type << "," << direction << "," << keyname << endl;
         outFile.close();
         if (statusChar == 'N' && keyname != "-") {
-            logActivity("STATUS-03", "Key Registered: " + keyname);
+            logActivity("STATUS-301", "Key Registered: " + keyname);
         }
     }
 }
@@ -126,9 +124,12 @@ void logData(char type, string direction, string keyname, char statusChar, char 
 // Mapping Logic ==================================================================================
 
 void processAction(string key_id, char mode) {
-    if (mode == 'P' && key_id == last_key_fired) {
-        logData('F', "--", "-", 'N', 'P');
-        return; 
+    if (mode == 'P') {
+        if (key_id == last_key_fired) {
+            logActivity("ERROR-300", "Hold Denied in Pulse Mode");
+            logData('F', "--", key_id, 'E', 'P');
+            return;
+        }
     }
 
     if (key_id == "W") { logData('T', "+X", "W", 'N', mode); setGPIO(0, 1); setGPIO(8, 1); }
@@ -136,16 +137,16 @@ void processAction(string key_id, char mode) {
     else if (key_id == "A") { logData('T', "-Y", "A", 'N', mode); setGPIO(2, 1); setGPIO(6, 1); }
     else if (key_id == "D") { logData('T', "+Y", "D", 'N', mode); setGPIO(1, 1); setGPIO(9, 1); }
     else if (key_id == "SPACE") { logData('T', "+Z", "Space", 'N', mode); setGPIO(4, 1); setGPIO(10, 1); }
-    else if (key_id == "SHIFT") { logData('T', "-Z", "Shift", 'N', mode); setGPIO(3, 1); setGPIO(9, 1); }
+    else if (key_id == "TAB") { logData('T', "-Z", "Tab", 'N', mode); setGPIO(3, 1); setGPIO(9, 1); }
     else if (key_id == "UP") { logData('R', "+P", "UpArrow", 'N', mode); setGPIO(9, 1); setGPIO(4, 1); }
     else if (key_id == "DOWN") { logData('R', "-P", "DownArrow", 'N', mode); setGPIO(3, 1); setGPIO(10, 1); }
     else if (key_id == "LEFT") { logData('R', "-Y", "LeftArrow", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
     else if (key_id == "RIGHT") { logData('R', "+Y", "RightArrow", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
-    else if (key_id == "CTRL+LEFT") { logData('R', "-R", "Ctrl+LeftArrow", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
-    else if (key_id == "CTRL+RIGHT") { logData('R', "+R", "Ctrl+RightArrow", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
+    else if (key_id == "[") { logData('R', "-R", "RollLeft", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
+    else if (key_id == "]") { logData('R', "+R", "RollRight", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
     else { 
         logData('F', "--", key_id, 'E', mode); 
-        logActivity("ERROR-03", "Incorrect Keybind"); 
+        logActivity("ERROR-300", "Incorrect Keybind"); 
     }
     
     last_key_fired = key_id;
@@ -162,8 +163,8 @@ int main() {
     r2 << "Time(s),Code,Description" << endl;
     r1.close(); r2.close();
 
-    logActivity("STATUS-00", "Startup Successful: Files Ready");
-    logActivity("STATUS-02", "Session Started");
+    logActivity("STATUS-000", "Startup Successful: Files Ready");
+    logActivity("STATUS-001", "Session Started");
 
     while (true) {
         char mode = isCapsLockOn() ? 'P' : 'C';
@@ -172,7 +173,7 @@ int main() {
             string key_pressed = "";
             unsigned char ch = getchar();
 
-            if (ch == 27) { // Escape Sequence
+            if (ch == 27) { // Escape Sequence for Arrows
                 if (kbhit()) {
                     getchar(); // skip '['
                     unsigned char sub = getchar();
@@ -180,36 +181,38 @@ int main() {
                     else if (sub == 'B') key_pressed = "DOWN";
                     else if (sub == 'C') key_pressed = "RIGHT";
                     else if (sub == 'D') key_pressed = "LEFT";
-                    else if (sub == '1') { // Potential Ctrl sequences
-                        for(int i=0; i<3; i++) getchar(); // skip ;5C etc
-                        if (sub == 'C') key_pressed = "CTRL+RIGHT";
-                        else if (sub == 'D') key_pressed = "CTRL+LEFT";
-                    }
-                } else break; // ESC
+                } else break; // Actual ESC key
             } else if (ch == '~') {
                 char next = getchar();
                 if (toupper(next) == 'O') {
                     isOperationalMode = true;
-                    logActivity("STATUS-05", "Mode Changed: Operational Mode");
+                    logActivity("STATUS-300", "Mode Changed: Operational Mode");
                 }
+            } else if (ch == '\t') {
+                key_pressed = "TAB";
+            } else if (ch == ' ') {
+                key_pressed = "SPACE";
             } else {
-                if (ch == 'W' || ch == 'A' || ch == 'S' || ch == 'D') key_pressed = string(1, ch);
-                else if (ch == 'w' || ch == 'a' || ch == 's' || ch == 'd') key_pressed = string(1, toupper(ch));
-                else if (ch >= 1 && ch <= 26) key_pressed = "SHIFT"; // Simplified Shift detection
-                else if (ch == ' ') key_pressed = "SPACE";
-                else if (ch != 0) key_pressed = string(1, toupper(ch));
+                key_pressed = string(1, toupper(ch));
             }
 
-            if (isOperationalMode && key_pressed != "") processAction(key_pressed, mode);
+            if (isOperationalMode && key_pressed != "") {
+                processAction(key_pressed, mode);
+            }
         } else {
             if (isOperationalMode) {
+                // Heartbeat logging for Free Fall state
                 logData('F', "--", "-", 'N', mode);
-                last_key_fired = ""; // Reset for Pulse mode
+                last_key_fired = ""; 
             }
         }
 
         if (isOperationalMode) time_counter += 0.1;
         this_thread::sleep_for(chrono::milliseconds(100));
     }
+
+    logActivity("STATUS-002", "Session Ended");
+    logActivity("STATUS-003", "Shutdown Successful");
+    if(chip) gpiod_chip_close(chip);
     return 0;
 }
