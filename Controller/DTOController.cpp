@@ -2,10 +2,10 @@
     DTO Controller - Raspberry Pi 5 Optimized Port
     
     UI Flow:
-    - 0: Menu Mode
-    - 1: Startup Sequence Mode
-    - 2: Operational Mode
-    - Esc: Quit Program
+    - 0 : Menu Mode
+    - 1 : Startup Sequence Mode
+    - 2 : Operational Mode
+    - Esc : Quit Program
 */
 
 #include <iostream>
@@ -30,7 +30,7 @@ using namespace std;
 double time_counter = 0.0;
 string last_key_fired = ""; 
 char current_firing_mode = 'C'; 
-int current_program_mode = 0; // 0: Menu, 1: Startup, 2: Operational
+int current_program_mode = 0; 
 const string LOG_PATH = "./Logs/"; 
 struct gpiod_chip* chip;
 const char* chip_path = "/dev/gpiochip4"; 
@@ -39,8 +39,9 @@ const char* chip_path = "/dev/gpiochip4";
 void logActivity(string code, string description);
 void logData(char type, string direction, string keyname, char statusChar, char mode);
 void displayMenu();
+void processAction(string key_id, char mode);
 
-// Helper to format time as 0:00 instead of 0.00
+// Helper for 0:10 Timestamp Format
 string formatTime(double t) {
     int whole = (int)t;
     int decimal = (int)((t - whole) * 100 + 0.5);
@@ -54,10 +55,7 @@ void initGPIO() {
     chip = gpiod_chip_open(chip_path);
     if (!chip) {
         chip = gpiod_chip_open("/dev/gpiochip0"); 
-        if (!chip) {
-            logActivity("ERROR-303", "GPIO Chip Failure: Hardware not detected");
-            return;
-        }
+        if (!chip) return;
     }
 }
 
@@ -118,62 +116,63 @@ void logData(char type, string direction, string keyname, char statusChar, char 
         if (statusChar == 'N' && keyname != "-") {
             logActivity("STATUS-301", "Key Registered: " + keyname);
         }
-    } else {
-        logActivity("ERROR-101", "Write Failure: Keybind CSV locked");
     }
 }
 
-// UI Displays ====================================================================================
+// Mapping Logic ==================================================================================
+
+void processAction(string key_id, char mode) {
+    if (mode == 'P' && key_id == last_key_fired) {
+        logActivity("ERROR-300", "Key cannot be operated because it is in pulse mode");
+        logData('F', "--", key_id, 'E', 'P');
+        return;
+    }
+
+    if (key_id == "W") { logData('T', "+X", "W", 'N', mode); setGPIO(0, 1); setGPIO(8, 1); }
+    else if (key_id == "S") { logData('T', "-X", "S", 'N', mode); setGPIO(5, 1); setGPIO(11, 1); }
+    else if (key_id == "A") { logData('T', "-Y", "A", 'N', mode); setGPIO(2, 1); setGPIO(6, 1); }
+    else if (key_id == "D") { logData('T', "+Y", "D", 'N', mode); setGPIO(1, 1); setGPIO(9, 1); }
+    else if (key_id == "SPACE") { logData('T', "+Z", "Space", 'N', mode); setGPIO(4, 1); setGPIO(10, 1); }
+    else if (key_id == "TAB") { logData('T', "-Z", "Tab", 'N', mode); setGPIO(3, 1); setGPIO(9, 1); }
+    else if (key_id == "UP") { logData('R', "+P", "UpArrow", 'N', mode); setGPIO(9, 1); setGPIO(4, 1); }
+    else if (key_id == "DOWN") { logData('R', "-P", "DownArrow", 'N', mode); setGPIO(3, 1); setGPIO(10, 1); }
+    else if (key_id == "LEFT") { logData('R', "-Y", "LeftArrow", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
+    else if (key_id == "RIGHT") { logData('R', "+Y", "RightArrow", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
+    else if (key_id == "[") { logData('R', "-R", "RollLeft", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
+    else if (key_id == "]") { logData('R', "+R", "RollRight", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
+    else { 
+        logData('F', "--", key_id, 'E', mode); 
+        logActivity("ERROR-300", "Incorrect Keybind"); 
+    }
+    last_key_fired = key_id;
+}
+
+// UI =============================================================================================
 
 void displayMenu() {
     if (current_program_mode == 0) {
-        cout << "\n=================================================" << endl;
-        cout << "DTO Program" << endl;
-        cout << "-------------------------------------------------" << endl;
-        cout << "Program Modes:" << endl;
-        cout << "- 0   : Menu Mode" << endl;
-        cout << "- 1   : Startup Sequence Mode" << endl;
-        cout << "- 2   : Operational Mode" << endl;
-        cout << "- Esc : Quit Mode" << endl;
-        cout << "=================================================\n>> " << flush;
+        cout << "\n=================================================\nDTO Program\n-------------------------------------------------\nProgram Modes:\n- 0   : Menu Mode\n- 1   : Startup Sequence Mode\n- 2   : Operational Mode\n- Esc : Quit Mode\n=================================================\n>> " << flush;
     } else if (current_program_mode == 1) {
-        cout << "\n=================================================" << endl;
-        cout << "Startup Sequence Mode" << endl;
-        cout << "-------------------------------------------------" << endl;
-        cout << "Program Modes:" << endl;
-        cout << "- Esc : Quit Mode" << endl;
-        cout << "=================================================\n>> " << flush;
+        cout << "\n=================================================\nStartup Sequence Mode\n-------------------------------------------------\nProgram Modes:\n- Esc : Quit Mode\n=================================================\n>> " << flush;
     } else if (current_program_mode == 2) {
-        cout << "\n=================================================" << endl;
-        cout << "Operational Mode (2)" << endl;
-        cout << "-------------------------------------------------" << endl;
-        cout << "Program Modes:" << endl;
-        cout << "- 1   : Continuous Mode" << endl;
-        cout << "- 2   : Pulse Mode" << endl;
-        cout << "- Esc : Quit Program" << endl;
-        cout << "=================================================\n>> " << flush;
+        cout << "\n=================================================\nOperational Mode (2)\n-------------------------------------------------\nProgram Modes:\n- 1   : Continuous Mode\n- 2   : Pulse Mode\n- Esc : Quit Program\n=================================================\n>> " << flush;
     }
 }
 
-// Main Loop ======================================================================================
+// Main ===========================================================================================
 
 int main() {
     system(("mkdir -p " + LOG_PATH).c_str());
     initGPIO();
-
     ofstream r1(LOG_PATH + "Keybind_Log.csv", ios::trunc);
     ofstream r2(LOG_PATH + "Activity_Log.csv", ios::trunc);
-
     if (r1.is_open() && r2.is_open()) {
         logActivity("STATUS-101", "Path Validated: File Open Successful");
         r1 << "Time(s),Mode,Type,Direction,Key" << endl;
         r2 << "Time(s),Code,Description" << endl;
         r1.close(); r2.close();
-        logActivity("STATUS-000", "Startup Successful: System Initialized");
-    } else {
-        cerr << "ERROR-000: Startup Failure. Check Folder Permissions." << endl;
-        return 1;
-    }
+        logActivity("STATUS-000", "Startup Successful: Files Ready");
+    } else { return 1; }
 
     logActivity("STATUS-001", "Session Started");
     displayMenu();
@@ -181,13 +180,23 @@ int main() {
     while (true) {
         if (kbhit()) {
             unsigned char ch = getchar();
-            if (ch == 27) break; // ESC
+            if (ch == 27) { // ESC Handling
+                if (kbhit()) { // Swallow Escape Sequences (Arrows)
+                    getchar(); char sub = getchar();
+                    if (current_program_mode == 2) {
+                        string key_id = "";
+                        if (sub == 'A') key_id = "UP";
+                        else if (sub == 'B') key_id = "DOWN";
+                        else if (sub == 'C') key_id = "RIGHT";
+                        else if (sub == 'D') key_id = "LEFT";
+                        processAction(key_id, current_firing_mode);
+                    }
+                } else break; // Real ESC
+            }
 
-            // Mode Switching from Menu
             if (current_program_mode == 0) {
                 if (ch == '1') {
-                    current_program_mode = 1;
-                    displayMenu();
+                    current_program_mode = 1; displayMenu();
                     logActivity("STATUS-302", "Sequence Initiated");
                     int connectors[3][4] = {{0,3,4,1}, {8,9,10,9}, {2,6,5,11}};
                     for (int r = 0; r < 3; r++) {
@@ -202,63 +211,32 @@ int main() {
                         }
                     }
                     logActivity("STATUS-305", "Sequence Complete");
-                    current_program_mode = 0; // Return to menu
-                    displayMenu();
-                } 
-                else if (ch == '2') {
-                    current_program_mode = 2;
-                    logActivity("STATUS-300", "Mode Changed: Operational Mode Active");
-                    displayMenu();
+                    current_program_mode = 0; displayMenu();
+                } else if (ch == '2') {
+                    current_program_mode = 2; displayMenu();
                 }
-            } 
-            // Logic while in Operational Mode
-            else if (current_program_mode == 2) {
-                if (ch == '1') {
-                    current_firing_mode = 'C';
-                    logActivity("STATUS-300", "Firing Mode: Continuous");
-                } 
-                else if (ch == '2') {
-                    current_firing_mode = 'P';
-                    logActivity("STATUS-300", "Firing Mode: Pulse");
-                } 
-                else if (ch == '0') {
-                    current_program_mode = 0;
-                    displayMenu();
-                }
+            } else if (current_program_mode == 2) {
+                if (ch == '1') { current_firing_mode = 'C'; logActivity("STATUS-300", "Mode Changed: Continuous Mode"); }
+                else if (ch == '2') { current_firing_mode = 'P'; logActivity("STATUS-300", "Mode Changed: Pulse Mode"); }
+                else if (ch == '0') { current_program_mode = 0; displayMenu(); }
                 else {
                     string key_id = "";
                     if (ch == '\t') key_id = "TAB";
                     else if (ch == ' ') key_id = "SPACE";
+                    else if (ch == '[' || ch == ']') key_id = string(1, ch);
                     else key_id = string(1, toupper(ch));
-
-                    // Pulse Mode Hold Check
-                    if (current_firing_mode == 'P' && key_id == last_key_fired) {
-                        logActivity("ERROR-300", "Key cannot be operated because it is in pulse mode");
-                        logData('F', "--", key_id, 'E', 'P');
-                    } else {
-                        // Translation Mappings (Simplified for brevity)
-                        if (key_id == "W") { logData('T', "+X", "W", 'N', current_firing_mode); setGPIO(0, 1); setGPIO(8, 1); }
-                        else if (key_id == "S") { logData('T', "-X", "S", 'N', current_firing_mode); setGPIO(5, 1); setGPIO(11, 1); }
-                        else { 
-                            logData('F', "--", key_id, 'E', current_firing_mode); 
-                            logActivity("ERROR-300", "Incorrect Keybind"); 
-                        }
-                        last_key_fired = key_id;
-                    }
+                    processAction(key_id, current_firing_mode);
                 }
             }
         } else {
-            // Heartbeat for Free Fall State
             if (current_program_mode == 2) {
                 logData('F', "--", "-", 'N', current_firing_mode);
                 last_key_fired = "";
             }
         }
-
         if (current_program_mode == 2) time_counter += 0.1;
         this_thread::sleep_for(chrono::milliseconds(100));
     }
-
     logActivity("STATUS-002", "Session Ended");
     logActivity("STATUS-003", "Shutdown Successful");
     if(chip) gpiod_chip_close(chip);
