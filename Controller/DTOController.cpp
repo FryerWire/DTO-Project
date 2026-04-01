@@ -141,12 +141,12 @@ void processAction(string key_id, char mode) {
     else if (key_id == "E") { logData('T', "+Z", "E", 'N', mode); setGPIO(4, 1); setGPIO(10, 1); }
     
     // Rotation Mappings
-    else if (key_id == "I") { logData('R', "+PITCH", "I", 'N', mode); setGPIO(9, 1); setGPIO(4, 1); }
-    else if (key_id == "K") { logData('R', "-PITCH", "K", 'N', mode); setGPIO(3, 1); setGPIO(10, 1); }
-    else if (key_id == "J") { logData('R', "-YAW",   "J", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
-    else if (key_id == "L") { logData('R', "+YAW",   "L", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
-    else if (key_id == "U") { logData('R', "-ROLL",  "U", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
-    else if (key_id == "O") { logData('R', "+ROLL",  "O", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
+    else if (key_id == "I") { logData('R', "+P", "I", 'N', mode); setGPIO(9, 1); setGPIO(4, 1); }
+    else if (key_id == "K") { logData('R', "-P", "K", 'N', mode); setGPIO(3, 1); setGPIO(10, 1); }
+    else if (key_id == "J") { logData('R', "-Y", "J", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
+    else if (key_id == "L") { logData('R', "+Y", "L", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
+    else if (key_id == "U") { logData('R', "-R", "U", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
+    else if (key_id == "O") { logData('R', "+R", "O", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
     
     else { 
         logData('F', "--", key_id, 'E', mode); 
