@@ -1,34 +1,13 @@
-
 /*
-    DTO Controller - Raspberry Pi 5 Port
-
+    DTO Controller - Raspberry Pi 5 Optimized Port
+    
     Features:
-    - Logs key events with timestamps, types, directions, and modes to Keybind_Log.csv.
-    - Supports Continuous (Caps Lock OFF) and Pulse (Caps Lock ON) modes.
-    - Maps specific keys to translation and rotation movements.
-    - Activity_Log.csv tracks high-level Application Codes (STATUS and ERROR).
-    - Toggle Modes: ~ + S (Startup Sequence) | ~ + O (Operational Mode).
-
-    Code:
-    ERROR-00: Startup Failure - Cannot open/create log files.
-    ERROR-01: GPIO Chip Failure - Could not open /dev/gpiochip0.
-    ERROR-02: Write Failure - Keybind CSV file is locked or inaccessible.
-    ERROR-03: Incorrect Keybind - Key pressed is not mapped to an action.
-    ERROR-06: Mode Switch Denied - Attempted Startup (~S) while in Operational Mode.
-
-    STATUS-00: Startup Successful - Directories and file headers initialized.
-    STATUS-01: Session Ended - User exited the application loop.
-    STATUS-02: Session Started - User loop is active.
-    STATUS-03: Key Registered - Valid movement key processed and logged.
-    STATUS-04: Shutdown Successful - Cleanup complete, application closing.
-    STATUS-05: Operational Mode Active - System switched to Mode ~O.
-    STATUS-10: Sequence Initiated - Startup Sequence (~S) started.
-    STATUS-11: Testing Rack [N] - Diagnostic loop entering a specific rack.
-    STATUS-13: GPIO [N] ON/OFF - Specific pin state change during diagnostic.
-    STATUS-14: Sequence Complete - Diagnostic loop finished successfully.
+    - ~S: Startup Sequence (Diagnostic)
+    - ~O: Operational Mode (Flight)
+    - Tab: Down (-Z) | Space: Up (+Z)
+    - [ / ]: Roll Rotation
+    - Caps Lock: Toggle Continuous (C) vs Pulse (P)
 */
-
-
 
 #include <iostream>
 #include <fstream>
@@ -37,9 +16,8 @@
 #include <string>
 #include <iomanip>
 #include <vector>
-#include <map>
 
-// Linux/RPi5 Specific Headers
+// Linux Specific Headers
 #include <fcntl.h>
 #include <unistd.h>
 #include <termios.h>
@@ -47,276 +25,205 @@
 #include <linux/kd.h>
 #include <gpiod.h> 
 
-
-
 using namespace std;
-
-
 
 // Global Variables ===============================================================================
 double time_counter = 0.0;
 string last_key_fired = ""; 
-const string LOG_PATH = "./Logs/";  // Path adjusted for Linux environment 
-bool isStartupMode = false;    
+const string LOG_PATH = "./Logs/"; 
 bool isOperationalMode = false; 
-const char* chip_path = "/dev/gpiochip0";  // GPIO Setup for RPi 5
 struct gpiod_chip* chip;
-struct gpiod_line_bulk lines;
+const char* chip_path = "/dev/gpiochip4"; 
 
+// Forward Declarations
+void logActivity(string code, string description);
+void logData(char type, string direction, string keyname, char statusChar, char mode);
 
+// GPIO Logic =====================================================================================
 
-/*
-    initGPIO() - Initializes GPIO chip for RPi 5.
-*/
 void initGPIO() {
     chip = gpiod_chip_open(chip_path);
     if (!chip) {
-        cerr << "ERROR-01: Could not open GPIO chip" << endl;
+        chip = gpiod_chip_open("/dev/gpiochip0"); 
+        if (!chip) {
+            cerr << "[ERROR-303] GPIO Chip Failure." << endl;
+            return;
+        }
     }
 }
 
-
-
-/*
-    setGPIO() - Sets a specific GPIO pin to high (1) or low (0).
-
-    Parameters:
-    - pin (int)   : The GPIO pin number to control.
-    - value (int) : 1 to set the pin high, 0 to set it low.
-*/
 void setGPIO(int pin, int value) {
-    struct gpiod_line* line = gpiod_chip_get_line(chip, pin);
-    if (line) {
-        gpiod_line_request_output(line, "DTO_Controller", value);
-        gpiod_line_release(line);
-    }
+    if (!chip) return;
+    struct gpiod_line_settings* settings = gpiod_line_settings_new();
+    gpiod_line_settings_set_direction(settings, GPIOD_LINE_DIRECTION_OUTPUT);
+    gpiod_line_settings_set_output_value(settings, value ? GPIOD_LINE_VALUE_ACTIVE : GPIOD_LINE_VALUE_INACTIVE);
+    struct gpiod_line_config* line_cfg = gpiod_line_config_new();
+    unsigned int offset = (unsigned int)pin;
+    gpiod_line_config_add_line_settings(line_cfg, &offset, 1, settings);
+    struct gpiod_request_config* req_cfg = gpiod_request_config_new();
+    gpiod_request_config_set_consumer(req_cfg, "DTO_Controller");
+    struct gpiod_line_request* request = gpiod_chip_request_lines(chip, req_cfg, line_cfg);
+    if (request) gpiod_line_request_release(request);
+    gpiod_request_config_free(req_cfg);
+    gpiod_line_config_free(line_cfg);
+    gpiod_line_settings_free(settings);
 }
 
+// Input Handling =================================================================================
 
-
-/*
-    kbhit() - Linux implementation of Windows _kbhit() using termios.
-*/
 int kbhit() {
     static const int STDIN = 0;
     static bool initialized = false;
     if (!initialized) {
-        termios term;                      // Disable canonical mode and echo for non-blocking input
-        tcgetattr(STDIN, &term);           // Get current terminal attributes
-        term.c_lflag &= ~ICANON;           // Disable canonical mode
-        tcsetattr(STDIN, TCSANOW, &term);  // Apply new attributes immediately
-        setbuf(stdin, NULL);               // Disable buffering for stdin
-        initialized = true;                // Mark initialization complete
+        termios term;
+        tcgetattr(STDIN, &term);
+        term.c_lflag &= ~ICANON;
+        term.c_lflag &= ~ECHO; 
+        tcsetattr(STDIN, TCSANOW, &term);
+        setbuf(stdin, NULL);
+        initialized = true;
     }
-
     int bytesWaiting;
     ioctl(STDIN, FIONREAD, &bytesWaiting);
-
     return bytesWaiting;
 }
 
-
-
-/*
-    getch_linux() - Linux implementation of _getch().
-*/
-char getch_linux() {
-    char buf = 0;                                                        // Buffer to hold the read character
-    struct termios old = {0};                                            // Structure to hold old terminal settings
-    if (tcgetattr(0, &old) < 0) perror("tcsetattr()");                   // Get current terminal attributes and check for errors
-    old.c_lflag &= ~ICANON;                                              // Disable canonical mode to allow reading input without waiting for a newline
-    old.c_lflag &= ~ECHO;                                                // Disable echo to prevent the character from being displayed on the terminal
-    old.c_cc[VMIN] = 1;                                                  // Set minimum number of characters to read
-    old.c_cc[VTIME] = 0;                                                 // Set timeout to 0 (no timeout)
-    if (tcsetattr(0, TCSANOW, &old) < 0) perror("tcsetattr ICANON");     // Apply new terminal settings immediately and check for errors
-    if (read(0, &buf, 1) < 0) perror("read()");                          // Read a single character from stdin and check for errors
-    old.c_lflag |= ICANON;                                               // Restore canonical mode
-    old.c_lflag |= ECHO;                                                 // Restore echo
-    if (tcsetattr(0, TCSADRAIN, &old) < 0) perror("tcsetattr ~ICANON");  // Restore old terminal settings after reading input and check for errors
-    
-    return buf;
-}
-
-
-
-/*
-    isCapsLockOn() - Checks keyboard LED state on Linux.
-*/
 bool isCapsLockOn() {
-    int fd = open("/dev/console", O_RDONLY);  // Open the console device to read keyboard LED states; returns a file descriptor or -1 on error
+    int fd = open("/dev/console", O_RDONLY);
     if (fd < 0) return false;
-    long state;                               // Variable to hold the LED state
-    ioctl(fd, KDGKBLED, &state);              // Get the current state of the keyboard LEDs and store it in the 'state' variable
+    long state;
+    ioctl(fd, KDGKBLED, &state);
     close(fd);
-
     return (state & LED_CAP);
 }
 
+// Logging ========================================================================================
 
-
-/*
-    getVirtualKeyName() - Converts virtual key codes to human-readable names for logging.
-
-    Parameters:
-    - vkCode (int) : The virtual key code of the pressed key.
-*/
 void logActivity(string code, string description) {
     ofstream activityFile(LOG_PATH + "Activity_Log.csv", ios_base::app);
     if (activityFile.is_open()) {
         activityFile << fixed << setprecision(2) << time_counter << "," << code << "," << description << endl;
         activityFile.close();
     }
+    cout << fixed << setprecision(2) << time_counter << "," << code << "," << description << endl;
 }
 
-
-
-/*
-    logError() - Helper function to log errors with specific codes and descriptions.
-
-    Parameters:
-    - errorCode (string) : A string representing the specific error code (e.g., "ERROR-03").
-    - title (string)     : A brief title or description of the error for context.
-*/
-void logError(string errorCode, string title) {
-    logActivity(errorCode, title);
-}
-
-
-
-/*
-    logData() - Logs key events to Keybind_Log.csv and the console, with status codes for successful registrations and errors.
-
-    Parameters:
-    - type (char)        : 'T' for Translation, 'R' for Rotation, 'F' for Fault/Error.
-    - direction (string) : A string representing the direction of movement (e.g., "+X", "-Y", "+P", etc.) or "--" for faults.
-    - keyname (string)   : The human-readable name of the key that triggered the event.
-    - statusChar (char)  : 'N' for Normal registration, 'E' for Error, used to determine if an activity log entry should be made for successful key registrations.
-    - mode (char)        : 'C' for Continuous mode, 'P' for Pulse mode. Defaults to 'C' if not specified.
-*/
-void logData(char type, string direction, string keyname, char statusChar, char mode = 'C') {
+void logData(char type, string direction, string keyname, char statusChar, char mode) {
     ofstream outFile(LOG_PATH + "Keybind_Log.csv", ios_base::app);
     if (outFile.is_open()) {  
-        outFile << fixed << setprecision(2)
-                << time_counter << "," << mode << "," << type << "," << direction << "," << keyname << endl;
+        outFile << fixed << setprecision(2) << time_counter << "," << mode << "," << type << "," << direction << "," << keyname << endl;
         outFile.close();
-        
         if (statusChar == 'N' && keyname != "-") {
-            logActivity("STATUS-03", "Key Registered: " + keyname);
+            logActivity("STATUS-301", "Key Registered: " + keyname);
         }
-
-    } else {
-        logError("ERROR-02", "Write Failure: Keybind CSV file locked");
     }
 }
 
+// Mapping Logic ==================================================================================
 
-
-/*
-    processAction() - Map Virtual Keys/Combinations to Directions and Names
-
-    Parameters:
-    - vkCode (int) : The virtual key code of the pressed key.
-    - mode (char)  : 'C' for Continuous mode, 'P' for Pulse mode
-*/
-void processAction(char key, char mode) {
-    switch (toupper(key)) {  
-        case 'W': logData('T', "+X", "W", 'N', mode); break;
-        case 'S': logData('T', "-X", "S", 'N', mode); break;
-        case 'D': logData('T', "+Y", "D", 'N', mode); break;
-        case 'A': logData('T', "-Y", "A", 'N', mode); break;
-        case ' ': logData('T', "+Z", "Space", 'N', mode); break;
-        default:
-             logData('F', "--", string(1, key), 'E', mode); logError("ERROR-03", "Incorrect Keybind"); break;
+void processAction(string key_id, char mode) {
+    // Pulse Mode Restriction: If key is held, trigger ERROR-300
+    if (mode == 'P' && key_id == last_key_fired) {
+        logActivity("ERROR-300", "Key cannot be operated: Pulse Mode active");
+        logData('F', "--", key_id, 'E', 'P');
+        return;
     }
+
+    if (key_id == "W") { logData('T', "+X", "W", 'N', mode); setGPIO(0, 1); setGPIO(8, 1); }
+    else if (key_id == "S") { logData('T', "-X", "S", 'N', mode); setGPIO(5, 1); setGPIO(11, 1); }
+    else if (key_id == "A") { logData('T', "-Y", "A", 'N', mode); setGPIO(2, 1); setGPIO(6, 1); }
+    else if (key_id == "D") { logData('T', "+Y", "D", 'N', mode); setGPIO(1, 1); setGPIO(9, 1); }
+    else if (key_id == "SPACE") { logData('T', "+Z", "Space", 'N', mode); setGPIO(4, 1); setGPIO(10, 1); }
+    else if (key_id == "TAB") { logData('T', "-Z", "Tab", 'N', mode); setGPIO(3, 1); setGPIO(9, 1); }
+    else if (key_id == "UP") { logData('R', "+P", "UpArrow", 'N', mode); setGPIO(9, 1); setGPIO(4, 1); }
+    else if (key_id == "DOWN") { logData('R', "-P", "DownArrow", 'N', mode); setGPIO(3, 1); setGPIO(10, 1); }
+    else if (key_id == "LEFT") { logData('R', "-Y", "LeftArrow", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
+    else if (key_id == "RIGHT") { logData('R', "+Y", "RightArrow", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
+    else if (key_id == "[") { logData('R', "-R", "RollLeft", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
+    else if (key_id == "]") { logData('R', "+R", "RollRight", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
+    else { 
+        logData('F', "--", key_id, 'E', mode); 
+        logActivity("ERROR-300", "Incorrect Keybind"); 
+    }
+    
+    last_key_fired = key_id;
 }
 
+// Main Loop ======================================================================================
 
-
-/*
-    main() - The entry point of the program.
-*/
 int main() {
-    initGPIO();
     system(("mkdir -p " + LOG_PATH).c_str());
+    initGPIO();
+    ofstream r1(LOG_PATH + "Keybind_Log.csv", ios::trunc);
+    ofstream r2(LOG_PATH + "Activity_Log.csv", ios::trunc);
+    r1 << "Time(s),Mode,Type,Direction,Key" << endl;
+    r2 << "Time(s),Code,Description" << endl;
+    r1.close(); r2.close();
 
-    ofstream resetFile(LOG_PATH + "Keybind_Log.csv", ios::trunc);
-    ofstream resetActivity(LOG_PATH + "Activity_Log.csv", ios::trunc);
+    logActivity("STATUS-000", "Startup Successful: Files Ready");
+    logActivity("STATUS-001", "Session Started");
 
-    // Check if files opened successfully before writing headers ----------------------------------
-    if (!resetFile.is_open() || !resetActivity.is_open()) {
-        cerr << "ERROR-00: Startup Failure. Path: " << LOG_PATH << endl;
-        return 1;
-    }
-
-    resetFile << "Time(s),Mode,Type,Direction,Key" << endl;
-    resetActivity << "Time(s),Code,Description" << endl;
-    resetFile.close();
-    resetActivity.close();
-
-    logActivity("STATUS-00", "Startup Successful: Files Ready");
-    logActivity("STATUS-02", "Session Started");
-
-    // Welcome Message ----------------------------------------------------------------------------
     while (true) {
-        // Exit check -----------------------------------------------------------------------------
-        if (kbhit()) {
-            char ch = getch_linux();
-            // Exit check for ESC key -------------------------------------------------------------
-            if (ch == 27) break; // ESC
+        char mode = isCapsLockOn() ? 'P' : 'C';
 
-            // Check for Mode Changes (~ + S or ~ + O) --------------------------------------------
-            if (ch == '~') {
-                char next = getch_linux();
-                // Handle Mode Toggles with Constraints --------------------------------------------
+        if (kbhit()) {
+            string key_pressed = "";
+            unsigned char ch = getchar();
+
+            if (ch == 27) { // Escape Sequence
+                if (kbhit()) {
+                    getchar(); // skip '['
+                    unsigned char sub = getchar();
+                    if (sub == 'A') key_pressed = "UP";
+                    else if (sub == 'B') key_pressed = "DOWN";
+                    else if (sub == 'C') key_pressed = "RIGHT";
+                    else if (sub == 'D') key_pressed = "LEFT";
+                } else break; // ESC
+            } else if (ch == '~') {
+                char next = getchar();
                 if (toupper(next) == 'S') {
-                    // Constraint: Cannot enter ~S if already in ~O. Must Esc and restart. --------
                     if (isOperationalMode) {
-                        logError("ERROR-06", "Mode Switch Denied");
+                        logActivity("ERROR-302", "Mode Switch Denied: Exit ~O first");
                     } else {
-                        isStartupMode = true;
-                        logActivity("STATUS-10", "Sequence Initiated");
-                        
-                        // Startup Sequence logic -------------------------------------------------
-                        int connectors[3][4] = {{0,1,2,3}, {4,5,6,7}, {8,11,12,13}};
-                        // Phase 1: 1.0s Pulses with Real-Time Delay --------------------------------------
+                        logActivity("STATUS-302", "Sequence Initiated");
+                        int connectors[3][4] = {{0,3,4,1}, {8,9,10,9}, {2,6,5,11}};
                         for (int r = 0; r < 3; r++) {
-                            logActivity("STATUS-11", "Testing Rack " + to_string(r+1));
-                            // Phase 1: 1.0s Pulses with Real-Time Delay --------------------------
+                            logActivity("STATUS-303", "Testing Rack Connector " + to_string(r+1));
                             for (int g = 0; g < 4; g++) {
                                 setGPIO(connectors[r][g], 1);
-                                logActivity("STATUS-13", "GPIO " + to_string(connectors[r][g]) + " ON");
-                                this_thread::sleep_for(chrono::milliseconds(1000));
+                                logActivity("STATUS-304", "GPIO " + to_string(connectors[r][g]) + " ON");
+                                this_thread::sleep_for(chrono::milliseconds(500));
                                 setGPIO(connectors[r][g], 0);
-                                logActivity("STATUS-13", "GPIO " + to_string(connectors[r][g]) + " OFF");
-                                this_thread::sleep_for(chrono::milliseconds(1000));
+                                logActivity("STATUS-304", "GPIO " + to_string(connectors[r][g]) + " OFF");
+                                this_thread::sleep_for(chrono::milliseconds(500));
                             }
                         }
-                        logActivity("STATUS-14", "Sequence Complete");
-                        isStartupMode = false;
+                        logActivity("STATUS-305", "Sequence Complete");
                     }
                 } else if (toupper(next) == 'O') {
                     isOperationalMode = true;
-                    logActivity("STATUS-05", "Operational Mode Active");
+                    logActivity("STATUS-300", "Mode Changed: Operational Mode");
                 }
-            } else if (isOperationalMode) {
-                char mode = isCapsLockOn() ? 'P' : 'C';
-                processAction(ch, mode);
+            } else if (ch == '\t') key_pressed = "TAB";
+            else if (ch == ' ') key_pressed = "SPACE";
+            else key_pressed = string(1, toupper(ch));
+
+            if (isOperationalMode && key_pressed != "") {
+                processAction(key_pressed, mode);
+            }
+        } else {
+            if (isOperationalMode) {
+                logData('F', "--", "-", 'N', mode);
+                last_key_fired = ""; // Reset tracker when no key is held
             }
         }
-        
-        this_thread::sleep_for(chrono::milliseconds(100));
 
-        // Only increment time in Operational Mode ------------------------------------------------
         if (isOperationalMode) time_counter += 0.1;
+        this_thread::sleep_for(chrono::milliseconds(100));
     }
 
-    logActivity("STATUS-01", "Session Ended");
-    logActivity("STATUS-04", "Shutdown Successful");
-    
-    // Final exit sequence ------------------------------------------------------------------------
+    logActivity("STATUS-002", "Session Ended");
+    logActivity("STATUS-003", "Shutdown Successful");
     if(chip) gpiod_chip_close(chip);
     return 0;
 }
-
-// Compilation Instructions =======================================================================
-// g++ DTOController.cpp -lgpiod -o DTOController
