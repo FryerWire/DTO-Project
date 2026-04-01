@@ -4,8 +4,12 @@
     UI Flow:
     - 0 : Menu Mode
     - 1 : Startup Sequence Mode
-    - 2 : Operational Mode
+    - 2 : Operational Mode (Starts in Continuous 'C')
     - Esc : Quit Program
+    
+    Mappings:
+    - Translation: W/S (+/-X), A/D (-/+Y), Q/E (-/+Z)
+    - Rotation:    I/K (+/-Pitch), J/L (-/+Yaw), U/O (-/+Roll)
 */
 
 #include <iostream>
@@ -128,18 +132,22 @@ void processAction(string key_id, char mode) {
         return;
     }
 
-    if (key_id == "W") { logData('T', "+X", "W", 'N', mode); setGPIO(0, 1); setGPIO(8, 1); }
+    // Translation Mappings
+    if (key_id == "W")      { logData('T', "+X", "W", 'N', mode); setGPIO(0, 1); setGPIO(8, 1); }
     else if (key_id == "S") { logData('T', "-X", "S", 'N', mode); setGPIO(5, 1); setGPIO(11, 1); }
     else if (key_id == "A") { logData('T', "-Y", "A", 'N', mode); setGPIO(2, 1); setGPIO(6, 1); }
     else if (key_id == "D") { logData('T', "+Y", "D", 'N', mode); setGPIO(1, 1); setGPIO(9, 1); }
-    else if (key_id == "SPACE") { logData('T', "+Z", "Space", 'N', mode); setGPIO(4, 1); setGPIO(10, 1); }
-    else if (key_id == "TAB") { logData('T', "-Z", "Tab", 'N', mode); setGPIO(3, 1); setGPIO(9, 1); }
-    else if (key_id == "UP") { logData('R', "+P", "UpArrow", 'N', mode); setGPIO(9, 1); setGPIO(4, 1); }
-    else if (key_id == "DOWN") { logData('R', "-P", "DownArrow", 'N', mode); setGPIO(3, 1); setGPIO(10, 1); }
-    else if (key_id == "LEFT") { logData('R', "-Y", "LeftArrow", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
-    else if (key_id == "RIGHT") { logData('R', "+Y", "RightArrow", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
-    else if (key_id == "[") { logData('R', "-R", "RollLeft", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
-    else if (key_id == "]") { logData('R', "+R", "RollRight", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
+    else if (key_id == "Q") { logData('T', "-Z", "Q", 'N', mode); setGPIO(3, 1); setGPIO(9, 1); }
+    else if (key_id == "E") { logData('T', "+Z", "E", 'N', mode); setGPIO(4, 1); setGPIO(10, 1); }
+    
+    // Rotation Mappings
+    else if (key_id == "I") { logData('R', "+PITCH", "I", 'N', mode); setGPIO(9, 1); setGPIO(4, 1); }
+    else if (key_id == "K") { logData('R', "-PITCH", "K", 'N', mode); setGPIO(3, 1); setGPIO(10, 1); }
+    else if (key_id == "J") { logData('R', "-YAW",   "J", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
+    else if (key_id == "L") { logData('R', "+YAW",   "L", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
+    else if (key_id == "U") { logData('R', "-ROLL",  "U", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
+    else if (key_id == "O") { logData('R', "+ROLL",  "O", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
+    
     else { 
         logData('F', "--", key_id, 'E', mode); 
         logActivity("ERROR-300", "Incorrect Keybind"); 
@@ -180,22 +188,7 @@ int main() {
     while (true) {
         if (kbhit()) {
             unsigned char ch = getchar();
-            if (ch == 27) { // ESC Handling
-                if (kbhit()) { // Multi-byte Arrow key logic
-                    getchar(); // skip '['
-                    char sub = getchar();
-                    if (current_program_mode == 2) {
-                        string key_id = "";
-                        if (sub == 'A') key_id = "UP";
-                        else if (sub == 'B') key_id = "DOWN";
-                        else if (sub == 'C') key_id = "RIGHT";
-                        else if (sub == 'D') key_id = "LEFT";
-                        
-                        if (key_id != "") processAction(key_id, current_firing_mode);
-                    }
-                    continue; // Skip processing the ESC byte as a separate key
-                } else break; // Real ESC
-            }
+            if (ch == 27) break; // ESC
 
             if (current_program_mode == 0) {
                 if (ch == '1') {
@@ -216,22 +209,17 @@ int main() {
                     logActivity("STATUS-305", "Sequence Complete");
                     current_program_mode = 0; displayMenu();
                 } else if (ch == '2') {
-                    current_program_mode = 2; displayMenu();
+                    current_program_mode = 2;
+                    current_firing_mode = 'C'; // Automatically start in Continuous Mode
+                    logActivity("STATUS-300", "Mode Changed: Operational Mode Active");
+                    displayMenu();
                 }
             } else if (current_program_mode == 2) {
                 if (ch == '1') { current_firing_mode = 'C'; logActivity("STATUS-300", "Mode Changed: Continuous Mode"); }
                 else if (ch == '2') { current_firing_mode = 'P'; logActivity("STATUS-300", "Mode Changed: Pulse Mode"); }
                 else if (ch == '0') { current_program_mode = 0; displayMenu(); }
                 else {
-                    string key_id = "";
-                    if (ch == '\t') key_id = "TAB";
-                    else if (ch == ' ') key_id = "SPACE";
-                    else if (ch == '[' || ch == ']') key_id = string(1, ch);
-                    else if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')) {
-                        key_id = string(1, toupper(ch));
-                    } else {
-                        key_id = string(1, ch); // Catch-all for logging errors
-                    }
+                    string key_id = string(1, toupper(ch));
                     processAction(key_id, current_firing_mode);
                 }
             }
