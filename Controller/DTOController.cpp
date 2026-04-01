@@ -8,23 +8,6 @@
     - Activity_Log.csv tracks high-level Application Codes (STATUS and ERROR).
     - Toggle Modes: ~ + S (Startup Sequence) | ~ + O (Operational Mode).
 
-    Code:
-    ERROR-00: Startup Failure - Cannot open/create log files.
-    ERROR-01: GPIO Chip Failure - Hardware not detected.
-    ERROR-03: Incorrect Keybind - Key pressed is not mapped to an action.
-    ERROR-06: Mode Switch Denied - Attempted Startup (~S) while in Operational Mode.
-
-    STATUS-00: Startup Successful - Directories and file headers initialized.
-    STATUS-02: Session Started - User loop is active.
-    STATUS-03: Key Registered - Valid movement key processed and logged.
-    STATUS-04: Shutdown Successful - Cleanup complete, application closing.
-    STATUS-05: Operational Mode Active - System switched to Mode ~O.
-    STATUS-10: Sequence Initiated - Startup Sequence (~S) started.
-    STATUS-11: Testing Rack Connector [N] - Diagnostic loop entering a specific rack.
-    STATUS-12: Rack Connector [N] PASS - Diagnostic for specific rack completed.
-    STATUS-13: GPIO [N] ON/OFF - Specific pin state change during diagnostic.
-    STATUS-14: All GPIO Successfully Activated - Diagnostic loop finished successfully.
-
     Architecture: Linux / libgpiod v2.x
     Pin Controller: pinctrl-rp1
 */
@@ -71,11 +54,12 @@ void initGPIO() {
         }
     }
 
-    // Correct way to get the chip name in libgpiod v2:
+    // Fixed v2.x implementation to avoid "Incomplete Type" error
     struct gpiod_chip_info* info = gpiod_chip_get_info(chip);
     if (info) {
-        cout << "[STATUS-00] GPIO System Online: " << gpiod_chip_info_get_name(info) << endl;
-        gpiod_chip_info_free(info); // Must free the info object after use
+        const char* name = gpiod_chip_info_get_name(info);
+        cout << "[STATUS-00] GPIO System Online: " << (name ? name : "Unknown Chip") << endl;
+        gpiod_chip_info_free(info); // Release memory for the info struct
     }
 }
 
@@ -109,7 +93,7 @@ int kbhit() {
         termios term;
         tcgetattr(STDIN, &term);
         term.c_lflag &= ~ICANON;
-        term.c_lflag &= ~ECHO; // Don't echo keys to terminal
+        term.c_lflag &= ~ECHO; 
         tcsetattr(STDIN, TCSANOW, &term);
         setbuf(stdin, NULL);
         initialized = true;
@@ -136,7 +120,6 @@ void logActivity(string code, string description) {
         activityFile << fixed << setprecision(2) << time_counter << "," << code << "," << description << endl;
         activityFile.close();
     }
-    // Print Status to Terminal as requested
     cout << fixed << setprecision(2) << "[" << time_counter << "s] " << code << ": " << description << endl;
 }
 
@@ -161,7 +144,6 @@ void processAction(char key, char mode) {
         case 'D': logData('T', "+Y", "D", 'N', mode); setGPIO(1, 1); setGPIO(9, 1); break;
         case ' ': logData('T', "+Z", "Space", 'N', mode); setGPIO(4, 1); setGPIO(10, 1); break;
         case 'X': logData('T', "-Z", "X", 'N', mode); setGPIO(3, 1); setGPIO(9, 1); break;
-        // Rotation
         case 'I': logData('R', "+P", "I", 'N', mode); setGPIO(9, 1); setGPIO(4, 1); break;
         case 'K': logData('R', "-P", "K", 'N', mode); setGPIO(3, 1); setGPIO(10, 1); break;
         default:  logActivity("ERROR-03", "Incorrect Keybind Detected"); break;
@@ -177,7 +159,7 @@ int main() {
     ofstream resetFile(LOG_PATH + "Keybind_Log.csv", ios::trunc);
     ofstream resetActivity(LOG_PATH + "Activity_Log.csv", ios::trunc);
     if (!resetFile.is_open() || !resetActivity.is_open()) {
-        cerr << "[ERROR-00] Startup Failure. Path issues." << endl;
+        cerr << "[ERROR-00] Startup Failure. Check Folder Permissions." << endl;
         return 1;
     }
     resetFile << "Time(s),Mode,Type,Direction,Key" << endl;
@@ -196,7 +178,7 @@ int main() {
     while (true) {
         if (kbhit()) {
             char ch = getchar();
-            if (ch == 27) break; // ESC logic
+            if (ch == 27) break; 
 
             if (ch == '~') {
                 char next = getchar();
@@ -237,5 +219,3 @@ int main() {
     if(chip) gpiod_chip_close(chip);
     return 0;
 }
-// Compilation Instructions =======================================================================
-// g++ DTOController.cpp -lgpiod -o DTOController
