@@ -9,7 +9,7 @@
     
     Mappings:
     - Translation: W/S (+/-X), A/D (-/+Y), Q/E (-/+Z)
-    - Rotation:    I/K (+/-Pitch), J/L (-/+Yaw), U/O (-/+Roll)
+    - Rotation:     I/K (+/-Pitch), J/L (-/+Yaw), U/O (-/+Roll)
 */
 
 #include <iostream>
@@ -59,8 +59,12 @@ void initGPIO() {
     chip = gpiod_chip_open(chip_path);
     if (!chip) {
         chip = gpiod_chip_open("/dev/gpiochip0"); 
-        if (!chip) return;
+        if (!chip) {
+            logActivity("ERROR-303", "GPIO Chip Failure: Cannot find chip4 or chip0");
+            return;
+        }
     }
+    logActivity("STATUS-306", "GPIO Init Success: Controller linked to hardware");
 }
 
 void setGPIO(int pin, int value) {
@@ -120,6 +124,8 @@ void logData(char type, string direction, string keyname, char statusChar, char 
         if (statusChar == 'N' && keyname != "-") {
             logActivity("STATUS-301", "Key Registered: " + keyname);
         }
+    } else {
+        logActivity("ERROR-101", "Write Failure: Keybind_Log is inaccessible");
     }
 }
 
@@ -127,7 +133,7 @@ void logData(char type, string direction, string keyname, char statusChar, char 
 
 void processAction(string key_id, char mode) {
     if (mode == 'P' && key_id == last_key_fired) {
-        logActivity("ERROR-300", "Key cannot be operated because it is in pulse mode");
+        logActivity("ERROR-305", "Mode Specific Block: Pulse Mode repeat prevented for " + key_id);
         logData('F', "--", key_id, 'E', 'P');
         return;
     }
@@ -158,6 +164,7 @@ void processAction(string key_id, char mode) {
 // UI =============================================================================================
 
 void displayMenu() {
+    logActivity("STATUS-402", "UI Redraw: Menu refreshed");
     if (current_program_mode == 0) {
         cout << "\n=================================================\nDTO Program\n-------------------------------------------------\nProgram Modes:\n- 0   : Menu Mode\n- 1   : Startup Sequence Mode\n- 2   : Operational Mode\n- Esc : Quit Mode\n=================================================\n>> " << flush;
     } else if (current_program_mode == 1) {
@@ -170,7 +177,12 @@ void displayMenu() {
 // Main ===========================================================================================
 
 int main() {
-    system(("mkdir -p " + LOG_PATH).c_str());
+    if (system(("mkdir -p " + LOG_PATH).c_str()) == 0) {
+        logActivity("STATUS-103", "Directory Created: Log storage ready");
+    } else {
+        logActivity("ERROR-103", "Dir Creation Fail: Check permissions");
+    }
+
     initGPIO();
     ofstream r1(LOG_PATH + "Keybind_Log.csv", ios::trunc);
     ofstream r2(LOG_PATH + "Activity_Log.csv", ios::trunc);
@@ -180,7 +192,10 @@ int main() {
         r2 << "Time(s),Code,Description" << endl;
         r1.close(); r2.close();
         logActivity("STATUS-000", "Startup Successful: Files Ready");
-    } else { return 1; }
+    } else { 
+        logActivity("ERROR-000", "Startup Failure: Path Inaccessible");
+        return 1; 
+    }
 
     logActivity("STATUS-001", "Session Started");
     displayMenu();
