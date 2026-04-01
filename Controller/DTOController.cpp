@@ -2,11 +2,12 @@
     DTO Controller - Raspberry Pi 5 Optimized Port
     
     Features:
+    - 1 : Switch to Continuous Mode (C)
+    - 2 : Switch to Pulse Mode (P)
     - ~S: Startup Sequence (Diagnostic)
     - ~O: Operational Mode (Flight)
-    - Tab: Down (-Z) | Space: Up (+Z)
-    - [ / ]: Roll Rotation
-    - Caps Lock: Toggle Continuous (C) vs Pulse (P)
+    - Tab: Down (-Z) | Space: Up (+Z) | [ / ]: Roll
+    - Maps all Status/Error codes to terminal output.
 */
 
 #include <iostream>
@@ -30,6 +31,7 @@ using namespace std;
 // Global Variables ===============================================================================
 double time_counter = 0.0;
 string last_key_fired = ""; 
+char current_firing_mode = 'C'; // Default to Continuous
 const string LOG_PATH = "./Logs/"; 
 bool isOperationalMode = false; 
 struct gpiod_chip* chip;
@@ -88,15 +90,6 @@ int kbhit() {
     return bytesWaiting;
 }
 
-bool isCapsLockOn() {
-    int fd = open("/dev/console", O_RDONLY);
-    if (fd < 0) return false;
-    long state;
-    ioctl(fd, KDGKBLED, &state);
-    close(fd);
-    return (state & LED_CAP);
-}
-
 // Logging ========================================================================================
 
 void logActivity(string code, string description) {
@@ -105,6 +98,7 @@ void logActivity(string code, string description) {
         activityFile << fixed << setprecision(2) << time_counter << "," << code << "," << description << endl;
         activityFile.close();
     }
+    // Requirement 4: Print all status/error codes to terminal
     cout << fixed << setprecision(2) << time_counter << "," << code << "," << description << endl;
 }
 
@@ -122,9 +116,9 @@ void logData(char type, string direction, string keyname, char statusChar, char 
 // Mapping Logic ==================================================================================
 
 void processAction(string key_id, char mode) {
-    // Pulse Mode Restriction: If key is held, trigger ERROR-300
+    // Requirement 3: Error for holding key in Pulse Mode
     if (mode == 'P' && key_id == last_key_fired) {
-        logActivity("ERROR-300", "Key cannot be operated: Pulse Mode active");
+        logActivity("ERROR-300", "Key cannot be operated: Pulse Mode active (Release key)");
         logData('F', "--", key_id, 'E', 'P');
         return;
     }
@@ -164,13 +158,11 @@ int main() {
     logActivity("STATUS-001", "Session Started");
 
     while (true) {
-        char mode = isCapsLockOn() ? 'P' : 'C';
-
         if (kbhit()) {
             string key_pressed = "";
             unsigned char ch = getchar();
 
-            if (ch == 27) { // Escape Sequence
+            if (ch == 27) { // Escape Sequence for Arrows
                 if (kbhit()) {
                     getchar(); // skip '['
                     unsigned char sub = getchar();
@@ -178,8 +170,18 @@ int main() {
                     else if (sub == 'B') key_pressed = "DOWN";
                     else if (sub == 'C') key_pressed = "RIGHT";
                     else if (sub == 'D') key_pressed = "LEFT";
-                } else break; // ESC
-            } else if (ch == '~') {
+                } else break; // Actual ESC key
+            } 
+            // Requirement 1: 1 for Continuous, 2 for Pulse
+            else if (ch == '1') {
+                current_firing_mode = 'C';
+                logActivity("STATUS-300", "Mode Changed: Continuous Mode Active");
+            }
+            else if (ch == '2') {
+                current_firing_mode = 'P';
+                logActivity("STATUS-300", "Mode Changed: Pulse Mode Active");
+            }
+            else if (ch == '~') {
                 char next = getchar();
                 if (toupper(next) == 'S') {
                     if (isOperationalMode) {
@@ -202,19 +204,19 @@ int main() {
                     }
                 } else if (toupper(next) == 'O') {
                     isOperationalMode = true;
-                    logActivity("STATUS-300", "Mode Changed: Operational Mode");
+                    logActivity("STATUS-300", "Mode Changed: Operational Mode Active");
                 }
             } else if (ch == '\t') key_pressed = "TAB";
             else if (ch == ' ') key_pressed = "SPACE";
             else key_pressed = string(1, toupper(ch));
 
             if (isOperationalMode && key_pressed != "") {
-                processAction(key_pressed, mode);
+                processAction(key_pressed, current_firing_mode);
             }
         } else {
             if (isOperationalMode) {
-                logData('F', "--", "-", 'N', mode);
-                last_key_fired = ""; // Reset tracker when no key is held
+                logData('F', "--", "-", 'N', current_firing_mode);
+                last_key_fired = ""; // Clear tracker when key is released
             }
         }
 
