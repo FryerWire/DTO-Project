@@ -70,7 +70,13 @@ void initGPIO() {
             return;
         }
     }
-    cout << "[STATUS-00] GPIO System Online: " << gpiod_chip_get_info(chip)->name << endl;
+
+    // Correct way to get the chip name in libgpiod v2:
+    struct gpiod_chip_info* info = gpiod_chip_get_info(chip);
+    if (info) {
+        cout << "[STATUS-00] GPIO System Online: " << gpiod_chip_info_get_name(info) << endl;
+        gpiod_chip_info_free(info); // Must free the info object after use
+    }
 }
 
 void setGPIO(int pin, int value) {
