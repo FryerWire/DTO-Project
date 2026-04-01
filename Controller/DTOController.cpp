@@ -54,12 +54,11 @@ void initGPIO() {
         }
     }
 
-    // Fixed v2.x implementation to avoid "Incomplete Type" error
     struct gpiod_chip_info* info = gpiod_chip_get_info(chip);
     if (info) {
         const char* name = gpiod_chip_info_get_name(info);
         cout << "[STATUS-00] GPIO System Online: " << (name ? name : "Unknown Chip") << endl;
-        gpiod_chip_info_free(info); // Release memory for the info struct
+        gpiod_chip_info_free(info);
     }
 }
 
@@ -136,18 +135,25 @@ void logData(char type, string direction, string keyname, char statusChar, char 
 
 // Mapping Logic ==================================================================================
 
-void processAction(char key, char mode) {
-    switch (toupper(key)) {  
-        case 'W': logData('T', "+X", "W", 'N', mode); setGPIO(0, 1); setGPIO(8, 1); break;
-        case 'S': logData('T', "-X", "S", 'N', mode); setGPIO(5, 1); setGPIO(11, 1); break;
-        case 'A': logData('T', "-Y", "A", 'N', mode); setGPIO(2, 1); setGPIO(6, 1); break;
-        case 'D': logData('T', "+Y", "D", 'N', mode); setGPIO(1, 1); setGPIO(9, 1); break;
-        case ' ': logData('T', "+Z", "Space", 'N', mode); setGPIO(4, 1); setGPIO(10, 1); break;
-        case 'X': logData('T', "-Z", "X", 'N', mode); setGPIO(3, 1); setGPIO(9, 1); break;
-        case 'I': logData('R', "+P", "I", 'N', mode); setGPIO(9, 1); setGPIO(4, 1); break;
-        case 'K': logData('R', "-P", "K", 'N', mode); setGPIO(3, 1); setGPIO(10, 1); break;
-        default:  logActivity("ERROR-03", "Incorrect Keybind Detected"); break;
-    }
+void processAction(string key_id, char mode) {
+    // Translation
+    if (key_id == "W") { logData('T', "+X", "W", 'N', mode); setGPIO(0, 1); setGPIO(8, 1); }
+    else if (key_id == "S") { logData('T', "-X", "S", 'N', mode); setGPIO(5, 1); setGPIO(11, 1); }
+    else if (key_id == "A") { logData('T', "-Y", "A", 'N', mode); setGPIO(2, 1); setGPIO(6, 1); }
+    else if (key_id == "D") { logData('T', "+Y", "D", 'N', mode); setGPIO(1, 1); setGPIO(9, 1); }
+    else if (key_id == "SPACE") { logData('T', "+Z", "Space", 'N', mode); setGPIO(4, 1); setGPIO(10, 1); }
+    else if (key_id == "X") { logData('T', "-Z", "X", 'N', mode); setGPIO(3, 1); setGPIO(9, 1); }
+    
+    // Rotation (Mapped to Arrows)
+    else if (key_id == "UP") { logData('R', "+P", "UpArrow", 'N', mode); setGPIO(9, 1); setGPIO(4, 1); }
+    else if (key_id == "DOWN") { logData('R', "-P", "DownArrow", 'N', mode); setGPIO(3, 1); setGPIO(10, 1); }
+    else if (key_id == "LEFT") { logData('R', "-Y", "LeftArrow", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
+    else if (key_id == "RIGHT") { logData('R', "+Y", "RightArrow", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
+    
+    // Rotation (Mapped to Ctrl+Arrows/Rotation Keys)
+    else if (key_id == "I") { logData('R', "+P", "I", 'N', mode); setGPIO(9, 1); setGPIO(4, 1); }
+    else if (key_id == "K") { logData('R', "-P", "K", 'N', mode); setGPIO(3, 1); setGPIO(10, 1); }
+    else { logActivity("ERROR-03", "Incorrect Keybind Detected: " + key_id); }
 }
 
 // Main Logic =====================================================================================
@@ -159,7 +165,7 @@ int main() {
     ofstream resetFile(LOG_PATH + "Keybind_Log.csv", ios::trunc);
     ofstream resetActivity(LOG_PATH + "Activity_Log.csv", ios::trunc);
     if (!resetFile.is_open() || !resetActivity.is_open()) {
-        cerr << "[ERROR-00] Startup Failure. Check Folder Permissions." << endl;
+        cerr << "[ERROR-00] Startup Failure." << endl;
         return 1;
     }
     resetFile << "Time(s),Mode,Type,Direction,Key" << endl;
@@ -168,47 +174,56 @@ int main() {
 
     cout << "\n====================================================" << endl;
     cout << " DTO MISSION CONTROL - RPi5 ACTIVE" << endl;
-    cout << " - Press '~' then 'S' for Startup Sequence" << endl;
-    cout << " - Press '~' then 'O' for Operational Mode" << endl;
-    cout << " - Press 'Esc' to Shutdown" << endl;
+    cout << " - W,A,S,D : Translation | SPACE/X : Up/Down" << endl;
+    cout << " - ARROWS  : Rotation (Pitch/Yaw)" << endl;
+    cout << " - ESC     : Shutdown" << endl;
     cout << "====================================================\n" << endl;
 
     logActivity("STATUS-02", "Session Started");
 
     while (true) {
         if (kbhit()) {
+            string key_pressed = "";
             char ch = getchar();
-            if (ch == 27) break; 
 
-            if (ch == '~') {
+            if (ch == 27) { // ESC or Escape Sequence
+                if (kbhit()) { // It's an escape sequence (Arrow keys)
+                    getchar(); // skip '['
+                    char sub = getchar();
+                    if (sub == 'A') key_pressed = "UP";
+                    else if (sub == 'B') key_pressed = "DOWN";
+                    else if (sub == 'C') key_pressed = "RIGHT";
+                    else if (sub == 'D') key_pressed = "LEFT";
+                } else {
+                    break; // Actual ESC key
+                }
+            } else if (ch == '~') {
                 char next = getchar();
                 if (toupper(next) == 'S') {
-                    if (isOperationalMode) {
-                        logActivity("ERROR-06", "Mode Switch Denied: Exit ~O first");
-                    } else {
-                        logActivity("STATUS-10", "Sequence Initiated");
-                        int connectors[3][4] = {{0,3,4,1}, {8,9,10,9}, {2,6,5,11}};
-                        for (int r = 0; r < 3; r++) {
-                            logActivity("STATUS-11", "Testing Rack Connector " + to_string(r+1));
-                            for (int g = 0; g < 4; g++) {
-                                setGPIO(connectors[r][g], 1);
-                                logActivity("STATUS-13", "GPIO " + to_string(connectors[r][g]) + " ON");
-                                this_thread::sleep_for(chrono::milliseconds(500));
-                                setGPIO(connectors[r][g], 0);
-                                logActivity("STATUS-13", "GPIO " + to_string(connectors[r][g]) + " OFF");
-                                this_thread::sleep_for(chrono::milliseconds(500));
-                            }
-                            logActivity("STATUS-12", "Rack Connector " + to_string(r+1) + " PASS");
+                    logActivity("STATUS-10", "Sequence Initiated");
+                    int connectors[3][4] = {{0,3,4,1}, {8,9,10,9}, {2,6,5,11}};
+                    for (int r = 0; r < 3; r++) {
+                        logActivity("STATUS-11", "Testing Rack Connector " + to_string(r+1));
+                        for (int g = 0; g < 4; g++) {
+                            setGPIO(connectors[r][g], 1);
+                            this_thread::sleep_for(chrono::milliseconds(200));
+                            setGPIO(connectors[r][g], 0);
+                            this_thread::sleep_for(chrono::milliseconds(200));
                         }
-                        logActivity("STATUS-14", "All GPIO Successfully Activated");
                     }
+                    logActivity("STATUS-14", "All GPIO Successfully Activated");
                 } else if (toupper(next) == 'O') {
                     isOperationalMode = true;
                     logActivity("STATUS-05", "Operational Mode Active");
                 }
-            } else if (isOperationalMode) {
+            } else {
+                key_pressed = string(1, toupper(ch));
+                if (ch == ' ') key_pressed = "SPACE";
+            }
+
+            if (isOperationalMode && key_pressed != "") {
                 char mode = isCapsLockOn() ? 'P' : 'C';
-                processAction(ch, mode);
+                processAction(key_pressed, mode);
             }
         }
         if (isOperationalMode) time_counter += 0.1;
