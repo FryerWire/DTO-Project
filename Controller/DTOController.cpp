@@ -1,8 +1,12 @@
 /*
     DTO Controller - Raspberry Pi 5 Optimized Port
     
-    Architecture: Linux / libgpiod v2.x
-    Pin Controller: pinctrl-rp1
+    Features:
+    - ~S: Startup Sequence (Diagnostic)
+    - ~O: Operational Mode (Flight)
+    - Tab: Down (-Z) | Space: Up (+Z)
+    - [ / ]: Roll Rotation
+    - Caps Lock: Toggle Continuous (C) vs Pulse (P)
 */
 
 #include <iostream>
@@ -26,7 +30,6 @@ using namespace std;
 // Global Variables ===============================================================================
 double time_counter = 0.0;
 string last_key_fired = ""; 
-bool isKeyHeld = false;
 const string LOG_PATH = "./Logs/"; 
 bool isOperationalMode = false; 
 struct gpiod_chip* chip;
@@ -43,13 +46,9 @@ void initGPIO() {
     if (!chip) {
         chip = gpiod_chip_open("/dev/gpiochip0"); 
         if (!chip) {
-            cerr << "[ERROR-000] GPIO Chip Failure." << endl;
+            cerr << "[ERROR-303] GPIO Chip Failure." << endl;
             return;
         }
-    }
-    struct gpiod_chip_info* info = gpiod_chip_get_info(chip);
-    if (info) {
-        gpiod_chip_info_free(info);
     }
 }
 
@@ -106,11 +105,10 @@ void logActivity(string code, string description) {
         activityFile << fixed << setprecision(2) << time_counter << "," << code << "," << description << endl;
         activityFile.close();
     }
-    // Formatted Terminal Output
     cout << fixed << setprecision(2) << time_counter << "," << code << "," << description << endl;
 }
 
-void logData(char type, string direction, string keyname, char statusChar, char mode = 'C') {
+void logData(char type, string direction, string keyname, char statusChar, char mode) {
     ofstream outFile(LOG_PATH + "Keybind_Log.csv", ios_base::app);
     if (outFile.is_open()) {  
         outFile << fixed << setprecision(2) << time_counter << "," << mode << "," << type << "," << direction << "," << keyname << endl;
@@ -124,12 +122,11 @@ void logData(char type, string direction, string keyname, char statusChar, char 
 // Mapping Logic ==================================================================================
 
 void processAction(string key_id, char mode) {
-    if (mode == 'P') {
-        if (key_id == last_key_fired) {
-            logActivity("ERROR-300", "Hold Denied in Pulse Mode");
-            logData('F', "--", key_id, 'E', 'P');
-            return;
-        }
+    // Pulse Mode Restriction: If key is held, trigger ERROR-300
+    if (mode == 'P' && key_id == last_key_fired) {
+        logActivity("ERROR-300", "Key cannot be operated: Pulse Mode active");
+        logData('F', "--", key_id, 'E', 'P');
+        return;
     }
 
     if (key_id == "W") { logData('T', "+X", "W", 'N', mode); setGPIO(0, 1); setGPIO(8, 1); }
@@ -173,7 +170,7 @@ int main() {
             string key_pressed = "";
             unsigned char ch = getchar();
 
-            if (ch == 27) { // Escape Sequence for Arrows
+            if (ch == 27) { // Escape Sequence
                 if (kbhit()) {
                     getchar(); // skip '['
                     unsigned char sub = getchar();
@@ -181,29 +178,43 @@ int main() {
                     else if (sub == 'B') key_pressed = "DOWN";
                     else if (sub == 'C') key_pressed = "RIGHT";
                     else if (sub == 'D') key_pressed = "LEFT";
-                } else break; // Actual ESC key
+                } else break; // ESC
             } else if (ch == '~') {
                 char next = getchar();
-                if (toupper(next) == 'O') {
+                if (toupper(next) == 'S') {
+                    if (isOperationalMode) {
+                        logActivity("ERROR-302", "Mode Switch Denied: Exit ~O first");
+                    } else {
+                        logActivity("STATUS-302", "Sequence Initiated");
+                        int connectors[3][4] = {{0,3,4,1}, {8,9,10,9}, {2,6,5,11}};
+                        for (int r = 0; r < 3; r++) {
+                            logActivity("STATUS-303", "Testing Rack Connector " + to_string(r+1));
+                            for (int g = 0; g < 4; g++) {
+                                setGPIO(connectors[r][g], 1);
+                                logActivity("STATUS-304", "GPIO " + to_string(connectors[r][g]) + " ON");
+                                this_thread::sleep_for(chrono::milliseconds(500));
+                                setGPIO(connectors[r][g], 0);
+                                logActivity("STATUS-304", "GPIO " + to_string(connectors[r][g]) + " OFF");
+                                this_thread::sleep_for(chrono::milliseconds(500));
+                            }
+                        }
+                        logActivity("STATUS-305", "Sequence Complete");
+                    }
+                } else if (toupper(next) == 'O') {
                     isOperationalMode = true;
                     logActivity("STATUS-300", "Mode Changed: Operational Mode");
                 }
-            } else if (ch == '\t') {
-                key_pressed = "TAB";
-            } else if (ch == ' ') {
-                key_pressed = "SPACE";
-            } else {
-                key_pressed = string(1, toupper(ch));
-            }
+            } else if (ch == '\t') key_pressed = "TAB";
+            else if (ch == ' ') key_pressed = "SPACE";
+            else key_pressed = string(1, toupper(ch));
 
             if (isOperationalMode && key_pressed != "") {
                 processAction(key_pressed, mode);
             }
         } else {
             if (isOperationalMode) {
-                // Heartbeat logging for Free Fall state
                 logData('F', "--", "-", 'N', mode);
-                last_key_fired = ""; 
+                last_key_fired = ""; // Reset tracker when no key is held
             }
         }
 
