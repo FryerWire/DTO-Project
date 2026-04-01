@@ -122,29 +122,24 @@ void logData(char type, string direction, string keyname, char statusChar, char 
 // Mapping Logic ==================================================================================
 
 void processAction(string key_id, char mode) {
-    // Pulse Mode Restriction
     if (mode == 'P' && key_id == last_key_fired) {
         logActivity("ERROR-300", "Key cannot be operated because it is in pulse mode");
         logData('F', "--", key_id, 'E', 'P');
         return;
     }
 
-    // Translation Mappings
     if (key_id == "W") { logData('T', "+X", "W", 'N', mode); setGPIO(0, 1); setGPIO(8, 1); }
     else if (key_id == "S") { logData('T', "-X", "S", 'N', mode); setGPIO(5, 1); setGPIO(11, 1); }
     else if (key_id == "A") { logData('T', "-Y", "A", 'N', mode); setGPIO(2, 1); setGPIO(6, 1); }
     else if (key_id == "D") { logData('T', "+Y", "D", 'N', mode); setGPIO(1, 1); setGPIO(9, 1); }
     else if (key_id == "SPACE") { logData('T', "+Z", "Space", 'N', mode); setGPIO(4, 1); setGPIO(10, 1); }
     else if (key_id == "TAB") { logData('T', "-Z", "Tab", 'N', mode); setGPIO(3, 1); setGPIO(9, 1); }
-    
-    // Rotation Mappings
     else if (key_id == "UP") { logData('R', "+P", "UpArrow", 'N', mode); setGPIO(9, 1); setGPIO(4, 1); }
     else if (key_id == "DOWN") { logData('R', "-P", "DownArrow", 'N', mode); setGPIO(3, 1); setGPIO(10, 1); }
     else if (key_id == "LEFT") { logData('R', "-Y", "LeftArrow", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
     else if (key_id == "RIGHT") { logData('R', "+Y", "RightArrow", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
     else if (key_id == "[") { logData('R', "-R", "RollLeft", 'N', mode); setGPIO(2, 1); setGPIO(9, 1); }
     else if (key_id == "]") { logData('R', "+R", "RollRight", 'N', mode); setGPIO(6, 1); setGPIO(1, 1); }
-    
     else { 
         logData('F', "--", key_id, 'E', mode); 
         logActivity("ERROR-300", "Incorrect Keybind"); 
@@ -186,54 +181,58 @@ int main() {
         if (kbhit()) {
             unsigned char ch = getchar();
             if (ch == 27) { // ESC Handling
-                if (kbhit()) { // Swallow Escape Sequences (Arrows)
-                    getchar(); char sub = getchar();
+                if (kbhit()) { // Multi-byte Arrow key logic
+                    getchar(); // skip '['
+                    char sub = getchar();
                     if (current_program_mode == 2) {
                         string key_id = "";
                         if (sub == 'A') key_id = "UP";
                         else if (sub == 'B') key_id = "DOWN";
                         else if (sub == 'C') key_id = "RIGHT";
                         else if (sub == 'D') key_id = "LEFT";
-                        processAction(key_id, current_firing_mode);
+                        
+                        if (key_id != "") processAction(key_id, current_firing_mode);
                     }
+                    continue; // Skip processing the ESC byte as a separate key
                 } else break; // Real ESC
             }
 
-            // Mode Switching Logic
-            if (ch == '0') { current_program_mode = 0; displayMenu(); }
-            else if (ch == '1' && current_program_mode == 0) {
-                current_program_mode = 1; displayMenu();
-                logActivity("STATUS-302", "Sequence Initiated");
-                int connectors[3][4] = {{0,3,4,1}, {8,9,10,9}, {2,6,5,11}};
-                for (int r = 0; r < 3; r++) {
-                    logActivity("STATUS-303", "Testing Rack Connector " + to_string(r+1));
-                    for (int g = 0; g < 4; g++) {
-                        setGPIO(connectors[r][g], 1);
-                        logActivity("STATUS-304", "GPIO " + to_string(connectors[r][g]) + " ON");
-                        this_thread::sleep_for(chrono::milliseconds(250));
-                        setGPIO(connectors[r][g], 0);
-                        logActivity("STATUS-304", "GPIO " + to_string(connectors[r][g]) + " OFF");
-                        this_thread::sleep_for(chrono::milliseconds(250));
+            if (current_program_mode == 0) {
+                if (ch == '1') {
+                    current_program_mode = 1; displayMenu();
+                    logActivity("STATUS-302", "Sequence Initiated");
+                    int connectors[3][4] = {{0,3,4,1}, {8,9,10,9}, {2,6,5,11}};
+                    for (int r = 0; r < 3; r++) {
+                        logActivity("STATUS-303", "Testing Rack Connector " + to_string(r+1));
+                        for (int g = 0; g < 4; g++) {
+                            setGPIO(connectors[r][g], 1);
+                            logActivity("STATUS-304", "GPIO " + to_string(connectors[r][g]) + " ON");
+                            this_thread::sleep_for(chrono::milliseconds(250));
+                            setGPIO(connectors[r][g], 0);
+                            logActivity("STATUS-304", "GPIO " + to_string(connectors[r][g]) + " OFF");
+                            this_thread::sleep_for(chrono::milliseconds(250));
+                        }
                     }
+                    logActivity("STATUS-305", "Sequence Complete");
+                    current_program_mode = 0; displayMenu();
+                } else if (ch == '2') {
+                    current_program_mode = 2; displayMenu();
                 }
-                logActivity("STATUS-305", "Sequence Complete");
-                current_program_mode = 0; displayMenu();
-            } 
-            else if (ch == '2' && current_program_mode == 0) {
-                current_program_mode = 2; displayMenu();
-            }
-            // Flight Logic inside Operational Mode
-            else if (current_program_mode == 2) {
+            } else if (current_program_mode == 2) {
                 if (ch == '1') { current_firing_mode = 'C'; logActivity("STATUS-300", "Mode Changed: Continuous Mode"); }
                 else if (ch == '2') { current_firing_mode = 'P'; logActivity("STATUS-300", "Mode Changed: Pulse Mode"); }
+                else if (ch == '0') { current_program_mode = 0; displayMenu(); }
                 else {
                     string key_id = "";
                     if (ch == '\t') key_id = "TAB";
                     else if (ch == ' ') key_id = "SPACE";
                     else if (ch == '[' || ch == ']') key_id = string(1, ch);
-                    else key_id = string(1, toupper(ch));
-                    
-                    if (key_id != "") processAction(key_id, current_firing_mode);
+                    else if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')) {
+                        key_id = string(1, toupper(ch));
+                    } else {
+                        key_id = string(1, ch); // Catch-all for logging errors
+                    }
+                    processAction(key_id, current_firing_mode);
                 }
             }
         } else {
