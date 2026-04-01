@@ -126,14 +126,17 @@ struct gpiod_chip* chip;
     initGPIO() - Initializes GPIO chip for RPi 5.
 */
 void initGPIO() {
+    cout << ">> Initializing GPIO Chip..." << endl;
     chip = gpiod_chip_open(chip_path);
     if (!chip) {
-        // Fallback for some OS versions where it might still be chip 0
+        cout << ">> Chip 4 failed, attempting Chip 0 fallback..." << endl;
         chip = gpiod_chip_open("/dev/gpiochip0");
         if (!chip) {
-            cerr << "ERROR-01: Could not open GPIO chip" << endl;
+            cerr << "ERROR-01: Could not open any GPIO chip!" << endl;
+            return;
         }
     }
+    cout << ">> GPIO System Online." << endl;
 }
 
 
@@ -255,6 +258,7 @@ void logActivity(string code, string description) {
 */
 void logError(string errorCode, string title) {
     logActivity(errorCode, title);
+    cout << ">> " << errorCode << ": " << title << endl;
 }
 
 
@@ -278,6 +282,7 @@ void logData(char type, string direction, string keyname, char statusChar, char 
         
         if (statusChar == 'N' && keyname != "-") {
             logActivity("STATUS-03", "Key Registered: " + keyname);
+            cout << ">> Key Pressed: " << keyname << " (" << direction << ") | Mode: " << mode << endl;
         }
 
     } else {
@@ -359,6 +364,10 @@ void processAction(char key, char mode) {
     main() - The entry point of the program.
 */
 int main() {
+    cout << "========================================" << endl;
+    cout << "     DTO CONTROLLER - RPi5 EDITION      " << endl;
+    cout << "========================================" << endl;
+
     initGPIO();
     system(("mkdir -p " + LOG_PATH).c_str());
 
@@ -379,6 +388,8 @@ int main() {
     logActivity("STATUS-00", "Startup Successful: Files Ready");
     logActivity("STATUS-02", "Session Started");
 
+    cout << ">> System Ready. Press '~' + 'O' to begin." << endl;
+
     // Welcome Message ----------------------------------------------------------------------------
     while (true) {
         // Exit check -----------------------------------------------------------------------------
@@ -397,6 +408,7 @@ int main() {
                         logError("ERROR-06", "Mode Switch Denied");
                     } else {
                         isStartupMode = true;
+                        cout << ">> STARTUP SEQUENCE INITIATED..." << endl;
                         logActivity("STATUS-10", "Sequence Initiated");
                         
                         // Startup Sequence logic based on your Pin Layout mapping ----------------
@@ -405,6 +417,7 @@ int main() {
 
                         for (int r = 0; r < 3; r++) {
                             logActivity("STATUS-11", "Testing Rack " + to_string(r+1));
+                            cout << "   Testing Rack " << (r+1) << "..." << endl;
                             // Phase 1: 1.0s Pulses with Real-Time Delay --------------------------
                             for (int g = 0; g < 4; g++) {
                                 setGPIO(connectors[r][g], 1);
@@ -416,10 +429,12 @@ int main() {
                             }
                         }
                         logActivity("STATUS-14", "Sequence Complete");
+                        cout << ">> STARTUP SEQUENCE COMPLETE." << endl;
                         isStartupMode = false;
                     }
                 } else if (toupper(next) == 'O') {
                     isOperationalMode = true;
+                    cout << ">> OPERATIONAL MODE ACTIVE. LOGGING ENABLED." << endl;
                     logActivity("STATUS-05", "Operational Mode Active");
                 }
             } else if (isOperationalMode) {
@@ -436,6 +451,7 @@ int main() {
 
     logActivity("STATUS-01", "Session Ended");
     logActivity("STATUS-04", "Shutdown Successful");
+    cout << ">> Shutdown Complete. Goodbye." << endl;
     
     // Final exit sequence ------------------------------------------------------------------------
     if(chip) gpiod_chip_close(chip);
