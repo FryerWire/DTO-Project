@@ -7,7 +7,6 @@ Features:
 - Supports a menu system with a Startup Sequence mode for testing GPIO activation and an Operational Mode for real-time control of the thrusters.
 - Implements error handling for file access, incorrect keybinds, and mode-specific constraints.
 - Uses non-blocking input handling to allow for real-time processing of key events without freezing the program.
-- Firing mode (Continuous/Pulse) is determined by manual selection in Operational Mode: 1 = Continuous, 2 = Pulse.
 
 Functions:
 - main(): Initializes the program, handles the main loop for input processing and mode management, and performs cleanup on exit.
@@ -58,7 +57,7 @@ Codes:
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <linux/kd.h>
-#include <gpiod.h>
+#include <gpiod.h> 
 
 
 
@@ -115,28 +114,29 @@ string formatTimestamp(double t) {
 */
 enum gpiod_line_value getRelayValue(int val) {
     if (val == 1) {
-        return ACTIVE_LOW ? GPIOD_LINE_VALUE_INACTIVE : GPIOD_LINE_VALUE_ACTIVE;
+        return ACTIVE_LOW ? GPIOD_LINE_VALUE_INACTIVE : GPIOD_LINE_VALUE_ACTIVE;  // For val == 1, return the opposite value based on relay logic
     }
 
-    return ACTIVE_LOW ? GPIOD_LINE_VALUE_ACTIVE : GPIOD_LINE_VALUE_INACTIVE;
+    return ACTIVE_LOW ? GPIOD_LINE_VALUE_ACTIVE : GPIOD_LINE_VALUE_INACTIVE;      // For val == 0, return the opposite value based on relay logic
 }
 
 
 
 /*
     initGPIO - Initializes the GPIO chip for controlling the thrusters, with error handling for chip access
-               This function attempts to open the specified GPIO chip at gpioChipPath.
-               If it fails, it falls back to trying "/dev/gpiochip0".
-               If both attempts fail, it logs an error and returns without initializing the GPIO chip.
-               If successful, it logs a status message indicating that the GPIO initialization was successful
+               This function attempts to open the specified GPIO chip at gpioChipPath. 
+               If it fails, it falls back to trying "/dev/gpiochip0". 
+               If both attempts fail, it logs an error and returns without initializing the GPIO chip. 
+               If successful, it logs a status message indicating that the GPIO initialization was successful 
                and that the controller is linked to the hardware.
 */
 void initGPIO() {
     gpioChip = gpiod_chip_open(gpioChipPath);
     if (!gpioChip) {
-        gpioChip = gpiod_chip_open("/dev/gpiochip0");
+        gpioChip = gpiod_chip_open("/dev/gpiochip0"); 
         if (!gpioChip) {
             logActivity("ERROR-303", "GPIO Chip Failure: Cannot find chip4 or chip0");
+
             return;
         }
     }
@@ -148,23 +148,30 @@ void initGPIO() {
 
 /*
     setGPIOPin - Sets the specified GPIO pin to the desired value, with error handling for chip access and relay logic
+                 This function first checks if the gpioChip is initialized. If not, it returns immediately. 
+                 It then creates line settings for the specified pin, setting it as an output and applying the appropriate output value based on relay logic. 
+                 It configures a line request for the specified pin and releases it immediately after setting the value. 
+                 Finally, it frees all allocated resources related to the line settings and request configuration.
 
     Parameters:
     - pinOffset (int) : The offset of the GPIO pin to set (0-11 for this controller)
-    - pinValue (int)  : The desired state of the pin, where 1 represents ON and 0 represents OFF.
+    - pinValue (int)  : The desired state of the pin, where 1 represents ON and 0 represents OFF. 
+                        This value is processed through getRelayValue to account for active-low or active-high relay configurations.
 */
 void setGPIOPin(int pinOffset, int pinValue) {
+    // Error handling for GPIO chip access ----------------------------------------------------------------------------------------------------------
     if (!gpioChip) return;
     struct gpiod_line_settings* lineSettings = gpiod_line_settings_new();
     gpiod_line_settings_set_direction(lineSettings, GPIOD_LINE_DIRECTION_OUTPUT);
     gpiod_line_settings_set_output_value(lineSettings, getRelayValue(pinValue));
     struct gpiod_line_config* lineConfig = gpiod_line_config_new();
     unsigned int offset = (unsigned int)pinOffset;
-    gpiod_line_config_add_line_settings(lineConfig, &offset, 1, lineSettings);
-    struct gpiod_request_config* requestConfig = gpiod_request_config_new();
-    gpiod_request_config_set_consumer(requestConfig, "DTO_Controller");
-    struct gpiod_line_request* lineRequest = gpiod_chip_request_lines(gpioChip, requestConfig, lineConfig);
+    gpiod_line_config_add_line_settings(lineConfig, &offset, 1, lineSettings);                           
+    struct gpiod_request_config* requestConfig = gpiod_request_config_new();                              
+    gpiod_request_config_set_consumer(requestConfig, "DTO_Controller");                              
+    struct gpiod_line_request* lineRequest = gpiod_chip_request_lines(gpioChip, requestConfig, lineConfig);  
 
+    // Error handling for line request --------------------------------------------------------------------------------------------------------------
     if (lineRequest) gpiod_line_request_release(lineRequest);
     gpiod_request_config_free(requestConfig);
     gpiod_line_config_free(lineConfig);
@@ -175,8 +182,8 @@ void setGPIOPin(int pinOffset, int pinValue) {
 
 /*
     checkKeyboardInput - Checks for available keyboard input without blocking program execution, with initialization of terminal settings for non-blocking input
-                         This function initializes the terminal settings for non-blocking input on the first call, configuring the terminal to disable canonical mode and echo.
-                         It also sets the standard input to non-blocking mode. On subsequent calls, it checks how many bytes of input are available and returns that count.
+                         This function initializes the terminal settings for non-blocking input on the first call, configuring the terminal to disable canonical mode and echo. 
+                         It also sets the standard input to non-blocking mode. On subsequent calls, it checks how many bytes of input are available and returns that count, allowing the main loop to read input without blocking if no keys are pressed.
 
     Returns:
     - int : The number of bytes of keyboard input currently available to read. A value of 0 indicates no input is available.
@@ -188,19 +195,19 @@ int checkKeyboardInput() {
         termios terminalSettings;
         tcgetattr(STDIN_FILENO_ID, &terminalSettings);
         terminalSettings.c_lflag &= ~ICANON;
-        terminalSettings.c_lflag &= ~ECHO;
+        terminalSettings.c_lflag &= ~ECHO; 
         tcsetattr(STDIN_FILENO_ID, TCSANOW, &terminalSettings);
         setbuf(stdin, NULL);
-
+        
         int oldflags = fcntl(STDIN_FILENO_ID, F_GETFL, 0);
         fcntl(STDIN_FILENO_ID, F_SETFL, oldflags | O_NONBLOCK);
-
+        
         isInputInitialized = true;
     }
 
     int bytesAvailable;
     ioctl(STDIN_FILENO_ID, FIONREAD, &bytesAvailable);
-
+    
     return bytesAvailable;
 }
 
@@ -208,10 +215,12 @@ int checkKeyboardInput() {
 
 /*
     logActivity - Logs a high-level activity or event with a standardized code and description, along with a timestamp
+                  This function formats the current time counter into a string, opens the Activity_Log.csv file in append mode, and writes a new line containing the timestamp, activity code, and description. 
+                  It also prints the same information to the console for real-time monitoring. If the file cannot be opened, it does not log the activity but still outputs to the console.
 
     Parameters:
-    - code (string)        : A standardized code representing the type of activity or event being logged
-    - description (string) : A human-readable description providing additional context about the activity or event
+    - code (string)        : A standardized code representing the type of activity or event being logged (e.g., "STATUS-101", "ERROR-000")
+    - description (string) : A human-readable description providing additional context about the activity or event being logged
 */
 void logActivity(string code, string description) {
     string timeString = formatTimestamp(timeCounter);
@@ -227,19 +236,22 @@ void logActivity(string code, string description) {
 
 
 /*
-    logKeyData - Logs detailed information about key events, including type, direction, key name, status, and mode
+    logKeyData - Logs detailed information about key events, including type, direction, key name, status, and mode, with error handling for file access
+                 This function formats the current time counter into a string, opens the Keybind_Log.csv file in append mode, and writes a new line containing the timestamp, mode, type of event (translation, rotation, or firing), direction of movement or rotation, key name, and status character. 
+                 If the status character indicates a new key press ('N') and the key name is not "-", it also logs a high-level activity indicating that a key was registered. 
+                 If the file cannot be opened for logging key data, it logs an error activity indicating that the Keybind_Log is inaccessible.
 
     Parameters:
-    - type (char)        : A character representing the type of event ('T' for translation, 'R' for rotation, 'F' for fault)
-    - direction (string) : A string indicating the direction of movement or rotation (e.g., "+X", "-P")
-    - keyName (string)   : The name of the key that triggered the event (e.g., "W", "A", "K")
-    - statusChar (char)  : A character representing the status of the key event ('N' for new press, 'E' for error)
-    - mode (char)        : A character representing the current firing mode ('C' for Continuous, 'P' for Pulse)
+    - type (char)          : A character representing the type of event being logged ('T' for translation, 'R' for rotation, 'F' for firing)
+    - direction (string)   : A string indicating the direction of movement or rotation associated with the key event (e.g., "+X", "-P")
+    - keyName (string)    : The name of the key that triggered the event (e.g., "W", "A", "K")
+    - statusChar (char)   : A character representing the status of the key event ('N' for new press, 'E' for error)
+    - mode (char)         : A character representing the current firing mode ('C' for Continuous Mode, 'P' for Pulse Mode)
 */
 void logKeyData(char type, string direction, string keyName, char statusChar, char mode) {
     string timeString = formatTimestamp(timeCounter);
     ofstream keyLogFile(logDirectoryPath + "Keybind_Log.csv", ios_base::app);
-    if (keyLogFile.is_open()) {
+    if (keyLogFile.is_open()) {  
         keyLogFile << timeString << "," << mode << "," << type << "," << direction << "," << keyName << endl;
         keyLogFile.close();
         if (statusChar == 'N' && keyName != "-") {
@@ -253,11 +265,15 @@ void logKeyData(char type, string direction, string keyName, char statusChar, ch
 
 
 /*
-    processMovementAction - Processes a key event for movement or rotation based on the key identifier and current mode
+    processMovementAction - Processes a key event for movement or rotation based on the key identifier and current mode, with error handling for invalid keybinds and Pulse Mode repeat prevention
+                            This function first checks if the current mode is Pulse Mode ('P') and if the key being processed is the same as the last key fired. If both conditions are true, it logs an error activity indicating that a repeat action was prevented for that key in Pulse Mode, logs an error entry in the Keybind_Log, and returns without processing the action. 
+                            If the action is valid, it checks the key identifier against known movement and rotation keys, logs the corresponding key data, and sets the appropriate GPIO pins to activate the thrusters. 
+                            If the key identifier does not match any known actions, it logs an error entry in the Keybind_Log and logs an error activity indicating an incorrect keybind. 
+                            Finally, it updates lastKeyFired to track the most recent key event.
 
     Parameters:
     - keyId (string) : The identifier of the key that triggered the event (e.g., "W", "A", "K")
-    - mode (char)    : The current firing mode ('C' for Continuous, 'P' for Pulse)
+    - mode (char)    : The current firing mode ('C' for Continuous Mode, 'P' for Pulse Mode) that affects how the action is processed and logged
 */
 void processMovementAction(string keyId, char mode) {
     if (mode == 'P' && keyId == lastKeyFired) {
@@ -266,25 +282,25 @@ void processMovementAction(string keyId, char mode) {
         return;
     }
 
-    // Translation Mappings -------------------------------------------------------------------------
+    // Translation Mappings -------------------------------------------------------------------------------------------------------------------------
     if (keyId == "W")      { logKeyData('T', "+X", "W", 'N', mode); setGPIOPin(0, 1); setGPIOPin(8, 1); }   // A1, A2
     else if (keyId == "S") { logKeyData('T', "-X", "S", 'N', mode); setGPIOPin(5, 1); setGPIOPin(11, 1); }  // F1, F2
     else if (keyId == "A") { logKeyData('T', "+Y", "A", 'N', mode); setGPIOPin(1, 1); setGPIOPin(7, 1); }   // S1, S2
     else if (keyId == "D") { logKeyData('T', "-Y", "D", 'N', mode); setGPIOPin(2, 1); setGPIOPin(6, 1); }   // P1, P2
     else if (keyId == "E") { logKeyData('T', "+Z", "E", 'N', mode); setGPIOPin(4, 1); setGPIOPin(10, 1); }  // B1, B2
     else if (keyId == "Q") { logKeyData('T', "-Z", "Q", 'N', mode); setGPIOPin(3, 1); setGPIOPin(9, 1); }   // T1, T2
-
-    // Rotation Mappings ----------------------------------------------------------------------------
+    
+    // Rotation Mappings ----------------------------------------------------------------------------------------------------------------------------
     else if (keyId == "K") { logKeyData('R', "-P", "K", 'N', mode); setGPIOPin(9, 1); setGPIOPin(4, 1); }   // T2, B1
     else if (keyId == "I") { logKeyData('R', "+P", "I", 'N', mode); setGPIOPin(3, 1); setGPIOPin(10, 1); }  // T1, B2
     else if (keyId == "U") { logKeyData('R', "-R", "U", 'N', mode); setGPIOPin(6, 1); setGPIOPin(1, 1); }   // P2, S1
     else if (keyId == "O") { logKeyData('R', "+R", "O", 'N', mode); setGPIOPin(2, 1); setGPIOPin(7, 1); }   // P1, S2
     else if (keyId == "J") { logKeyData('R', "-Y", "J", 'N', mode); setGPIOPin(0, 1); setGPIOPin(11, 1); }  // A1, F2
     else if (keyId == "L") { logKeyData('R', "+Y", "L", 'N', mode); setGPIOPin(8, 1); setGPIOPin(5, 1); }   // A2, F1
-
-    else {
-        logKeyData('F', "--", keyId, 'E', mode);
-        logActivity("ERROR-300", "Incorrect Keybind");
+    
+    else { 
+        logKeyData('F', "--", keyId, 'E', mode); 
+        logActivity("ERROR-300", "Incorrect Keybind"); 
     }
     lastKeyFired = keyId;
 }
@@ -293,6 +309,10 @@ void processMovementAction(string keyId, char mode) {
 
 /*
     displayMenu - Displays the appropriate menu options based on the current program mode, with logging for UI redraws
+                  This function logs a status activity indicating that the menu is being refreshed. 
+                  It then checks the current program mode and outputs the corresponding menu options to the console. 
+                  The menu options include available modes and actions for each mode, along with instructions for quitting the program. 
+                  Finally, it prompts the user for input with a ">> " symbol.
 */
 void displayMenu() {
     logActivity("STATUS-402", "UI Redraw: Menu refreshed");
@@ -301,14 +321,20 @@ void displayMenu() {
     } else if (programMode == 1) {
         cout << "\n=================================================\nStartup Sequence Mode\n-------------------------------------------------\nProgram Modes:\n- Esc : Quit Mode\n=================================================\n>> " << flush;
     } else if (programMode == 2) {
-        cout << "\n=================================================\nOperational Mode (2)\n-------------------------------------------------\nProgram Modes:\n- 1   : Continuous Mode\n- 2   : Pulse Mode\n- 0   : Return to Menu\n- Esc : Quit Program\n=================================================\n>> " << flush;
+        cout << "\n=================================================\nOperational Mode (2)\n-------------------------------------------------\nProgram Modes:\n- 1   : Continuous Mode\n- 2   : Pulse Mode\n- Esc : Quit Program\n=================================================\n>> " << flush;
     }
 }
 
 
 
 /*
-    main - The main entry point of the DTO Controller software
+    main - The main entry point of the DTO Controller software, responsible for initialization, main program loop, and cleanup on exit
+           This function first attempts to create the log directory and logs the result. It then initializes the GPIO chip and prepares the log files for keybinds and activities, logging the startup status. 
+           It enters a main loop where it checks for keyboard input and processes it based on the current program mode. In Operational Mode, it also handles turning off thrusters when no keys are pressed. 
+           The loop continues until the user presses the ESC key, at which point it performs cleanup by turning off all thrusters, logging session end and shutdown status, closing the GPIO chip if it was initialized, and returning from the program.
+
+    Returns:
+    - int : The exit status of the program, where 0 indicates successful execution and 1 indicates an error during initialization (e.g., log file access failure)
 */
 int main() {
     // Initialization and Setup ---------------------------------------------------------------------------------------------------------------------
@@ -328,9 +354,9 @@ int main() {
         activityLogFile << "Time(s),Code,Description" << endl;
         keybindLogFile.close(); activityLogFile.close();
         logActivity("STATUS-000", "Startup Successful: Files Ready");
-    } else {
+    } else { 
         logActivity("ERROR-000", "Startup Failure: Path Inaccessible");
-        return 1;
+        return 1; 
     }
 
     // Main Program Loop ----------------------------------------------------------------------------------------------------------------------------
@@ -340,16 +366,17 @@ int main() {
         // Keyboard Input Handling ------------------------------------------------------------------------------------------------------------------
         if (checkKeyboardInput()) {
             unsigned char charInput = getchar();
-            // Handle ESC key -----------------------------------------------------------------------------------------------------------------------
-            if (charInput == 27) break;
+            // Handle ESC key for quitting the program ----------------------------------------------------------------------------------------------
+            if (charInput == 27) break; // ESC
 
             // Handle input based on current program mode -------------------------------------------------------------------------------------------
             if (programMode == 0) {
                 // Menu Mode: Only accepts mode selection inputs ------------------------------------------------------------------------------------
-                if (charInput == '1') {
+                if (charInput == '1') {                                                            
                     programMode = 1; displayMenu();
                     logActivity("STATUS-302", "Sequence Initiated");
                     int sequenceOrder[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+                    // Startup Sequence: Activates each thruster in order with a delay, then returns to Menu Mode -----------------------------------
                     for (int gpioPin : sequenceOrder) {
                         setGPIOPin(gpioPin, 1);
                         logActivity("STATUS-304", "GPIO " + to_string(gpioPin) + " ON");
@@ -360,6 +387,7 @@ int main() {
                     }
                     logActivity("STATUS-305", "Sequence Complete");
                     programMode = 0; displayMenu();
+                // Operational Mode: Accepts mode selection inputs and transitions to mode-specific menu --------------------------------------------
                 } else if (charInput == '2') {
                     programMode = 2;
                     firingMode = 'C'; 
@@ -368,6 +396,7 @@ int main() {
                 }
             // Operational Mode: Accepts mode selection and movement/rotation inputs ----------------------------------------------------------------
             } else if (programMode == 2) {
+                // In Operational Mode, handle mode switching and movement/rotation key processing --------------------------------------------------
                 if (charInput == '1') { firingMode = 'C'; logActivity("STATUS-300", "Mode Changed: Continuous Mode"); }
                 else if (charInput == '2') { firingMode = 'P'; logActivity("STATUS-300", "Mode Changed: Pulse Mode"); }
                 else if (charInput == '0') { programMode = 0; displayMenu(); }
@@ -376,24 +405,26 @@ int main() {
                     processMovementAction(keyIdString, firingMode);
                 }
             }
-        // No key pressed: deactivate all thrusters -------------------------------------------------------------------------------------------------
+        // Handle thruster deactivation when no keys are pressed in Operational Mode ----------------------------------------------------------------
         } else {
+            // In Operational Mode, if no keys are pressed, ensure all thrusters are turned off and log the status if it was previously active
             if (programMode == 2) {
-                for (int i = 0; i <= 11; i++) setGPIOPin(i, 0);
+                // Turn off all thrusters when no key is pressed
+                for(int i = 0; i <= 11; i++) setGPIOPin(i, 0);
                 logKeyData('F', "--", "-", 'N', firingMode);
                 lastKeyFired = "";
             }
         }
 
-        // Increment time counter in Operational Mode only ------------------------------------------------------------------------------------------
+        // Increment time counter for logging purposes, with a delay to control loop timing ---------------------------------------------------------
         if (programMode == 2) timeCounter += 0.1;
         this_thread::sleep_for(chrono::milliseconds(100));
     }
-
-    // Cleanup and Exit -----------------------------------------------------------------------------------------------------------------------------
-    for (int i = 0; i <= 11; i++) setGPIOPin(i, 0);
+    
+    // Cleanup and Exit ---------------------------------------------------------------------------
+    for(int i = 0; i <= 11; i++) setGPIOPin(i, 0);
     logActivity("STATUS-002", "Session Ended");
     logActivity("STATUS-003", "Shutdown Successful");
-    if (gpioChip) gpiod_chip_close(gpioChip);
+    if(gpioChip) gpiod_chip_close(gpioChip);
     return 0;
 }
