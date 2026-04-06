@@ -1,0 +1,702 @@
+0.00,STATUS-103,Directory Created: Log storage ready
+0.00,STATUS-101,Path Validated: File Open Successful
+0.00,STATUS-000,Startup Successful: Files Ready
+0.00,STATUS-001,Session Started
+0.00,STATUS-402,UI Redraw: Menu refreshed
+0.00,STATUS-103,Directory Created: Log storage ready
+0.00,STATUS-101,Path Validated: File Open Successful
+0.00,STATUS-000,Startup Successful: Files Ready
+0.00,STATUS-001,Session Started
+0.00,STATUS-402,UI Redraw: Menu refreshed
+0.00,STATUS-300,Mode Changed: Operational Mode Active
+0.00,STATUS-402,UI Redraw: Menu refreshed
+0.20,ERROR-301,System Ghosting: Non-printable scan code ignored
+1.60,STATUS-03,Key Registered: W
+1.60,STATUS-304,GPIO 0 ON (Simulated)
+1.60,STATUS-304,GPIO 8 ON (Simulated)
+3.10,STATUS-03,Key Registered: W
+3.10,STATUS-304,GPIO 0 ON (Simulated)
+3.10,STATUS-304,GPIO 8 ON (Simulated)
+3.50,STATUS-03,Key Registered: A
+3.50,STATUS-304,GPIO 1 ON (Simulated)
+3.50,STATUS-304,GPIO 7 ON (Simulated)
+3.70,STATUS-03,Key Registered: S
+3.70,STATUS-304,GPIO 5 ON (Simulated)
+3.70,STATUS-304,GPIO 11 ON (Simulated)
+3.90,STATUS-03,Key Registered: D
+3.90,STATUS-304,GPIO 2 ON (Simulated)
+3.90,STATUS-304,GPIO 6 ON (Simulated)
+4.00,STATUS-03,Key Registered: W
+4.00,STATUS-304,GPIO 0 ON (Simulated)
+4.00,STATUS-304,GPIO 8 ON (Simulated)
+4.20,STATUS-03,Key Registered: A
+4.20,STATUS-304,GPIO 1 ON (Simulated)
+4.20,STATUS-304,GPIO 7 ON (Simulated)
+4.30,STATUS-03,Key Registered: S
+4.30,STATUS-304,GPIO 5 ON (Simulated)
+4.30,STATUS-304,GPIO 11 ON (Simulated)
+4.40,STATUS-03,Key Registered: D
+4.40,STATUS-304,GPIO 2 ON (Simulated)
+4.40,STATUS-304,GPIO 6 ON (Simulated)
+4.50,STATUS-03,Key Registered: W
+4.50,STATUS-304,GPIO 0 ON (Simulated)
+4.50,STATUS-304,GPIO 8 ON (Simulated)
+4.60,STATUS-03,Key Registered: A
+4.60,STATUS-304,GPIO 1 ON (Simulated)
+4.60,STATUS-304,GPIO 7 ON (Simulated)
+4.70,STATUS-03,Key Registered: S
+4.70,STATUS-304,GPIO 5 ON (Simulated)
+4.70,STATUS-304,GPIO 11 ON (Simulated)
+4.80,STATUS-03,Key Registered: D
+4.80,STATUS-304,GPIO 2 ON (Simulated)
+4.80,STATUS-304,GPIO 6 ON (Simulated)
+5.00,STATUS-03,Key Registered: W
+5.00,STATUS-304,GPIO 0 ON (Simulated)
+5.00,STATUS-304,GPIO 8 ON (Simulated)
+5.10,STATUS-03,Key Registered: A
+5.10,STATUS-304,GPIO 1 ON (Simulated)
+5.10,STATUS-304,GPIO 7 ON (Simulated)
+5.20,STATUS-03,Key Registered: S
+5.20,STATUS-304,GPIO 5 ON (Simulated)
+5.20,STATUS-304,GPIO 11 ON (Simulated)
+5.30,STATUS-03,Key Registered: D
+5.30,STATUS-304,GPIO 2 ON (Simulated)
+5.30,STATUS-304,GPIO 6 ON (Simulated)
+5.60,STATUS-300,Mode Changed: Pulse Mode (Caps Lock ON)
+6.30,STATUS-300,Mode Changed: Continuous Mode (Caps Lock OFF)
+6.50,STATUS-03,Key Registered: W
+6.50,STATUS-304,GPIO 0 ON (Simulated)
+6.50,STATUS-304,GPIO 8 ON (Simulated)
+6.70,STATUS-300,Mode Changed: Pulse Mode (Caps Lock ON)
+6.80,STATUS-03,Key Registered: S
+6.80,STATUS-304,GPIO 5 ON (Simulated)
+6.80,STATUS-304,GPIO 11 ON (Simulated)
+7.10,STATUS-03,Key Registered: D
+7.10,STATUS-304,GPIO 2 ON (Simulated)
+7.10,STATUS-304,GPIO 6 ON (Simulated)
+7.20,STATUS-03,Key Registered: W
+7.20,STATUS-304,GPIO 0 ON (Simulated)
+7.20,STATUS-304,GPIO 8 ON (Simulated)
+7.30,STATUS-03,Key Registered: A
+7.30,STATUS-304,GPIO 1 ON (Simulated)
+7.30,STATUS-304,GPIO 7 ON (Simulated)
+7.40,STATUS-03,Key Registered: S
+7.40,STATUS-304,GPIO 5 ON (Simulated)
+7.40,STATUS-304,GPIO 11 ON (Simulated)
+7.50,STATUS-03,Key Registered: D
+7.50,STATUS-304,GPIO 2 ON (Simulated)
+7.50,STATUS-304,GPIO 6 ON (Simulated)
+7.70,STATUS-300,Mode Changed: Continuous Mode (Caps Lock OFF)
+9.10,STATUS-03,Key Registered: W
+9.10,STATUS-304,GPIO 0 ON (Simulated)
+9.10,STATUS-304,GPIO 8 ON (Simulated)
+9.30,STATUS-03,Key Registered: D
+9.30,STATUS-304,GPIO 2 ON (Simulated)
+9.30,STATUS-304,GPIO 6 ON (Simulated)
+9.50,STATUS-03,Key Registered: S
+9.50,STATUS-304,GPIO 5 ON (Simulated)
+9.50,STATUS-304,GPIO 11 ON (Simulated)
+9.60,STATUS-03,Key Registered: A
+9.60,STATUS-304,GPIO 1 ON (Simulated)
+9.60,STATUS-304,GPIO 7 ON (Simulated)
+9.70,STATUS-03,Key Registered: W
+9.70,STATUS-304,GPIO 0 ON (Simulated)
+9.70,STATUS-304,GPIO 8 ON (Simulated)
+9.80,STATUS-03,Key Registered: D
+9.80,STATUS-304,GPIO 2 ON (Simulated)
+9.80,STATUS-304,GPIO 6 ON (Simulated)
+10.00,STATUS-03,Key Registered: S
+10.00,STATUS-304,GPIO 5 ON (Simulated)
+10.00,STATUS-304,GPIO 11 ON (Simulated)
+10.40,ERROR-03,Incorrect Keybind
+10.80,ERROR-03,Incorrect Keybind
+11.00,ERROR-03,Incorrect Keybind
+11.20,ERROR-03,Incorrect Keybind
+11.40,ERROR-03,Incorrect Keybind
+12.60,ERROR-03,Incorrect Keybind
+12.80,ERROR-03,Incorrect Keybind
+13.20,STATUS-03,Key Registered: E
+13.20,STATUS-304,GPIO 4 ON (Simulated)
+13.20,STATUS-304,GPIO 10 ON (Simulated)
+14.10,STATUS-03,Key Registered: E
+14.10,STATUS-304,GPIO 4 ON (Simulated)
+14.10,STATUS-304,GPIO 10 ON (Simulated)
+14.40,STATUS-03,Key Registered: W
+14.40,STATUS-304,GPIO 0 ON (Simulated)
+14.40,STATUS-304,GPIO 8 ON (Simulated)
+15.10,STATUS-03,Key Registered: A
+15.10,STATUS-304,GPIO 1 ON (Simulated)
+15.10,STATUS-304,GPIO 7 ON (Simulated)
+15.20,STATUS-03,Key Registered: S
+15.20,STATUS-304,GPIO 5 ON (Simulated)
+15.20,STATUS-304,GPIO 11 ON (Simulated)
+15.30,STATUS-03,Key Registered: D
+15.30,STATUS-304,GPIO 2 ON (Simulated)
+15.30,STATUS-304,GPIO 6 ON (Simulated)
+15.40,STATUS-03,Key Registered: W
+15.40,STATUS-304,GPIO 0 ON (Simulated)
+15.40,STATUS-304,GPIO 8 ON (Simulated)
+15.60,STATUS-03,Key Registered: A
+15.60,STATUS-304,GPIO 1 ON (Simulated)
+15.60,STATUS-304,GPIO 7 ON (Simulated)
+15.70,STATUS-03,Key Registered: S
+15.70,STATUS-304,GPIO 5 ON (Simulated)
+15.70,STATUS-304,GPIO 11 ON (Simulated)
+15.80,STATUS-03,Key Registered: D
+15.80,STATUS-304,GPIO 2 ON (Simulated)
+15.80,STATUS-304,GPIO 6 ON (Simulated)
+15.90,STATUS-03,Key Registered: W
+15.90,STATUS-304,GPIO 0 ON (Simulated)
+15.90,STATUS-304,GPIO 8 ON (Simulated)
+16.10,STATUS-03,Key Registered: A
+16.10,STATUS-304,GPIO 1 ON (Simulated)
+16.10,STATUS-304,GPIO 7 ON (Simulated)
+16.20,STATUS-03,Key Registered: S
+16.20,STATUS-304,GPIO 5 ON (Simulated)
+16.20,STATUS-304,GPIO 11 ON (Simulated)
+16.30,STATUS-03,Key Registered: D
+16.30,STATUS-304,GPIO 2 ON (Simulated)
+16.30,STATUS-304,GPIO 6 ON (Simulated)
+16.40,STATUS-03,Key Registered: W
+16.40,STATUS-304,GPIO 0 ON (Simulated)
+16.40,STATUS-304,GPIO 8 ON (Simulated)
+16.60,STATUS-03,Key Registered: A
+16.60,STATUS-304,GPIO 1 ON (Simulated)
+16.60,STATUS-304,GPIO 7 ON (Simulated)
+16.70,STATUS-03,Key Registered: S
+16.70,STATUS-304,GPIO 5 ON (Simulated)
+16.70,STATUS-304,GPIO 11 ON (Simulated)
+16.80,STATUS-03,Key Registered: D
+16.80,STATUS-304,GPIO 2 ON (Simulated)
+16.80,STATUS-304,GPIO 6 ON (Simulated)
+16.90,STATUS-03,Key Registered: W
+16.90,STATUS-304,GPIO 0 ON (Simulated)
+16.90,STATUS-304,GPIO 8 ON (Simulated)
+17.10,STATUS-03,Key Registered: A
+17.10,STATUS-304,GPIO 1 ON (Simulated)
+17.10,STATUS-304,GPIO 7 ON (Simulated)
+17.20,STATUS-03,Key Registered: S
+17.20,STATUS-304,GPIO 5 ON (Simulated)
+17.20,STATUS-304,GPIO 11 ON (Simulated)
+17.30,STATUS-03,Key Registered: D
+17.30,STATUS-304,GPIO 2 ON (Simulated)
+17.30,STATUS-304,GPIO 6 ON (Simulated)
+17.50,STATUS-03,Key Registered: W
+17.50,STATUS-304,GPIO 0 ON (Simulated)
+17.50,STATUS-304,GPIO 8 ON (Simulated)
+17.60,STATUS-03,Key Registered: A
+17.60,STATUS-304,GPIO 1 ON (Simulated)
+17.60,STATUS-304,GPIO 7 ON (Simulated)
+17.80,STATUS-03,Key Registered: S
+17.80,STATUS-304,GPIO 5 ON (Simulated)
+17.80,STATUS-304,GPIO 11 ON (Simulated)
+17.90,STATUS-03,Key Registered: D
+17.90,STATUS-304,GPIO 2 ON (Simulated)
+17.90,STATUS-304,GPIO 6 ON (Simulated)
+18.10,STATUS-03,Key Registered: W
+18.10,STATUS-304,GPIO 0 ON (Simulated)
+18.10,STATUS-304,GPIO 8 ON (Simulated)
+18.20,STATUS-03,Key Registered: A
+18.20,STATUS-304,GPIO 1 ON (Simulated)
+18.20,STATUS-304,GPIO 7 ON (Simulated)
+18.30,STATUS-03,Key Registered: S
+18.30,STATUS-304,GPIO 5 ON (Simulated)
+18.30,STATUS-304,GPIO 11 ON (Simulated)
+18.40,STATUS-03,Key Registered: D
+18.40,STATUS-304,GPIO 2 ON (Simulated)
+18.40,STATUS-304,GPIO 6 ON (Simulated)
+18.60,STATUS-03,Key Registered: W
+18.60,STATUS-304,GPIO 0 ON (Simulated)
+18.60,STATUS-304,GPIO 8 ON (Simulated)
+18.70,STATUS-03,Key Registered: A
+18.70,STATUS-304,GPIO 1 ON (Simulated)
+18.70,STATUS-304,GPIO 7 ON (Simulated)
+18.90,STATUS-03,Key Registered: S
+18.90,STATUS-304,GPIO 5 ON (Simulated)
+18.90,STATUS-304,GPIO 11 ON (Simulated)
+19.00,STATUS-03,Key Registered: D
+19.00,STATUS-304,GPIO 2 ON (Simulated)
+19.00,STATUS-304,GPIO 6 ON (Simulated)
+19.10,STATUS-03,Key Registered: W
+19.10,STATUS-304,GPIO 0 ON (Simulated)
+19.10,STATUS-304,GPIO 8 ON (Simulated)
+19.30,STATUS-03,Key Registered: A
+19.30,STATUS-304,GPIO 1 ON (Simulated)
+19.30,STATUS-304,GPIO 7 ON (Simulated)
+20.10,STATUS-002,Session Ended
+20.10,STATUS-003,Shutdown Successful
+0.00,STATUS-103,Directory Created: Log storage ready
+0.00,STATUS-101,Path Validated: File Open Successful
+0.00,STATUS-000,Startup Successful: Files Ready
+0.00,STATUS-001,Session Started
+0.00,STATUS-402,UI Redraw: Menu refreshed
+0.00,STATUS-300,Mode Changed: Operational Mode Active
+0.00,STATUS-402,UI Redraw: Menu refreshed
+1.00,STATUS-03,Key Registered: W
+1.00,STATUS-304,GPIO 0 ON (Simulated)
+1.00,STATUS-304,GPIO 8 ON (Simulated)
+1.50,STATUS-03,Key Registered: W
+1.50,STATUS-304,GPIO 0 ON (Simulated)
+1.50,STATUS-304,GPIO 8 ON (Simulated)
+1.60,STATUS-03,Key Registered: W
+1.60,STATUS-304,GPIO 0 ON (Simulated)
+1.60,STATUS-304,GPIO 8 ON (Simulated)
+1.70,STATUS-03,Key Registered: W
+1.70,STATUS-304,GPIO 0 ON (Simulated)
+1.70,STATUS-304,GPIO 8 ON (Simulated)
+1.80,STATUS-03,Key Registered: W
+1.80,STATUS-304,GPIO 0 ON (Simulated)
+1.80,STATUS-304,GPIO 8 ON (Simulated)
+1.90,STATUS-03,Key Registered: W
+1.90,STATUS-304,GPIO 0 ON (Simulated)
+1.90,STATUS-304,GPIO 8 ON (Simulated)
+2.00,STATUS-03,Key Registered: W
+2.00,STATUS-304,GPIO 0 ON (Simulated)
+2.00,STATUS-304,GPIO 8 ON (Simulated)
+2.10,STATUS-03,Key Registered: W
+2.10,STATUS-304,GPIO 0 ON (Simulated)
+2.10,STATUS-304,GPIO 8 ON (Simulated)
+2.20,STATUS-03,Key Registered: W
+2.20,STATUS-304,GPIO 0 ON (Simulated)
+2.20,STATUS-304,GPIO 8 ON (Simulated)
+2.30,STATUS-03,Key Registered: W
+2.30,STATUS-304,GPIO 0 ON (Simulated)
+2.30,STATUS-304,GPIO 8 ON (Simulated)
+2.40,STATUS-03,Key Registered: W
+2.40,STATUS-304,GPIO 0 ON (Simulated)
+2.40,STATUS-304,GPIO 8 ON (Simulated)
+2.50,STATUS-03,Key Registered: W
+2.50,STATUS-304,GPIO 0 ON (Simulated)
+2.50,STATUS-304,GPIO 8 ON (Simulated)
+2.60,STATUS-03,Key Registered: W
+2.60,STATUS-304,GPIO 0 ON (Simulated)
+2.60,STATUS-304,GPIO 8 ON (Simulated)
+2.70,STATUS-03,Key Registered: W
+2.70,STATUS-304,GPIO 0 ON (Simulated)
+2.70,STATUS-304,GPIO 8 ON (Simulated)
+2.80,STATUS-03,Key Registered: W
+2.80,STATUS-304,GPIO 0 ON (Simulated)
+2.80,STATUS-304,GPIO 8 ON (Simulated)
+2.90,STATUS-03,Key Registered: W
+2.90,STATUS-304,GPIO 0 ON (Simulated)
+2.90,STATUS-304,GPIO 8 ON (Simulated)
+3.00,STATUS-03,Key Registered: W
+3.00,STATUS-304,GPIO 0 ON (Simulated)
+3.00,STATUS-304,GPIO 8 ON (Simulated)
+3.10,STATUS-03,Key Registered: W
+3.10,STATUS-304,GPIO 0 ON (Simulated)
+3.10,STATUS-304,GPIO 8 ON (Simulated)
+3.20,STATUS-03,Key Registered: W
+3.20,STATUS-304,GPIO 0 ON (Simulated)
+3.20,STATUS-304,GPIO 8 ON (Simulated)
+3.30,STATUS-03,Key Registered: W
+3.30,STATUS-304,GPIO 0 ON (Simulated)
+3.30,STATUS-304,GPIO 8 ON (Simulated)
+3.40,STATUS-03,Key Registered: W
+3.40,STATUS-304,GPIO 0 ON (Simulated)
+3.40,STATUS-304,GPIO 8 ON (Simulated)
+3.50,STATUS-300,Mode Changed: Pulse Mode (Caps Lock ON)
+3.50,STATUS-03,Key Registered: W
+3.50,STATUS-304,GPIO 0 ON (Simulated)
+3.50,STATUS-304,GPIO 8 ON (Simulated)
+3.60,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+3.60,ERROR-03,Incorrect Keybind
+3.70,STATUS-03,Key Registered: W
+3.70,STATUS-304,GPIO 0 ON (Simulated)
+3.70,STATUS-304,GPIO 8 ON (Simulated)
+3.80,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+3.80,ERROR-03,Incorrect Keybind
+3.90,STATUS-03,Key Registered: W
+3.90,STATUS-304,GPIO 0 ON (Simulated)
+3.90,STATUS-304,GPIO 8 ON (Simulated)
+4.00,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+4.00,ERROR-03,Incorrect Keybind
+4.10,STATUS-03,Key Registered: W
+4.10,STATUS-304,GPIO 0 ON (Simulated)
+4.10,STATUS-304,GPIO 8 ON (Simulated)
+4.20,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+4.20,ERROR-03,Incorrect Keybind
+4.30,STATUS-03,Key Registered: W
+4.30,STATUS-304,GPIO 0 ON (Simulated)
+4.30,STATUS-304,GPIO 8 ON (Simulated)
+4.40,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+4.40,ERROR-03,Incorrect Keybind
+4.50,STATUS-03,Key Registered: W
+4.50,STATUS-304,GPIO 0 ON (Simulated)
+4.50,STATUS-304,GPIO 8 ON (Simulated)
+4.60,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+4.60,ERROR-03,Incorrect Keybind
+4.70,STATUS-03,Key Registered: W
+4.70,STATUS-304,GPIO 0 ON (Simulated)
+4.70,STATUS-304,GPIO 8 ON (Simulated)
+4.80,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+4.80,ERROR-03,Incorrect Keybind
+4.90,STATUS-03,Key Registered: W
+4.90,STATUS-304,GPIO 0 ON (Simulated)
+4.90,STATUS-304,GPIO 8 ON (Simulated)
+5.00,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+5.00,ERROR-03,Incorrect Keybind
+5.10,STATUS-03,Key Registered: W
+5.10,STATUS-304,GPIO 0 ON (Simulated)
+5.10,STATUS-304,GPIO 8 ON (Simulated)
+5.20,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+5.20,ERROR-03,Incorrect Keybind
+5.50,STATUS-03,Key Registered: W
+5.50,STATUS-304,GPIO 0 ON (Simulated)
+5.50,STATUS-304,GPIO 8 ON (Simulated)
+5.60,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+5.60,ERROR-03,Incorrect Keybind
+5.70,STATUS-03,Key Registered: W
+5.70,STATUS-304,GPIO 0 ON (Simulated)
+5.70,STATUS-304,GPIO 8 ON (Simulated)
+5.80,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+5.80,ERROR-03,Incorrect Keybind
+5.90,STATUS-03,Key Registered: W
+5.90,STATUS-304,GPIO 0 ON (Simulated)
+5.90,STATUS-304,GPIO 8 ON (Simulated)
+6.00,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+6.00,ERROR-03,Incorrect Keybind
+6.10,STATUS-03,Key Registered: W
+6.10,STATUS-304,GPIO 0 ON (Simulated)
+6.10,STATUS-304,GPIO 8 ON (Simulated)
+6.20,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+6.20,ERROR-03,Incorrect Keybind
+6.30,STATUS-03,Key Registered: W
+6.30,STATUS-304,GPIO 0 ON (Simulated)
+6.30,STATUS-304,GPIO 8 ON (Simulated)
+6.40,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+6.40,ERROR-03,Incorrect Keybind
+6.50,STATUS-03,Key Registered: W
+6.50,STATUS-304,GPIO 0 ON (Simulated)
+6.50,STATUS-304,GPIO 8 ON (Simulated)
+6.60,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+6.60,ERROR-03,Incorrect Keybind
+6.70,STATUS-03,Key Registered: W
+6.70,STATUS-304,GPIO 0 ON (Simulated)
+6.70,STATUS-304,GPIO 8 ON (Simulated)
+6.80,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+6.80,ERROR-03,Incorrect Keybind
+6.90,STATUS-03,Key Registered: W
+6.90,STATUS-304,GPIO 0 ON (Simulated)
+6.90,STATUS-304,GPIO 8 ON (Simulated)
+7.00,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+7.00,ERROR-03,Incorrect Keybind
+7.10,STATUS-03,Key Registered: W
+7.10,STATUS-304,GPIO 0 ON (Simulated)
+7.10,STATUS-304,GPIO 8 ON (Simulated)
+7.20,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+7.20,ERROR-03,Incorrect Keybind
+7.30,STATUS-03,Key Registered: W
+7.30,STATUS-304,GPIO 0 ON (Simulated)
+7.30,STATUS-304,GPIO 8 ON (Simulated)
+7.40,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+7.40,ERROR-03,Incorrect Keybind
+7.50,STATUS-03,Key Registered: W
+7.50,STATUS-304,GPIO 0 ON (Simulated)
+7.50,STATUS-304,GPIO 8 ON (Simulated)
+7.60,STATUS-300,Mode Changed: Continuous Mode (Caps Lock OFF)
+7.60,STATUS-03,Key Registered: W
+7.60,STATUS-304,GPIO 0 ON (Simulated)
+7.60,STATUS-304,GPIO 8 ON (Simulated)
+7.70,STATUS-03,Key Registered: W
+7.70,STATUS-304,GPIO 0 ON (Simulated)
+7.70,STATUS-304,GPIO 8 ON (Simulated)
+7.80,STATUS-03,Key Registered: W
+7.80,STATUS-304,GPIO 0 ON (Simulated)
+7.80,STATUS-304,GPIO 8 ON (Simulated)
+7.90,STATUS-03,Key Registered: W
+7.90,STATUS-304,GPIO 0 ON (Simulated)
+7.90,STATUS-304,GPIO 8 ON (Simulated)
+8.00,STATUS-03,Key Registered: W
+8.00,STATUS-304,GPIO 0 ON (Simulated)
+8.00,STATUS-304,GPIO 8 ON (Simulated)
+8.10,STATUS-03,Key Registered: W
+8.10,STATUS-304,GPIO 0 ON (Simulated)
+8.10,STATUS-304,GPIO 8 ON (Simulated)
+8.20,STATUS-03,Key Registered: W
+8.20,STATUS-304,GPIO 0 ON (Simulated)
+8.20,STATUS-304,GPIO 8 ON (Simulated)
+8.30,STATUS-03,Key Registered: W
+8.30,STATUS-304,GPIO 0 ON (Simulated)
+8.30,STATUS-304,GPIO 8 ON (Simulated)
+8.40,STATUS-03,Key Registered: W
+8.40,STATUS-304,GPIO 0 ON (Simulated)
+8.40,STATUS-304,GPIO 8 ON (Simulated)
+0.00,STATUS-103,Directory Created: Log storage ready
+0.00,STATUS-101,Path Validated: File Open Successful
+0.00,STATUS-000,Startup Successful: Files Ready
+0.00,STATUS-001,Session Started
+0.00,STATUS-402,UI Redraw: Menu refreshed
+0.00,STATUS-300,Mode Changed: Operational Mode Active
+0.00,STATUS-402,UI Redraw: Menu refreshed
+5.40,STATUS-03,Key Registered: E
+5.40,STATUS-304,GPIO 4 ON (Simulated)
+5.40,STATUS-304,GPIO 10 ON (Simulated)
+5.90,STATUS-03,Key Registered: E
+5.90,STATUS-304,GPIO 4 ON (Simulated)
+5.90,STATUS-304,GPIO 10 ON (Simulated)
+6.60,STATUS-002,Session Ended
+6.60,STATUS-003,Shutdown Successful
+0.00,STATUS-103,Directory Created: Log storage ready
+0.00,STATUS-101,Path Validated: File Open Successful
+0.00,STATUS-000,Startup Successful: Files Ready
+0.00,STATUS-001,Session Started
+0.00,STATUS-402,UI Redraw: Menu refreshed
+0.00,STATUS-300,Mode Changed: Operational Mode Active
+0.00,STATUS-402,UI Redraw: Menu refreshed
+1.60,STATUS-03,Key Registered: W
+1.60,STATUS-304,GPIO 0 ON (Simulated)
+1.60,STATUS-304,GPIO 8 ON (Simulated)
+2.00,STATUS-03,Key Registered: W
+2.00,STATUS-304,GPIO 0 ON (Simulated)
+2.00,STATUS-304,GPIO 8 ON (Simulated)
+2.20,STATUS-03,Key Registered: W
+2.20,STATUS-304,GPIO 0 ON (Simulated)
+2.20,STATUS-304,GPIO 8 ON (Simulated)
+2.40,STATUS-03,Key Registered: A
+2.40,STATUS-304,GPIO 1 ON (Simulated)
+2.40,STATUS-304,GPIO 7 ON (Simulated)
+2.50,STATUS-03,Key Registered: S
+2.50,STATUS-304,GPIO 5 ON (Simulated)
+2.50,STATUS-304,GPIO 11 ON (Simulated)
+2.60,STATUS-03,Key Registered: D
+2.60,STATUS-304,GPIO 2 ON (Simulated)
+2.60,STATUS-304,GPIO 6 ON (Simulated)
+3.00,STATUS-03,Key Registered: A
+3.00,STATUS-304,GPIO 1 ON (Simulated)
+3.00,STATUS-304,GPIO 7 ON (Simulated)
+3.20,STATUS-03,Key Registered: S
+3.20,STATUS-304,GPIO 5 ON (Simulated)
+3.20,STATUS-304,GPIO 11 ON (Simulated)
+3.30,STATUS-03,Key Registered: D
+3.30,STATUS-304,GPIO 2 ON (Simulated)
+3.30,STATUS-304,GPIO 6 ON (Simulated)
+3.60,ERROR-03,Incorrect Keybind
+3.70,ERROR-03,Incorrect Keybind
+3.90,ERROR-03,Incorrect Keybind
+4.00,ERROR-03,Incorrect Keybind
+4.20,ERROR-03,Incorrect Keybind
+4.30,ERROR-03,Incorrect Keybind
+4.40,ERROR-03,Incorrect Keybind
+4.60,ERROR-03,Incorrect Keybind
+4.70,ERROR-03,Incorrect Keybind
+5.30,STATUS-03,Key Registered: W
+5.30,STATUS-304,GPIO 0 ON (Simulated)
+5.30,STATUS-304,GPIO 8 ON (Simulated)
+5.40,STATUS-03,Key Registered: E
+5.40,STATUS-304,GPIO 4 ON (Simulated)
+5.40,STATUS-304,GPIO 10 ON (Simulated)
+5.50,STATUS-03,Key Registered: A
+5.50,STATUS-304,GPIO 1 ON (Simulated)
+5.50,STATUS-304,GPIO 7 ON (Simulated)
+5.60,STATUS-03,Key Registered: S
+5.60,STATUS-304,GPIO 5 ON (Simulated)
+5.60,STATUS-304,GPIO 11 ON (Simulated)
+5.80,STATUS-03,Key Registered: D
+5.80,STATUS-304,GPIO 2 ON (Simulated)
+5.80,STATUS-304,GPIO 6 ON (Simulated)
+5.90,STATUS-03,Key Registered: W
+5.90,STATUS-304,GPIO 0 ON (Simulated)
+5.90,STATUS-304,GPIO 8 ON (Simulated)
+6.00,STATUS-03,Key Registered: A
+6.00,STATUS-304,GPIO 1 ON (Simulated)
+6.00,STATUS-304,GPIO 7 ON (Simulated)
+6.10,STATUS-03,Key Registered: S
+6.10,STATUS-304,GPIO 5 ON (Simulated)
+6.10,STATUS-304,GPIO 11 ON (Simulated)
+6.50,STATUS-300,Mode Changed: Pulse Mode (Caps Lock ON)
+7.00,ERROR-03,Incorrect Keybind
+8.20,STATUS-300,Mode Changed: Continuous Mode (Caps Lock OFF)
+8.60,STATUS-03,Key Registered: W
+8.60,STATUS-304,GPIO 0 ON (Simulated)
+8.60,STATUS-304,GPIO 8 ON (Simulated)
+9.20,STATUS-03,Key Registered: W
+9.20,STATUS-304,GPIO 0 ON (Simulated)
+9.20,STATUS-304,GPIO 8 ON (Simulated)
+9.30,STATUS-03,Key Registered: W
+9.30,STATUS-304,GPIO 0 ON (Simulated)
+9.30,STATUS-304,GPIO 8 ON (Simulated)
+9.40,STATUS-03,Key Registered: W
+9.40,STATUS-304,GPIO 0 ON (Simulated)
+9.40,STATUS-304,GPIO 8 ON (Simulated)
+9.50,STATUS-03,Key Registered: W
+9.50,STATUS-304,GPIO 0 ON (Simulated)
+9.50,STATUS-304,GPIO 8 ON (Simulated)
+9.60,STATUS-03,Key Registered: W
+9.60,STATUS-304,GPIO 0 ON (Simulated)
+9.60,STATUS-304,GPIO 8 ON (Simulated)
+9.70,STATUS-03,Key Registered: W
+9.70,STATUS-304,GPIO 0 ON (Simulated)
+9.70,STATUS-304,GPIO 8 ON (Simulated)
+9.80,STATUS-03,Key Registered: W
+9.80,STATUS-304,GPIO 0 ON (Simulated)
+9.80,STATUS-304,GPIO 8 ON (Simulated)
+9.90,STATUS-03,Key Registered: W
+9.90,STATUS-304,GPIO 0 ON (Simulated)
+9.90,STATUS-304,GPIO 8 ON (Simulated)
+10.00,STATUS-03,Key Registered: W
+10.00,STATUS-304,GPIO 0 ON (Simulated)
+10.00,STATUS-304,GPIO 8 ON (Simulated)
+10.10,STATUS-03,Key Registered: W
+10.10,STATUS-304,GPIO 0 ON (Simulated)
+10.10,STATUS-304,GPIO 8 ON (Simulated)
+10.20,STATUS-03,Key Registered: W
+10.20,STATUS-304,GPIO 0 ON (Simulated)
+10.20,STATUS-304,GPIO 8 ON (Simulated)
+10.30,STATUS-03,Key Registered: W
+10.30,STATUS-304,GPIO 0 ON (Simulated)
+10.30,STATUS-304,GPIO 8 ON (Simulated)
+10.40,STATUS-300,Mode Changed: Pulse Mode (Caps Lock ON)
+10.40,STATUS-03,Key Registered: W
+10.40,STATUS-304,GPIO 0 ON (Simulated)
+10.40,STATUS-304,GPIO 8 ON (Simulated)
+10.50,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+10.50,ERROR-03,Incorrect Keybind
+10.60,STATUS-03,Key Registered: W
+10.60,STATUS-304,GPIO 0 ON (Simulated)
+10.60,STATUS-304,GPIO 8 ON (Simulated)
+10.70,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+10.70,ERROR-03,Incorrect Keybind
+10.80,STATUS-03,Key Registered: W
+10.80,STATUS-304,GPIO 0 ON (Simulated)
+10.80,STATUS-304,GPIO 8 ON (Simulated)
+10.90,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+10.90,ERROR-03,Incorrect Keybind
+11.00,STATUS-03,Key Registered: W
+11.00,STATUS-304,GPIO 0 ON (Simulated)
+11.00,STATUS-304,GPIO 8 ON (Simulated)
+11.10,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+11.10,ERROR-03,Incorrect Keybind
+11.20,STATUS-03,Key Registered: W
+11.20,STATUS-304,GPIO 0 ON (Simulated)
+11.20,STATUS-304,GPIO 8 ON (Simulated)
+11.30,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+11.30,ERROR-03,Incorrect Keybind
+11.40,STATUS-03,Key Registered: W
+11.40,STATUS-304,GPIO 0 ON (Simulated)
+11.40,STATUS-304,GPIO 8 ON (Simulated)
+11.50,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+11.50,ERROR-03,Incorrect Keybind
+11.60,STATUS-03,Key Registered: W
+11.60,STATUS-304,GPIO 0 ON (Simulated)
+11.60,STATUS-304,GPIO 8 ON (Simulated)
+11.70,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+11.70,ERROR-03,Incorrect Keybind
+11.80,STATUS-03,Key Registered: W
+11.80,STATUS-304,GPIO 0 ON (Simulated)
+11.80,STATUS-304,GPIO 8 ON (Simulated)
+11.90,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+11.90,ERROR-03,Incorrect Keybind
+12.00,STATUS-03,Key Registered: W
+12.00,STATUS-304,GPIO 0 ON (Simulated)
+12.00,STATUS-304,GPIO 8 ON (Simulated)
+13.60,STATUS-03,Key Registered: W
+13.60,STATUS-304,GPIO 0 ON (Simulated)
+13.60,STATUS-304,GPIO 8 ON (Simulated)
+14.20,STATUS-03,Key Registered: W
+14.20,STATUS-304,GPIO 0 ON (Simulated)
+14.20,STATUS-304,GPIO 8 ON (Simulated)
+14.30,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+14.30,ERROR-03,Incorrect Keybind
+14.40,STATUS-03,Key Registered: W
+14.40,STATUS-304,GPIO 0 ON (Simulated)
+14.40,STATUS-304,GPIO 8 ON (Simulated)
+14.50,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+14.50,ERROR-03,Incorrect Keybind
+14.60,STATUS-03,Key Registered: W
+14.60,STATUS-304,GPIO 0 ON (Simulated)
+14.60,STATUS-304,GPIO 8 ON (Simulated)
+14.70,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+14.70,ERROR-03,Incorrect Keybind
+14.80,STATUS-03,Key Registered: W
+14.80,STATUS-304,GPIO 0 ON (Simulated)
+14.80,STATUS-304,GPIO 8 ON (Simulated)
+14.90,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+14.90,ERROR-03,Incorrect Keybind
+15.00,STATUS-03,Key Registered: W
+15.00,STATUS-304,GPIO 0 ON (Simulated)
+15.00,STATUS-304,GPIO 8 ON (Simulated)
+15.10,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+15.10,ERROR-03,Incorrect Keybind
+15.20,STATUS-03,Key Registered: W
+15.20,STATUS-304,GPIO 0 ON (Simulated)
+15.20,STATUS-304,GPIO 8 ON (Simulated)
+15.30,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+15.30,ERROR-03,Incorrect Keybind
+15.40,STATUS-03,Key Registered: W
+15.40,STATUS-304,GPIO 0 ON (Simulated)
+15.40,STATUS-304,GPIO 8 ON (Simulated)
+15.50,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
+15.50,ERROR-03,Incorrect Keybind
+15.60,STATUS-03,Key Registered: W
+15.60,STATUS-304,GPIO 0 ON (Simulated)
+15.60,STATUS-304,GPIO 8 ON (Simulated)
+15.70,STATUS-300,Mode Changed: Continuous Mode (Caps Lock OFF)
+15.70,STATUS-03,Key Registered: W
+15.70,STATUS-304,GPIO 0 ON (Simulated)
+15.70,STATUS-304,GPIO 8 ON (Simulated)
+15.80,STATUS-03,Key Registered: W
+15.80,STATUS-304,GPIO 0 ON (Simulated)
+15.80,STATUS-304,GPIO 8 ON (Simulated)
+15.90,STATUS-03,Key Registered: W
+15.90,STATUS-304,GPIO 0 ON (Simulated)
+15.90,STATUS-304,GPIO 8 ON (Simulated)
+16.00,STATUS-03,Key Registered: W
+16.00,STATUS-304,GPIO 0 ON (Simulated)
+16.00,STATUS-304,GPIO 8 ON (Simulated)
+16.10,STATUS-03,Key Registered: W
+16.10,STATUS-304,GPIO 0 ON (Simulated)
+16.10,STATUS-304,GPIO 8 ON (Simulated)
+16.20,STATUS-03,Key Registered: W
+16.20,STATUS-304,GPIO 0 ON (Simulated)
+16.20,STATUS-304,GPIO 8 ON (Simulated)
+16.30,STATUS-03,Key Registered: W
+16.30,STATUS-304,GPIO 0 ON (Simulated)
+16.30,STATUS-304,GPIO 8 ON (Simulated)
+16.40,STATUS-03,Key Registered: W
+16.40,STATUS-304,GPIO 0 ON (Simulated)
+16.40,STATUS-304,GPIO 8 ON (Simulated)
+16.50,STATUS-03,Key Registered: W
+16.50,STATUS-304,GPIO 0 ON (Simulated)
+16.50,STATUS-304,GPIO 8 ON (Simulated)
+16.60,STATUS-03,Key Registered: W
+16.60,STATUS-304,GPIO 0 ON (Simulated)
+16.60,STATUS-304,GPIO 8 ON (Simulated)
+16.70,STATUS-03,Key Registered: W
+16.70,STATUS-304,GPIO 0 ON (Simulated)
+16.70,STATUS-304,GPIO 8 ON (Simulated)
+16.80,STATUS-03,Key Registered: W
+16.80,STATUS-304,GPIO 0 ON (Simulated)
+16.80,STATUS-304,GPIO 8 ON (Simulated)
+16.90,STATUS-03,Key Registered: W
+16.90,STATUS-304,GPIO 0 ON (Simulated)
+16.90,STATUS-304,GPIO 8 ON (Simulated)
+17.00,STATUS-03,Key Registered: W
+17.00,STATUS-304,GPIO 0 ON (Simulated)
+17.00,STATUS-304,GPIO 8 ON (Simulated)
+17.10,STATUS-03,Key Registered: W
+17.10,STATUS-304,GPIO 0 ON (Simulated)
+17.10,STATUS-304,GPIO 8 ON (Simulated)
+17.20,STATUS-03,Key Registered: W
+17.20,STATUS-304,GPIO 0 ON (Simulated)
+17.20,STATUS-304,GPIO 8 ON (Simulated)
+17.30,STATUS-03,Key Registered: W
+17.30,STATUS-304,GPIO 0 ON (Simulated)
+17.30,STATUS-304,GPIO 8 ON (Simulated)
+17.40,STATUS-03,Key Registered: W
+17.40,STATUS-304,GPIO 0 ON (Simulated)
+17.40,STATUS-304,GPIO 8 ON (Simulated)
+17.50,STATUS-03,Key Registered: W
+17.50,STATUS-304,GPIO 0 ON (Simulated)
+17.50,STATUS-304,GPIO 8 ON (Simulated)
+17.60,STATUS-03,Key Registered: W
+17.60,STATUS-304,GPIO 0 ON (Simulated)
+17.60,STATUS-304,GPIO 8 ON (Simulated)
+17.70,STATUS-03,Key Registered: W
+17.70,STATUS-304,GPIO 0 ON (Simulated)
+17.70,STATUS-304,GPIO 8 ON (Simulated)
+17.80,STATUS-03,Key Registered: W
+17.80,STATUS-304,GPIO 0 ON (Simulated)
+17.80,STATUS-304,GPIO 8 ON (Simulated)
+18.40,STATUS-002,Session Ended
+18.40,STATUS-003,Shutdown Successful
