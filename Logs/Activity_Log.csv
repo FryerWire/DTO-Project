@@ -2,104 +2,171 @@ Time(s),Code,Description
 0.00,STATUS-00,Startup Successful: Files Ready
 0.00,STATUS-02,Session Started
 0.00,STATUS-05,Mode Changed: Operational Mode
-0.00,STATUS-03,Key Registered: Shift
-0.10,STATUS-03,Key Registered: Shift
-9.60,ERROR-03,Incorrect Keybind
-9.70,ERROR-03,Incorrect Keybind
-10.80,ERROR-03,Incorrect Keybind
-11.00,ERROR-03,Incorrect Keybind
-12.50,STATUS-03,Key Registered: W
-12.60,STATUS-03,Key Registered: W
-12.70,STATUS-03,Key Registered: W
-12.80,STATUS-03,Key Registered: W
-12.90,STATUS-03,Key Registered: W
-13.00,STATUS-03,Key Registered: W
-13.10,STATUS-03,Key Registered: W
-13.20,STATUS-03,Key Registered: W
-13.30,STATUS-03,Key Registered: W
-13.40,STATUS-03,Key Registered: W
-13.50,STATUS-03,Key Registered: W
-13.60,STATUS-03,Key Registered: W
-13.70,STATUS-03,Key Registered: W
-13.80,STATUS-03,Key Registered: W
-13.90,STATUS-03,Key Registered: W
-14.00,STATUS-03,Key Registered: A
-14.10,STATUS-03,Key Registered: A
-14.20,STATUS-03,Key Registered: A
-14.30,STATUS-03,Key Registered: A
-14.40,STATUS-03,Key Registered: A
-14.50,STATUS-03,Key Registered: A
-14.60,STATUS-03,Key Registered: A
-14.70,STATUS-03,Key Registered: A
-14.80,STATUS-03,Key Registered: A
-14.90,STATUS-03,Key Registered: A
-15.00,STATUS-03,Key Registered: A
-15.10,STATUS-03,Key Registered: A
-15.20,STATUS-03,Key Registered: A
-15.30,STATUS-03,Key Registered: A
-15.40,STATUS-03,Key Registered: A
-15.50,STATUS-03,Key Registered: A
-15.60,STATUS-03,Key Registered: D
-15.70,STATUS-03,Key Registered: D
-15.80,STATUS-03,Key Registered: D
-15.90,STATUS-03,Key Registered: D
-16.00,STATUS-03,Key Registered: D
+1.40,STATUS-03,Key Registered: W
+1.40,STATUS-03,Key Registered: W
+1.50,STATUS-03,Key Registered: W
+2.10,STATUS-03,Key Registered: A
+2.10,STATUS-03,Key Registered: A
+2.20,STATUS-03,Key Registered: A
+2.40,STATUS-03,Key Registered: S
+2.40,STATUS-03,Key Registered: S
+2.50,STATUS-03,Key Registered: S
+2.60,STATUS-03,Key Registered: D
+2.60,STATUS-03,Key Registered: D
+2.70,STATUS-03,Key Registered: D
+3.20,STATUS-03,Key Registered: W
+3.20,STATUS-03,Key Registered: W
+3.60,STATUS-03,Key Registered: A
+3.60,STATUS-03,Key Registered: A
+3.70,STATUS-03,Key Registered: A
+4.20,ERROR-03,Incorrect Keybind
+4.20,ERROR-03,Incorrect Keybind
+5.00,ERROR-03,Incorrect Keybind
+5.00,ERROR-03,Incorrect Keybind
+5.20,ERROR-03,Incorrect Keybind
+5.20,ERROR-03,Incorrect Keybind
+5.30,ERROR-03,Incorrect Keybind
+5.50,ERROR-03,Incorrect Keybind
+5.50,ERROR-03,Incorrect Keybind
+5.70,ERROR-03,Incorrect Keybind
+5.80,ERROR-03,Incorrect Keybind
+7.30,STATUS-03,Key Registered: W
+7.50,STATUS-03,Key Registered: A
+7.60,STATUS-03,Key Registered: S
+9.80,STATUS-03,Key Registered: D
+9.80,STATUS-03,Key Registered: D
+9.90,STATUS-03,Key Registered: D
+10.00,STATUS-03,Key Registered: D
+10.10,STATUS-03,Key Registered: D
+10.20,STATUS-03,Key Registered: D
+10.30,STATUS-03,Key Registered: D
+10.30,STATUS-03,Key Registered: D
+10.30,STATUS-03,Key Registered: D
+10.40,STATUS-03,Key Registered: D
+10.40,STATUS-03,Key Registered: D
+10.40,STATUS-03,Key Registered: D
+10.40,STATUS-03,Key Registered: D
+10.40,STATUS-03,Key Registered: D
+10.50,STATUS-03,Key Registered: D
+10.50,STATUS-03,Key Registered: D
+10.50,STATUS-03,Key Registered: D
+10.50,STATUS-03,Key Registered: D
+10.60,STATUS-03,Key Registered: D
+10.60,STATUS-03,Key Registered: D
+10.60,STATUS-03,Key Registered: D
+10.60,STATUS-03,Key Registered: D
+10.60,STATUS-03,Key Registered: D
+10.70,STATUS-03,Key Registered: D
+10.70,STATUS-03,Key Registered: D
+10.70,STATUS-03,Key Registered: D
+10.70,STATUS-03,Key Registered: D
+10.70,STATUS-03,Key Registered: D
+10.80,STATUS-03,Key Registered: D
+10.80,STATUS-03,Key Registered: D
+10.80,STATUS-03,Key Registered: D
+10.80,STATUS-03,Key Registered: D
+10.90,STATUS-03,Key Registered: D
+10.90,STATUS-03,Key Registered: D
+10.90,STATUS-03,Key Registered: D
+10.90,STATUS-03,Key Registered: D
+11.00,STATUS-03,Key Registered: D
+11.00,STATUS-03,Key Registered: D
+11.00,STATUS-03,Key Registered: D
+11.00,STATUS-03,Key Registered: D
+11.10,STATUS-03,Key Registered: D
+11.10,STATUS-03,Key Registered: D
+11.10,STATUS-03,Key Registered: D
+11.10,STATUS-03,Key Registered: D
+11.10,STATUS-03,Key Registered: D
+11.20,STATUS-03,Key Registered: D
+11.20,STATUS-03,Key Registered: D
+11.20,STATUS-03,Key Registered: D
+11.20,STATUS-03,Key Registered: D
+11.20,STATUS-03,Key Registered: D
+11.30,STATUS-03,Key Registered: D
+11.30,STATUS-03,Key Registered: D
+11.30,STATUS-03,Key Registered: D
+11.30,STATUS-03,Key Registered: D
+11.40,STATUS-03,Key Registered: D
+11.40,STATUS-03,Key Registered: D
+12.50,STATUS-03,Key Registered: I
+12.50,STATUS-03,Key Registered: I
+12.60,STATUS-03,Key Registered: I
+12.70,STATUS-03,Key Registered: I
+12.80,STATUS-03,Key Registered: I
+12.90,STATUS-03,Key Registered: I
+13.00,STATUS-03,Key Registered: I
+13.00,STATUS-03,Key Registered: I
+13.00,STATUS-03,Key Registered: I
+13.00,STATUS-03,Key Registered: I
+13.10,STATUS-03,Key Registered: I
+13.10,STATUS-03,Key Registered: I
+13.10,STATUS-03,Key Registered: I
+13.10,STATUS-03,Key Registered: J
+13.10,STATUS-03,Key Registered: J
+13.20,STATUS-03,Key Registered: J
+13.30,STATUS-03,Key Registered: J
+13.40,STATUS-03,Key Registered: J
+13.50,STATUS-03,Key Registered: K
+13.50,STATUS-03,Key Registered: J
+13.60,STATUS-03,Key Registered: K
+13.70,STATUS-03,Key Registered: K
+13.80,STATUS-03,Key Registered: K
+13.90,STATUS-03,Key Registered: K
+14.00,STATUS-03,Key Registered: K
+14.00,STATUS-03,Key Registered: K
+14.00,STATUS-03,Key Registered: L
+14.00,STATUS-03,Key Registered: L
+14.10,STATUS-03,Key Registered: L
+14.20,STATUS-03,Key Registered: L
+14.30,STATUS-03,Key Registered: L
+14.50,STATUS-03,Key Registered: O
+14.50,STATUS-03,Key Registered: O
+14.60,STATUS-03,Key Registered: O
+14.80,STATUS-03,Key Registered: I
+14.90,STATUS-03,Key Registered: J
+14.90,STATUS-03,Key Registered: J
+15.00,STATUS-03,Key Registered: K
+15.00,STATUS-03,Key Registered: K
+15.10,STATUS-03,Key Registered: K
+15.20,STATUS-03,Key Registered: L
+15.20,STATUS-03,Key Registered: L
+15.60,ERROR-03,Incorrect Keybind
+15.60,ERROR-03,Incorrect Keybind
+15.80,ERROR-03,Incorrect Keybind
+15.90,ERROR-03,Incorrect Keybind
+15.90,ERROR-03,Incorrect Keybind
 16.10,STATUS-03,Key Registered: D
-16.20,STATUS-03,Key Registered: D
-16.30,STATUS-03,Key Registered: D
-16.40,STATUS-03,Key Registered: D
-16.50,STATUS-03,Key Registered: D
-16.60,STATUS-03,Key Registered: D
-16.70,STATUS-03,Key Registered: D
-16.80,STATUS-03,Key Registered: S
-16.90,STATUS-03,Key Registered: S
-17.00,STATUS-03,Key Registered: S
-17.10,STATUS-03,Key Registered: S
-17.20,STATUS-03,Key Registered: S
-17.30,STATUS-03,Key Registered: S
-17.40,STATUS-03,Key Registered: S
-17.50,STATUS-03,Key Registered: S
-17.60,STATUS-03,Key Registered: S
-24.70,STATUS-03,Key Registered: W
-24.80,STATUS-03,Key Registered: W
-24.90,STATUS-03,Key Registered: W
-25.00,STATUS-03,Key Registered: W
-25.30,STATUS-03,Key Registered: W
-25.40,STATUS-03,Key Registered: W
-25.60,STATUS-03,Key Registered: LeftArrow
-25.70,STATUS-03,Key Registered: LeftArrow
-25.80,STATUS-03,Key Registered: LeftArrow
-25.90,STATUS-03,Key Registered: LeftArrow
-26.00,STATUS-03,Key Registered: RightArrow
-26.10,STATUS-03,Key Registered: RightArrow
-26.20,STATUS-03,Key Registered: RightArrow
-26.30,STATUS-03,Key Registered: RightArrow
-26.40,STATUS-03,Key Registered: RightArrow
-26.50,STATUS-03,Key Registered: RightArrow
-26.60,STATUS-03,Key Registered: RightArrow
-26.70,STATUS-03,Key Registered: RightArrow
-26.80,STATUS-03,Key Registered: RightArrow
-26.90,STATUS-03,Key Registered: UpArrow
-27.00,STATUS-03,Key Registered: UpArrow
-32.80,STATUS-03,Key Registered: W
-34.20,STATUS-03,Key Registered: W
-35.30,STATUS-03,Key Registered: A
-36.90,STATUS-03,Key Registered: A
-37.00,STATUS-03,Key Registered: A
-37.10,STATUS-03,Key Registered: A
-37.20,STATUS-03,Key Registered: A
-37.30,STATUS-03,Key Registered: A
-37.40,STATUS-03,Key Registered: A
-37.50,STATUS-03,Key Registered: A
-37.60,STATUS-03,Key Registered: A
-37.70,STATUS-03,Key Registered: A
-37.80,STATUS-03,Key Registered: A
-37.90,STATUS-03,Key Registered: D
-38.00,STATUS-03,Key Registered: D
-38.10,STATUS-03,Key Registered: D
-38.20,STATUS-03,Key Registered: D
-38.30,STATUS-03,Key Registered: S
-38.40,STATUS-03,Key Registered: S
-38.50,STATUS-03,Key Registered: S
-39.60,STATUS-01,Session Ended
-39.60,STATUS-04,Shutdown Successful
+16.10,STATUS-03,Key Registered: D
+16.30,ERROR-03,Incorrect Keybind
+16.30,ERROR-03,Incorrect Keybind
+16.50,ERROR-03,Incorrect Keybind
+16.50,ERROR-03,Incorrect Keybind
+16.60,ERROR-03,Incorrect Keybind
+16.60,ERROR-03,Incorrect Keybind
+16.80,ERROR-03,Incorrect Keybind
+16.80,ERROR-03,Incorrect Keybind
+17.20,STATUS-03,Key Registered: D
+17.30,STATUS-03,Key Registered: D
+17.40,ERROR-03,Incorrect Keybind
+17.50,ERROR-03,Incorrect Keybind
+17.50,ERROR-03,Incorrect Keybind
+17.60,STATUS-03,Key Registered: D
+17.60,STATUS-03,Key Registered: D
+17.90,ERROR-03,Incorrect Keybind
+18.10,ERROR-03,Incorrect Keybind
+18.50,ERROR-03,Incorrect Keybind
+18.60,ERROR-03,Incorrect Keybind
+18.70,STATUS-03,Key Registered: S
+18.70,STATUS-03,Key Registered: S
+18.90,ERROR-03,Incorrect Keybind
+18.90,STATUS-03,Key Registered: S
+18.90,STATUS-03,Key Registered: S
+19.00,ERROR-03,Incorrect Keybind
+19.00,ERROR-03,Incorrect Keybind
+19.10,STATUS-03,Key Registered: S
+19.10,STATUS-03,Key Registered: S
+19.20,ERROR-03,Incorrect Keybind
+19.20,ERROR-03,Incorrect Keybind
+19.70,STATUS-01,Session Ended
+19.70,STATUS-04,Shutdown Successful

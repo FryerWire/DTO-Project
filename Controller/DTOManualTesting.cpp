@@ -1,4 +1,3 @@
-
 /*
     DTO Manual Testing Program
 
@@ -7,7 +6,7 @@
     - Supports Continuous (Caps Lock OFF) and Pulse (Caps Lock ON) modes.
     - Maps specific keys to translation and rotation movements.
     - Activity_Log.csv tracks high-level Application Codes (STATUS and ERROR).
-    - Toggle Modes: ~ + S (Startup Sequence) | ~ + O (Operational Mode).
+    - Toggle Modes: Input '1' (Startup Sequence) | Input '2' (Operational Mode) | Input '0' (Return to Menu).
       Note: GPIO control is simulated with console output for testing purposes. Actual GPIO implementation will be done in the RPi 5 environment using libgpiod as per architecture requirements[cite: 758, 918].
 
     Functions:
@@ -16,6 +15,8 @@
     - getVirtualKeyName(int vkCode): Converts virtual key codes to human-readable names for logging.
     - logData(char type, string direction, string keyname, char statusChar, char mode): Logs key events to Keybind_Log.csv and the console, with status codes for successful registrations and errors.
     - processAction(int vkCode, char mode): Maps virtual key codes to specific translation and rotation actions based on the current mode (Continuous or Pulse).
+    - printMenu(): Prints the main menu to the console.
+    - printOperationalHeader(): Prints the operational mode header to the console.
     - main(): Initializes log files, handles mode toggling, processes key events, and manages the overall program flow.
 
     Codes:
@@ -58,8 +59,8 @@ using namespace std;
 // Global Variables ===============================================================================
 double time_counter = 0.0;
 string last_key_fired = "";      // Tracks the key name to prevent repeat firing in Pulse mode
-bool isStartupMode = false;      // Tracks if the system is in Startup Sequence Mode (~S)
-bool isOperationalMode = false;  // Tracks if the system is in Operational Mode (~O)
+bool isStartupMode = false;      // Tracks if the system is in Startup Sequence Mode (1)
+bool isOperationalMode = false;  // Tracks if the system is in Operational Mode (2)
 const string LOG_PATH = "C:\\Users\\maxwe\\OneDrive\\Desktop\\GitHub Repos\\DTO-Project\\Logs\\";
 
 
@@ -115,7 +116,6 @@ string getVirtualKeyName(int vkCode) {
     if (vkCode == VK_CONTROL) return "Control";
     if (vkCode == VK_MENU) return "Alt";
     if (vkCode == VK_RETURN) return "Enter";
-    if (vkCode == VK_OEM_3) return "~";
 
     // Alphanumeric keys (A-Z, 0-9) ---------------------------------------------------------------
     if ((vkCode >= '0' && vkCode <= '9') || (vkCode >= 'A' && vkCode <= 'Z')) {
@@ -138,16 +138,16 @@ string getVirtualKeyName(int vkCode) {
 */
 void logData(char type, string direction, string keyname, char statusChar, char mode = 'C') {
     // Log to console -----------------------------------------------------------------------------
-    cout << fixed << setprecision(2) 
-         << time_counter << ", " << mode << ", " << type << ", " << direction << ", " << keyname << ", " << statusChar << endl;
+    cout << fixed << setprecision(2)
+         << time_counter << "," << mode << "," << type << "," << direction << "," << keyname << endl;
 
     // Log to Keybind_Log.csv ---------------------------------------------------------------------
     ofstream outFile(LOG_PATH + "Keybind_Log.csv", ios_base::app);
-    if (outFile.is_open()) {  
+    if (outFile.is_open()) {
         outFile << fixed << setprecision(2)
                 << time_counter << "," << mode << "," << type << "," << direction << "," << keyname << endl;
         outFile.close();
-        
+
         // Log Status Code for successful key registration ----------------------------------------
         if (statusChar == 'N' && keyname != "-") {
             logActivity("STATUS-03", "Key Registered: " + keyname);
@@ -168,38 +168,61 @@ void logData(char type, string direction, string keyname, char statusChar, char 
     - mode (char)  : 'C' for Continuous mode, 'P' for Pulse mode
 */
 void processAction(int vkCode, char mode) {
-    bool ctrl = (GetAsyncKeyState(VK_CONTROL) & 0x8000);
-
-    switch (vkCode) {  
+    switch (vkCode) {
         // Translation ----------------------------------------------------------------------------
-        case 'W':            logData('T', "+X", "W", 'N', mode); break;
-        case 'S':            logData('T', "-X", "S", 'N', mode); break;
-        case 'D':            logData('T', "+Y", "D", 'N', mode); break;
-        case 'A':            logData('T', "-Y", "A", 'N', mode); break;
-        case VK_SPACE:       logData('T', "+Z", "Space", 'N', mode); break;
-        case VK_SHIFT:       logData('T', "-Z", "Shift", 'N', mode); break;
+        case 'W':      logData('T', "+X", "W", 'N', mode); break;  // Forward
+        case 'S':      logData('T', "-X", "S", 'N', mode); break;  // Backward
+        case 'A':      logData('T', "+Y", "A", 'N', mode); break;  // Left
+        case 'D':      logData('T', "-Y", "D", 'N', mode); break;  // Right
+        case 'E':      logData('T', "+Z", "E", 'N', mode); break;  // Up
+        case 'Q':      logData('T', "-Z", "Q", 'N', mode); break;  // Down
 
         // Rotation -------------------------------------------------------------------------------
-        case VK_RIGHT: 
-            if (ctrl)        logData('R', "+R", "Ctrl+RightArrow", 'N', mode); 
-            else             logData('R', "+Y", "RightArrow", 'N', mode); 
-            break;
-        case VK_LEFT:  
-            if (ctrl)        logData('R', "-R", "Ctrl+LeftArrow", 'N', mode); 
-            else             logData('R', "-Y", "LeftArrow", 'N', mode); 
-            break;
-        case VK_UP:          logData('R', "+P", "UpArrow", 'N', mode); break;
-        case VK_DOWN:        logData('R', "-P", "DownArrow", 'N', mode); break;
-
-        // Intentional Fault Trigger Keys ---------------------------------------------------------
-        case 'Q':            logData('F', "--", "Q", 'E', mode); logError("ERROR-03", "Incorrect Keybind"); break;
-        case 'E':            logData('F', "--", "E", 'E', mode); logError("ERROR-03", "Incorrect Keybind"); break;
-        case 'G':            logData('F', "--", "G", 'E', mode); logError("ERROR-03", "Incorrect Keybind"); break; 
-        case 'F':            logData('F', "--", "F", 'E', mode); logError("ERROR-03", "Incorrect Keybind"); break;
+        case 'I':      logData('R', "+P", "I", 'N', mode); break;  // Pitch CCW
+        case 'K':      logData('R', "-P", "K", 'N', mode); break;  // Pitch CW
+        case 'O':      logData('R', "+R", "O", 'N', mode); break;  // Roll CCW
+        case 'U':      logData('R', "-R", "U", 'N', mode); break;  // Roll CW
+        case 'L':      logData('R', "+Y", "L", 'N', mode); break;  // Yaw CCW
+        case 'J':      logData('R', "-Y", "J", 'N', mode); break;  // Yaw CW
 
         // General Error Handling -----------------------------------------------------------------
-        default:             logData('F', "--", getVirtualKeyName(vkCode), 'E', mode); logError("ERROR-03", "Incorrect Keybind"); break;
+        default:       logData('F', "--", getVirtualKeyName(vkCode), 'E', mode); logError("ERROR-03", "Incorrect Keybind"); break;
     }
+}
+
+
+
+/*
+    printMenu() - Prints the main menu to the console.
+*/
+void printMenu() {
+    cout << "=================================================" << endl;
+    cout << "DTO Program"                                        << endl;
+    cout << "-------------------------------------------------"  << endl;
+    cout << "Program Modes:"                                     << endl;
+    cout << "- 0   : Menu Mode"                                  << endl;
+    cout << "- 1   : Startup Sequence Mode"                      << endl;
+    cout << "- 2   : Operational Mode"                           << endl;
+    cout << "- Esc : Quit Mode"                                  << endl;
+    cout << "================================================="  << endl;
+    cout << ">> ";
+}
+
+
+
+/*
+    printOperationalHeader() - Prints the operational mode header to the console.
+*/
+void printOperationalHeader() {
+    cout << "================================================="  << endl;
+    cout << "Operational Mode (2)"                               << endl;
+    cout << "-------------------------------------------------"  << endl;
+    cout << "Firing Mode: Caps Lock OFF = Continuous | Caps Lock ON = Pulse" << endl;
+    cout << "Program Modes:"                                     << endl;
+    cout << "- 0   : Return to Menu"                             << endl;
+    cout << "- Esc : Quit Program"                               << endl;
+    cout << "================================================="  << endl;
+    cout << ">> "                                                 << endl;
 }
 
 
@@ -226,45 +249,35 @@ int main() {
     resetActivity.close();
 
     logActivity("STATUS-00", "Startup Successful: Files Ready");
-
-    // Welcome Message ----------------------------------------------------------------------------
-    cout << "DTO Program:" << endl;
-    cout << "- Enter '~S' Startup Sequence Mode" << endl;
-    cout << "- Enter '~O' Operational Mode" << endl;
-    cout << "- Enter 'Esc' Exit Mode/Program." << endl;
-    cout << "------------------------------------------------------------" << endl;
-
     logActivity("STATUS-02", "Session Started");
+
+    // Display Menu -------------------------------------------------------------------------------
+    printMenu();
 
     // Main Loop ----------------------------------------------------------------------------------
     while (true) {
         // Exit check -----------------------------------------------------------------------------
-        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) break; 
+        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) break;
 
-        // Check for Mode Changes (~ + S or ~ + O) ------------------------------------------------
-        bool tildePressed = (GetAsyncKeyState(VK_OEM_3) & 0x8000);
-        if (tildePressed) {
-            if (GetAsyncKeyState('S') & 0x8000) {
-                // Constraint: Cannot enter ~S if already in ~O. Must Esc and restart.
-                if (isOperationalMode) {
-                    logError("ERROR-06", "Mode Switch Denied: Exit ~O first");
-                    cout << ">> ERROR: Cannot enter Startup Mode while Operational Mode is active." << endl;
-                }
-                else if (!isStartupMode) {
+        // Menu Mode (not in any sub-mode) --------------------------------------------------------
+        if (!isStartupMode && !isOperationalMode) {
+            if (_kbhit()) {
+                int input = _getch();
+
+                if (input == '1') {
+                    // Enter Startup Sequence Mode ------------------------------------------------
                     isStartupMode = true;
-                    isOperationalMode = false;
-                    cout << ">> MODE CHANGE: STARTUP SEQUENCE MODE ACTIVATED" << endl;
+                    cout << "1" << endl;
                     logActivity("STATUS-05", "Mode Changed: Startup Sequence Mode");
                     logActivity("STATUS-10", "Sequence Initiated");
 
-                    // Startup Sequence Mode (~S) Variables & Testing -----------------------------
+                    // Startup Sequence Mode Variables & Testing ----------------------------------
                     int rackConnector0[4] = {0, 1, 2, 3};
                     int rackConnector1[4] = {4, 5, 6, 7};
-                    int rackConnector2[4] = {8, 11, 12, 13}; 
-                    
+                    int rackConnector2[4] = {8, 9, 10, 11};
+
                     int* connectors[3] = {rackConnector0, rackConnector1, rackConnector2};
 
-                    // Label for jumping out of nested loops on Esc -------------------------------
                     bool force_exit = false;
 
                     for (int r = 0; r < 3; r++) {
@@ -273,7 +286,7 @@ int main() {
                         cout << "Rack Connector " << r + 1 << " Test:" << endl;
                         logActivity("STATUS-11", "Testing Rack Connector " + to_string(r + 1));
 
-                        // Phase 1: 1.0s Pulses with Real-Time Delay ------------------------------
+                        // Phase 1: 1.0s Pulses ---------------------------------------------------
                         for (int g = 0; g < 4; g++) {
                             if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { force_exit = true; break; }
                             cout << fixed << setprecision(2) << sequence_time << " GPIO " << connectors[r][g] << " On" << endl;
@@ -288,7 +301,7 @@ int main() {
                             sequence_time += 1.00;
                         }
 
-                        // Phase 2: Double 0.5s Pulses with Real-Time Delay -----------------------
+                        // Phase 2: Double 0.5s Pulses --------------------------------------------
                         for (int g = 0; g < 4; g++) {
                             if (force_exit) break;
                             for (int i = 0; i < 2; i++) {
@@ -313,32 +326,68 @@ int main() {
 
                     if (force_exit) {
                         logError("ERROR-10", "Sequence Aborted by User");
-                        break; 
+                        break;
                     }
 
                     cout << "All GPIO Successfully Activated." << endl;
                     logActivity("STATUS-14", "All GPIO Successfully Activated");
-                    cout << "------------------------------------------------------------" << endl;
-                    isStartupMode = false; // Reset so ~S can be ran again
-                }
-            }
 
-            else if (GetAsyncKeyState('O') & 0x8000) {
-                if (!isOperationalMode) {
-                    isOperationalMode = true;
                     isStartupMode = false;
-                    cout << ">> MODE CHANGE: OPERATIONAL MODE ACTIVATED" << endl;
+
+                    // Return to menu -------------------------------------------------------------
+                    printMenu();
+                }
+
+                else if (input == '2') {
+                    // Enter Operational Mode -----------------------------------------------------
+                    isOperationalMode = true;
+                    cout << "2" << endl;
                     logActivity("STATUS-05", "Mode Changed: Operational Mode");
+                    printOperationalHeader();
+                }
+
+                else if (input == 27) { // Esc via _getch
+                    break;
                 }
             }
         }
 
-        // Logic branching based on Mode ----------------------------------------------------------
-        if (isStartupMode) {
-            // Sequence completed above; waiting for mode toggle or exit.
-        } 
+        // Operational Mode (2) Logic -------------------------------------------------------------
         else if (isOperationalMode) {
-            // Operational Mode (~O) Logic 
+            // Check for '0' to return to menu ----------------------------------------------------
+            if (_kbhit()) {
+                int peeked = _getch();
+                if (peeked == '0') {
+                    isOperationalMode = false;
+                    time_counter = 0.0;
+                    last_key_fired = "";
+                    logActivity("STATUS-05", "Mode Changed: Menu Mode");
+                    printMenu();
+                    continue;
+                }
+                // Put the character back via an internal flag ------------------------------------
+                // Since _getch() consumes the char, re-process it as a VK if possible
+                // For letter keys, push back to processAction directly
+                if (peeked >= 32 && peeked <= 126) {
+                    int vk = toupper(peeked);
+                    bool isCapsOn = (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
+                    char currentMode = isCapsOn ? 'P' : 'C';
+
+                    if (currentMode == 'P') {
+                        string key_id = to_string(vk);
+                        if (key_id != last_key_fired) {
+                            processAction(vk, 'P');
+                            last_key_fired = key_id;
+                        } else {
+                            logData('F', "--", "-", 'N', 'P');
+                        }
+                    } else {
+                        processAction(vk, 'C');
+                    }
+                }
+                continue;
+            }
+
             bool isCapsOn = (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
             char currentMode = isCapsOn ? 'P' : 'C';
 
@@ -348,18 +397,13 @@ int main() {
             // Check all virtual keys for activity ------------------------------------------------
             for (int i = 0x08; i <= 0xFE; i++) {
                 if (GetAsyncKeyState(i) & 0x8000) {
-                    // Skip modifier keys to prevent them from being logged as primary keys -----------
-                    if (i == VK_CONTROL || i == VK_MENU || i == VK_CAPITAL || 
-                        i == VK_LCONTROL || i == VK_RCONTROL || i == VK_OEM_3) continue;
+                    // Skip modifier keys ---------------------------------------------------------
+                    if (i == VK_CONTROL || i == VK_MENU || i == VK_CAPITAL ||
+                        i == VK_LCONTROL || i == VK_RCONTROL) continue;
 
                     active_vk = i;
-                    
-                    // Handle Ctrl + Arrow combinations for rotation ------------------------------
-                    bool ctrl = (GetAsyncKeyState(VK_CONTROL) & 0x8000);
-                    if (i == VK_RIGHT && ctrl) current_key_id = "Ctrl+Right";
-                    else if (i == VK_LEFT && ctrl) current_key_id = "Ctrl+Left";
-                    else current_key_id = to_string(i);
-                    break; 
+                    current_key_id = to_string(i);
+                    break;
                 }
             }
 
@@ -367,7 +411,7 @@ int main() {
             if (active_vk != 0) {
                 if (currentMode == 'C') {
                     processAction(active_vk, 'C');
-                } 
+                }
                 else if (currentMode == 'P') {
                     if (current_key_id != last_key_fired) {
                         processAction(active_vk, 'P');
@@ -377,42 +421,23 @@ int main() {
                     }
                 }
                 while (_kbhit()) { _getch(); }
-            } 
-            // Handle unmapped keys and system ghosting -------------------------------------------
-            else if (_kbhit()) {
-                int key_raw = _getch();
-                char error_char = (char)toupper(key_raw);
-                
-                string mapped = "WASDQEGFT R L C";
-                if (mapped.find(error_char) != string::npos || key_raw == 'H' || key_raw == 'P' || key_raw == 'K' || key_raw == 'M') {
-                    logData('F', "--", "-", 'N', currentMode);
-                } 
-                else if (key_raw >= 32 && key_raw <= 126) {
-                    logData('F', "--", string(1, (char)key_raw), 'E', currentMode);
-                    logError("ERROR-03", "Incorrect Keybind");
-                } 
-                else {
-                    logData('F', "--", "-", 'N', currentMode);
-                    logError("ERROR-04", "System Ghosting");
-                }
-                last_key_fired = "";
             }
-            // No key activity detected, reset last_key_fired for Pulse mode ----------------------
+            // No key activity, reset pulse tracking and log idle --------------------------------
             else {
                 last_key_fired = "";
                 logData('F', "--", "-", 'N', currentMode);
             }
 
-            // Only increment time in Operational Mode --------------------------------------------
+            // Increment time only in Operational Mode --------------------------------------------
             time_counter += 0.10;
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-    
+
     // Final exit sequence ------------------------------------------------------------------------
     logActivity("STATUS-01", "Session Ended");
-    
+
     ofstream finalize(LOG_PATH + "Activity_Log.csv", ios_base::app);
     if (finalize.is_open()) {
         finalize << fixed << setprecision(2) << time_counter << ",STATUS-04,Shutdown Successful" << endl;
@@ -424,6 +449,7 @@ int main() {
 
     return 0;
 }
+
 
 
 // Compilation Instructions =======================================================================
