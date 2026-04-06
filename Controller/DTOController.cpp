@@ -7,14 +7,13 @@ Features:
 - Supports a menu system with a Startup Sequence mode for testing GPIO activation and an Operational Mode for real-time control of the thrusters.
 - Implements error handling for file access, incorrect keybinds, and mode-specific constraints.
 - Uses non-blocking input handling to allow for real-time processing of key events without freezing the program.
-- Firing mode (Continuous/Pulse) is determined by Caps Lock state: OFF = Continuous, ON = Pulse.
+- Firing mode (Continuous/Pulse) is determined by manual selection in Operational Mode: 1 = Continuous, 2 = Pulse.
 
 Functions:
 - main(): Initializes the program, handles the main loop for input processing and mode management, and performs cleanup on exit.
 - initGPIO(): Initializes the GPIO chip for controlling the thrusters, with error handling for chip access.
 - setGPIOPin(int pinOffset, int pinValue): Sets the specified GPIO pin to the desired value, with error handling for chip access and relay logic.
 - checkKeyboardInput(): Checks for available keyboard input without blocking program execution, with initialization of terminal settings for non-blocking input.
-- getCapsLockState(): Reads the Caps Lock LED state via ioctl to determine the current firing mode.
 - logActivity(string code, string description): Logs a high-level activity or event with a standardized code and description, along with a timestamp.
 - logKeyData(char type, string direction, string keyName, char statusChar, char mode): Logs detailed information about key events, including type, direction, key name, status, and mode, with error handling for file access.
 - processMovementAction(string keyId, char mode): Processes a key event for movement or rotation based on the key identifier and current mode, with error handling for invalid keybinds and Pulse Mode repeat prevention.
@@ -208,31 +207,6 @@ int checkKeyboardInput() {
 
 
 /*
-    getCapsLockState - Reads the current state of the Caps Lock LED via ioctl to determine the firing mode
-                       This function queries the keyboard LED flags from the terminal console. The LED_CAP bit
-                       corresponds to the Caps Lock indicator. If Caps Lock is ON, Pulse Mode is active;
-                       if OFF, Continuous Mode is active. Falls back to false (Continuous) on ioctl failure.
-
-    Returns:
-    - bool : true if Caps Lock is ON (Pulse Mode), false if Caps Lock is OFF (Continuous Mode)
-*/
-bool getCapsLockState() {
-    int ledFlags;
-    int fd = open("/dev/tty", O_RDONLY);
-    if (fd == -1) fd = STDIN_FILENO; 
-    
-    if (ioctl(fd, KDGETLED, &ledFlags) == -1) {
-        if (fd != STDIN_FILENO) close(fd);
-        return false;
-    }
-    
-    if (fd != STDIN_FILENO) close(fd);
-    return (ledFlags & LED_CAP) != 0;
-}
-
-
-
-/*
     logActivity - Logs a high-level activity or event with a standardized code and description, along with a timestamp
 
     Parameters:
@@ -327,7 +301,7 @@ void displayMenu() {
     } else if (programMode == 1) {
         cout << "\n=================================================\nStartup Sequence Mode\n-------------------------------------------------\nProgram Modes:\n- Esc : Quit Mode\n=================================================\n>> " << flush;
     } else if (programMode == 2) {
-        cout << "\n=================================================\nOperational Mode (2)\n-------------------------------------------------\nFiring Mode: Caps Lock OFF = Continuous | Caps Lock ON = Pulse\nProgram Modes:\n- 0   : Return to Menu\n- Esc : Quit Program\n=================================================\n>> " << endl;
+        cout << "\n=================================================\nOperational Mode (2)\n-------------------------------------------------\nProgram Modes:\n- 1   : Continuous Mode\n- 2   : Pulse Mode\n- 0   : Return to Menu\n- Esc : Quit Program\n=================================================\n>> " << flush;
     }
 }
 
@@ -388,26 +362,23 @@ int main() {
                     programMode = 0; displayMenu();
                 } else if (charInput == '2') {
                     programMode = 2;
-                    firingMode = getCapsLockState() ? 'P' : 'C';  // Sync firing mode to Caps Lock state on entry
+                    firingMode = 'C'; 
                     logActivity("STATUS-300", "Mode Changed: Operational Mode Active");
                     displayMenu();
                 }
-            // Operational Mode: Accepts movement/rotation inputs and mode switching ----------------------------------------------------------------
+            // Operational Mode: Accepts mode selection and movement/rotation inputs ----------------------------------------------------------------
             } else if (programMode == 2) {
-                if (charInput == '0') { 
-                    programMode = 0; 
-                    displayMenu(); 
-                } else {
-                    // Update firing mode from Caps Lock before processing the key ------------------------------------------------------------------
-                    firingMode = getCapsLockState() ? 'P' : 'C';
+                if (charInput == '1') { firingMode = 'C'; logActivity("STATUS-300", "Mode Changed: Continuous Mode"); }
+                else if (charInput == '2') { firingMode = 'P'; logActivity("STATUS-300", "Mode Changed: Pulse Mode"); }
+                else if (charInput == '0') { programMode = 0; displayMenu(); }
+                else {
                     string keyIdString = string(1, toupper(charInput));
                     processMovementAction(keyIdString, firingMode);
                 }
             }
-        // No key pressed: deactivate all thrusters and update firing mode from Caps Lock -----------------------------------------------------------
+        // No key pressed: deactivate all thrusters -------------------------------------------------------------------------------------------------
         } else {
             if (programMode == 2) {
-                firingMode = getCapsLockState() ? 'P' : 'C';
                 for (int i = 0; i <= 11; i++) setGPIOPin(i, 0);
                 logKeyData('F', "--", "-", 'N', firingMode);
                 lastKeyFired = "";
