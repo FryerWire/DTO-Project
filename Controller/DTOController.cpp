@@ -51,6 +51,7 @@ Codes:
 #include <string>
 #include <iomanip>
 #include <vector>
+#include <algorithm>
 
 // Linux Specific Headers ---------------------------------------------------------------------------------------------------------------------------
 #include <fcntl.h>
@@ -75,6 +76,7 @@ char firingMode = 'C';                        // 'C' for Continuous, 'P' for Pul
 chrono::high_resolution_clock::time_point programStartTime;  // Track actual program start time
 string lastKeyFired = "";                     // Tracks last key for Pulse Mode repeat prevention
 string currentKeyPressed = "";                // Tracks currently pressed key
+vector<int> failedGPIOPins;                   // Tracks GPIO pins that failed during startup
 struct gpiod_chip* gpioChip;                  // GPIO chip handle
 const int ACTIVE_LOW = 0;                     // Set to 1 if using active-low relays, 0 for active-high relays
 const string logDirectoryPath = "./Logs/";    // Data logging path
@@ -165,19 +167,23 @@ void initGPIO() {
 
 /*
     setGPIOPin - Sets the specified GPIO pin to the desired value, with error handling for chip access and relay logic
-                 This function first checks if the gpioChip is initialized. If not, it returns immediately. 
+                 This function first checks if the gpioChip is initialized. If not, it returns false. 
                  It then creates line settings for the specified pin, setting it as an output and applying the appropriate output value based on relay logic. 
                  It configures a line request for the specified pin and releases it immediately after setting the value. 
                  Finally, it frees all allocated resources related to the line settings and request configuration.
+                 Returns true if the operation was successful, false if there was an error.
 
     Parameters:
     - pinOffset (int) : The offset of the GPIO pin to set (0-11 for this controller)
     - pinValue (int)  : The desired state of the pin, where 1 represents ON and 0 represents OFF. 
                         This value is processed through getRelayValue to account for active-low or active-high relay configurations.
+
+    Returns:
+    - bool : true if the GPIO pin was successfully set, false if there was an error (chip not initialized or line request failed)
 */
-void setGPIOPin(int pinOffset, int pinValue) {
+bool setGPIOPin(int pinOffset, int pinValue) {
     // Error handling for GPIO chip access ----------------------------------------------------------------------------------------------------------
-    if (!gpioChip) return;
+    if (!gpioChip) return false;
     struct gpiod_line_settings* lineSettings = gpiod_line_settings_new();
     gpiod_line_settings_set_direction(lineSettings, GPIOD_LINE_DIRECTION_OUTPUT);
     gpiod_line_settings_set_output_value(lineSettings, getRelayValue(pinValue));
@@ -189,10 +195,12 @@ void setGPIOPin(int pinOffset, int pinValue) {
     struct gpiod_line_request* lineRequest = gpiod_chip_request_lines(gpioChip, requestConfig, lineConfig);  
 
     // Error handling for line request --------------------------------------------------------------------------------------------------------------
+    bool success = (lineRequest != nullptr);
     if (lineRequest) gpiod_line_request_release(lineRequest);
     gpiod_request_config_free(requestConfig);
     gpiod_line_config_free(lineConfig);
     gpiod_line_settings_free(lineSettings);
+    return success;
 }
 
 
@@ -302,20 +310,20 @@ void processMovementAction(string keyId, char mode) {
     }
 
     // Translation Mappings -------------------------------------------------------------------------------------------------------------------------
-    if (keyId == "W")      { logKeyData('T', "+X", "W", 'N', mode); setGPIOPin(0, 1); setGPIOPin(8, 1); }   // A1, A2
-    else if (keyId == "S") { logKeyData('T', "-X", "S", 'N', mode); setGPIOPin(5, 1); setGPIOPin(11, 1); }  // F1, F2
-    else if (keyId == "A") { logKeyData('T', "+Y", "A", 'N', mode); setGPIOPin(1, 1); setGPIOPin(7, 1); }   // S1, S2
-    else if (keyId == "D") { logKeyData('T', "-Y", "D", 'N', mode); setGPIOPin(2, 1); setGPIOPin(6, 1); }   // P1, P2
-    else if (keyId == "E") { logKeyData('T', "+Z", "E", 'N', mode); setGPIOPin(4, 1); setGPIOPin(10, 1); }  // B1, B2
-    else if (keyId == "Q") { logKeyData('T', "-Z", "Q", 'N', mode); setGPIOPin(3, 1); setGPIOPin(9, 1); }   // T1, T2
+    if (keyId == "W")      { logKeyData('T', "+X", "W", 'N', mode); (void)setGPIOPin(0, 1); (void)setGPIOPin(8, 1); }   // A1, A2
+    else if (keyId == "S") { logKeyData('T', "-X", "S", 'N', mode); (void)setGPIOPin(5, 1); (void)setGPIOPin(11, 1); }  // F1, F2
+    else if (keyId == "A") { logKeyData('T', "+Y", "A", 'N', mode); (void)setGPIOPin(1, 1); (void)setGPIOPin(7, 1); }   // S1, S2
+    else if (keyId == "D") { logKeyData('T', "-Y", "D", 'N', mode); (void)setGPIOPin(2, 1); (void)setGPIOPin(6, 1); }   // P1, P2
+    else if (keyId == "E") { logKeyData('T', "+Z", "E", 'N', mode); (void)setGPIOPin(4, 1); (void)setGPIOPin(10, 1); }  // B1, B2
+    else if (keyId == "Q") { logKeyData('T', "-Z", "Q", 'N', mode); (void)setGPIOPin(3, 1); (void)setGPIOPin(9, 1); }   // T1, T2
     
     // Rotation Mappings ----------------------------------------------------------------------------------------------------------------------------
-    else if (keyId == "K") { logKeyData('R', "-P", "K", 'N', mode); setGPIOPin(9, 1); setGPIOPin(4, 1); }   // T2, B1
-    else if (keyId == "I") { logKeyData('R', "+P", "I", 'N', mode); setGPIOPin(3, 1); setGPIOPin(10, 1); }  // T1, B2
-    else if (keyId == "U") { logKeyData('R', "-R", "U", 'N', mode); setGPIOPin(6, 1); setGPIOPin(1, 1); }   // P2, S1
-    else if (keyId == "O") { logKeyData('R', "+R", "O", 'N', mode); setGPIOPin(2, 1); setGPIOPin(7, 1); }   // P1, S2
-    else if (keyId == "J") { logKeyData('R', "-Y", "J", 'N', mode); setGPIOPin(0, 1); setGPIOPin(11, 1); }  // A1, F2
-    else if (keyId == "L") { logKeyData('R', "+Y", "L", 'N', mode); setGPIOPin(8, 1); setGPIOPin(5, 1); }   // A2, F1
+    else if (keyId == "K") { logKeyData('R', "-P", "K", 'N', mode); (void)setGPIOPin(9, 1); (void)setGPIOPin(4, 1); }   // T2, B1
+    else if (keyId == "I") { logKeyData('R', "+P", "I", 'N', mode); (void)setGPIOPin(3, 1); (void)setGPIOPin(10, 1); }  // T1, B2
+    else if (keyId == "U") { logKeyData('R', "-R", "U", 'N', mode); (void)setGPIOPin(6, 1); (void)setGPIOPin(1, 1); }   // P2, S1
+    else if (keyId == "O") { logKeyData('R', "+R", "O", 'N', mode); (void)setGPIOPin(2, 1); (void)setGPIOPin(7, 1); }   // P1, S2
+    else if (keyId == "J") { logKeyData('R', "-Y", "J", 'N', mode); (void)setGPIOPin(0, 1); (void)setGPIOPin(11, 1); }  // A1, F2
+    else if (keyId == "L") { logKeyData('R', "+Y", "L", 'N', mode); (void)setGPIOPin(8, 1); (void)setGPIOPin(5, 1); }   // A2, F1
     
     else { 
         logKeyData('F', "--", keyId, 'E', mode); 
@@ -396,20 +404,120 @@ int main() {
             if (programMode == 0) {
                 // Menu Mode: Only accepts mode selection inputs ------------------------------------------------------------------------------------
                 if (charInput == '1') {                                                            
-                    programMode = 1; displayMenu();
+                    programMode = 1; 
                     logActivity("STATUS-302", "Sequence Initiated");
-                    int sequenceOrder[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
-                    // Startup Sequence: Activates each thruster in order with a delay, then returns to Menu Mode -----------------------------------
-                    for (int gpioPin : sequenceOrder) {
-                        setGPIOPin(gpioPin, 1);
-                        logActivity("STATUS-304", "GPIO " + to_string(gpioPin) + " ON");
-                        this_thread::sleep_for(chrono::milliseconds(250));
-                        setGPIOPin(gpioPin, 0);
-                        logActivity("STATUS-304", "GPIO " + to_string(gpioPin) + " OFF");
-                        this_thread::sleep_for(chrono::milliseconds(250));
+                    
+                    // Clear previous test failures
+                    failedGPIOPins.clear();
+                    
+                    // Rack Connector Definitions (organized by rack)
+                    int rackConnector1[] = {0, 1, 2, 3};
+                    int rackConnector2[] = {4, 5, 6, 7};
+                    int rackConnector3[] = {8, 9, 10, 11};
+                    int* connectors[3] = {rackConnector1, rackConnector2, rackConnector3};
+                    
+                    bool force_exit = false;
+                    
+                    // Test each rack connector
+                    for (int rackNum = 0; rackNum < 3; rackNum++) {
+                        if (force_exit) break;
+                        
+                        cout << "\nRack Connector " << (rackNum + 1) << " Test:" << endl;
+                        logActivity("STATUS-311", "Testing Rack Connector " + to_string(rackNum + 1));
+                        
+                        // Phase 1: Individual 1 second ON/OFF pulses for each GPIO
+                        for (int g = 0; g < 4; g++) {
+                            if (checkKeyboardInput() && getchar() == 27) { force_exit = true; break; } // ESC check
+                            
+                            int gpioPin = connectors[rackNum][g];
+                            double phaseTime = g * 2.0;
+                            
+                            // GPIO ON for 1 second
+                            cout << fixed << setprecision(2) << phaseTime << " GPIO " << gpioPin << " On" << endl;
+                            if (!setGPIOPin(gpioPin, 1)) {
+                                failedGPIOPins.push_back(gpioPin);
+                            }
+                            logActivity("STATUS-304", "GPIO " + to_string(gpioPin) + " ON");
+                            this_thread::sleep_for(chrono::milliseconds(1000));
+                            
+                            // GPIO OFF for 1 second
+                            phaseTime += 1.0;
+                            cout << fixed << setprecision(2) << phaseTime << " GPIO " << gpioPin << " Off" << endl;
+                            setGPIOPin(gpioPin, 0);
+                            logActivity("STATUS-304", "GPIO " + to_string(gpioPin) + " OFF");
+                            this_thread::sleep_for(chrono::milliseconds(1000));
+                        }
+                        
+                        // Phase 2: Double 0.5 second pulses for each GPIO
+                        for (int g = 0; g < 4; g++) {
+                            if (force_exit) break;
+                            
+                            int gpioPin = connectors[rackNum][g];
+                            double phaseTime = 8.0 + (g * 2.0);
+                            
+                            // Two quick pulses
+                            for (int pulse = 0; pulse < 2; pulse++) {
+                                if (checkKeyboardInput() && getchar() == 27) { force_exit = true; break; } // ESC check
+                                
+                                // GPIO ON for 0.5 seconds
+                                cout << fixed << setprecision(2) << phaseTime << " GPIO " << gpioPin << " On" << endl;
+                                if (!setGPIOPin(gpioPin, 1)) {
+                                    // Only add to failed list if not already there
+                                    if (find(failedGPIOPins.begin(), failedGPIOPins.end(), gpioPin) == failedGPIOPins.end()) {
+                                        failedGPIOPins.push_back(gpioPin);
+                                    }
+                                }
+                                logActivity("STATUS-304", "GPIO " + to_string(gpioPin) + " ON (PULSE)");
+                                this_thread::sleep_for(chrono::milliseconds(500));
+                                
+                                // GPIO OFF for 0.5 seconds
+                                phaseTime += 0.5;
+                                cout << fixed << setprecision(2) << phaseTime << " GPIO " << gpioPin << " Off" << endl;
+                                setGPIOPin(gpioPin, 0);
+                                logActivity("STATUS-304", "GPIO " + to_string(gpioPin) + " OFF (PULSE)");
+                                this_thread::sleep_for(chrono::milliseconds(500));
+                                phaseTime += 0.5;
+                            }
+                        }
+                        
+                        // Check if any GPIO in this rack failed and report all failures
+                        vector<int> rackFailedPins;
+                        for (int pin : failedGPIOPins) {
+                            if (pin >= connectors[rackNum][0] && pin <= connectors[rackNum][3]) {
+                                rackFailedPins.push_back(pin);
+                            }
+                        }
+                        
+                        if (!rackFailedPins.empty()) {
+                            for (int failedPin : rackFailedPins) {
+                                cout << "Rack Connector " << (rackNum + 1) << " Test Failed: GPIO " << failedPin << " Connection issue" << endl;
+                                logActivity("STATUS-313", "Rack Connector " + to_string(rackNum + 1) + " Test Failed: GPIO " + to_string(failedPin) + " Connection issue");
+                            }
+                            cout << endl;
+                        } else {
+                            cout << "Rack Connector " << (rackNum + 1) << " Test Successfully Completed.\n" << endl;
+                            logActivity("STATUS-312", "Rack Connector " + to_string(rackNum + 1) + " Test Successfully Completed");
+                        }
                     }
-                    logActivity("STATUS-305", "Sequence Complete");
-                    programMode = 0; displayMenu();
+                    
+                    if (!force_exit) {
+                        // Report final status
+                        int successCount = 12 - failedGPIOPins.size();
+                        if (failedGPIOPins.empty()) {
+                            cout << "All 12/12 GPIO Successfully Activated." << endl;
+                            logActivity("STATUS-305", "Sequence Complete: All 12/12 GPIO Successfully Activated");
+                        } else {
+                            cout << successCount << "/12 GPIO Successfully Activated." << endl;
+                            for (int pin : failedGPIOPins) {
+                                cout << "Rack Connector " << ((pin / 4) + 1) << " Test Failed: GPIO " << pin << " Connection issue" << endl;
+                                logActivity("STATUS-314", "Connection Failed: GPIO " + to_string(pin));
+                            }
+                            logActivity("STATUS-315", "Sequence Complete: " + to_string(successCount) + "/12 GPIO activated, " + to_string(failedGPIOPins.size()) + " connection issues detected");
+                        }
+                    }
+                    
+                    programMode = 0; 
+                    displayMenu();
                 // Operational Mode: Accepts mode selection inputs and transitions to mode-specific menu --------------------------------------------
                 } else if (charInput == '2') {
                     programMode = 2;
@@ -439,7 +547,7 @@ int main() {
                 // Only turn off and reset if we were previously tracking a key
                 if (!currentKeyPressed.empty()) {
                     // Turn off all thrusters when no key is pressed
-                    for(int i = 0; i <= 11; i++) setGPIOPin(i, 0);
+                    for(int i = 0; i <= 11; i++) (void)setGPIOPin(i, 0);
                     currentKeyPressed = "";
                     lastKeyFired = "";
                 }
@@ -451,7 +559,7 @@ int main() {
     }
     
     // Cleanup and Exit ---------------------------------------------------------------------------
-    for(int i = 0; i <= 11; i++) setGPIOPin(i, 0);
+    for(int i = 0; i <= 11; i++) (void)setGPIOPin(i, 0);
     logActivity("STATUS-002", "Session Ended");
     logActivity("STATUS-003", "Shutdown Successful");
     if(gpioChip) gpiod_chip_close(gpioChip);
