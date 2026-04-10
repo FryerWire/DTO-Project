@@ -1,4 +1,3 @@
-
 /*
 DTO Controller Software
 
@@ -8,6 +7,7 @@ Features:
 - Supports a menu system with a Startup Sequence mode for testing GPIO activation and an Operational Mode for real-time control of the thrusters.
 - Implements error handling for file access, incorrect keybinds, and mode-specific constraints.
 - Uses non-blocking input handling to allow for real-time processing of key events without freezing the program.
+- Uses hardware-based timing to prevent lag issues from affecting key press duration tracking.
 
 Functions:
 - main(): Initializes the program, handles the main loop for input processing and mode management, and performs cleanup on exit.
@@ -72,8 +72,9 @@ int programMode = 0;                          // 0 = Menu, 1 = Startup Sequence,
 char firingMode = 'C';                        // 'C' for Continuous, 'P' for Pulse Mode in Operational Mode
 
 // Logging and Input Tracking Variables -------------------------------------------------------------------------------------------------------------
-double timeCounter = 0.0;                     // Tracks elapsed time for logging purposes
+chrono::high_resolution_clock::time_point programStartTime;  // Track actual program start time
 string lastKeyFired = "";                     // Tracks last key for Pulse Mode repeat prevention
+string currentKeyPressed = "";                // Tracks currently pressed key
 struct gpiod_chip* gpioChip;                  // GPIO chip handle
 const int ACTIVE_LOW = 0;                     // Set to 1 if using active-low relays, 0 for active-high relays
 const string logDirectoryPath = "./Logs/";    // Data logging path
@@ -86,6 +87,21 @@ void displayMenu();
 void logActivity(string code, string description);
 void processMovementAction(string keyId, char mode);
 void logKeyData(char type, string direction, string keyName, char statusChar, char mode);
+double getElapsedTime();
+
+
+
+/*
+    getElapsedTime - Returns elapsed time in seconds since program start
+
+    Returns:
+    - double : The number of seconds elapsed since program initialization
+*/
+double getElapsedTime() {
+    auto currentTime = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed = currentTime - programStartTime;
+    return elapsed.count();
+}
 
 
 
@@ -216,7 +232,7 @@ int checkKeyboardInput() {
 
 /*
     logActivity - Logs a high-level activity or event with a standardized code and description, along with a timestamp
-                  This function formats the current time counter into a string, opens the Activity_Log.csv file in append mode, and writes a new line containing the timestamp, activity code, and description. 
+                  This function formats the current elapsed time into a string, opens the Activity_Log.csv file in append mode, and writes a new line containing the timestamp, activity code, and description. 
                   It also prints the same information to the console for real-time monitoring. If the file cannot be opened, it does not log the activity but still outputs to the console.
 
     Parameters:
@@ -224,6 +240,7 @@ int checkKeyboardInput() {
     - description (string) : A human-readable description providing additional context about the activity or event being logged
 */
 void logActivity(string code, string description) {
+    double timeCounter = getElapsedTime();
     string timeString = formatTimestamp(timeCounter);
     ofstream activityFile(logDirectoryPath + "Activity_Log.csv", ios_base::app);
     if (activityFile.is_open()) {
@@ -238,7 +255,7 @@ void logActivity(string code, string description) {
 
 /*
     logKeyData - Logs detailed information about key events, including type, direction, key name, status, and mode, with error handling for file access
-                 This function formats the current time counter into a string, opens the Keybind_Log.csv file in append mode, and writes a new line containing the timestamp, mode, type of event (translation, rotation, or firing), direction of movement or rotation, key name, and status character. 
+                 This function formats the current elapsed time into a string, opens the Keybind_Log.csv file in append mode, and writes a new line containing the timestamp, mode, type of event (translation, rotation, or firing), direction of movement or rotation, key name, and status character. 
                  If the status character indicates a new key press ('N') and the key name is not "-", it also logs a high-level activity indicating that a key was registered. 
                  If the file cannot be opened for logging key data, it logs an error activity indicating that the Keybind_Log is inaccessible.
 
@@ -250,6 +267,7 @@ void logActivity(string code, string description) {
     - mode (char)         : A character representing the current firing mode ('C' for Continuous Mode, 'P' for Pulse Mode)
 */
 void logKeyData(char type, string direction, string keyName, char statusChar, char mode) {
+    double timeCounter = getElapsedTime();
     string timeString = formatTimestamp(timeCounter);
     ofstream keyLogFile(logDirectoryPath + "Keybind_Log.csv", ios_base::app);
     if (keyLogFile.is_open()) {  
@@ -338,6 +356,9 @@ void displayMenu() {
     - int : The exit status of the program, where 0 indicates successful execution and 1 indicates an error during initialization (e.g., log file access failure)
 */
 int main() {
+    // Initialize high-resolution timer
+    programStartTime = chrono::high_resolution_clock::now();
+
     // Initialization and Setup ---------------------------------------------------------------------------------------------------------------------
     if (system(("mkdir -p " + logDirectoryPath).c_str()) == 0) {
         logActivity("STATUS-103", "Directory Created: Log storage ready");
@@ -363,6 +384,7 @@ int main() {
     // Main Program Loop ----------------------------------------------------------------------------------------------------------------------------
     logActivity("STATUS-001", "Session Started");
     displayMenu();
+    
     while (true) {
         // Keyboard Input Handling ------------------------------------------------------------------------------------------------------------------
         if (checkKeyboardInput()) {
@@ -403,23 +425,29 @@ int main() {
                 else if (charInput == '0') { programMode = 0; displayMenu(); }
                 else {
                     string keyIdString = string(1, toupper(charInput));
-                    processMovementAction(keyIdString, firingMode);
+                    // Only process if it's a different key than currently tracked
+                    if (keyIdString != currentKeyPressed) {
+                        processMovementAction(keyIdString, firingMode);
+                        currentKeyPressed = keyIdString;
+                    }
                 }
             }
         // Handle thruster deactivation when no keys are pressed in Operational Mode ----------------------------------------------------------------
         } else {
-            // In Operational Mode, if no keys are pressed, ensure all thrusters are turned off and log the status if it was previously active
+            // In Operational Mode, if no keys are pressed, ensure all thrusters are turned off
             if (programMode == 2) {
-                // Turn off all thrusters when no key is pressed
-                for(int i = 0; i <= 11; i++) setGPIOPin(i, 0);
-                logKeyData('F', "--", "-", 'N', firingMode);
-                lastKeyFired = "";
+                // Only turn off and reset if we were previously tracking a key
+                if (!currentKeyPressed.empty()) {
+                    // Turn off all thrusters when no key is pressed
+                    for(int i = 0; i <= 11; i++) setGPIOPin(i, 0);
+                    currentKeyPressed = "";
+                    lastKeyFired = "";
+                }
             }
         }
 
-        // Increment time counter for logging purposes, with a delay to control loop timing ---------------------------------------------------------
-        if (programMode == 2) timeCounter += 0.1;
-        this_thread::sleep_for(chrono::milliseconds(100));
+        // Small delay to prevent excessive CPU usage
+        this_thread::sleep_for(chrono::milliseconds(50));
     }
     
     // Cleanup and Exit ---------------------------------------------------------------------------
