@@ -30,6 +30,7 @@ ERROR-03  : Unexpected general execution error
 
 
 
+# Libraries =========================================================================================================================================
 import os
 import math
 import numpy as np
@@ -46,23 +47,22 @@ def log_event(code, message):
     log_event: Logs a message with a timestamp and status/error code.
     
     Parameters:
-    - code (str): A status or error code (e.g., "STATUS-01", "ERROR-02").
-    - message (str): A descriptive message about the event being logged.
+    - code (str)    : A status or error code (e.g., "STATUS-01", "ERROR-02").
+    - message (str) : A descriptive message about the event being logged.
     """
     
     timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]
+    
     print(f"[{timestamp}] [{code}] {message}")
 
 
 
 log_event("STATUS-00", "Script Initialization Started.")
 
-# --- CONFIGURATION ---
 file_path = r'C:\Users\maxwe\OneDrive\Desktop\GitHub Repos\DTO-Project\Logs\Keybind_Log.csv'
 filename = os.path.basename(file_path)
 
-# Time Marker Settings
-TICK_INTERVAL = 5.0   # Drop a time marker every 5 seconds
+TICK_INTERVAL = 5.0 
 
 
 
@@ -74,7 +74,7 @@ def format_time(seconds):
     - seconds (float): Time in seconds to be formatted.
     
     Returns:
-    - str: A string representing the time in "M:SS" format.
+    - (str): A string representing the time in "M:SS" format.
     """
     
     minutes = int(seconds // 60)
@@ -84,7 +84,6 @@ def format_time(seconds):
 
 
 
-# Incremental transformation mapping
 step_increment = 1.0  
 rot_increment = np.radians(2.0) 
 
@@ -95,23 +94,23 @@ def get_rotation_matrix(axis, theta):
     get_rotation_matrix: Generates a 3D rotation matrix for a given axis and angle.
     
     Parameters:
-    - axis (str): The axis of rotation ('x', 'y', or 'z').
-    - theta (float): The rotation angle in radians.
+    - axis (str)    : The axis of rotation ('x', 'y', or 'z').
+    - theta (float) : The rotation angle in radians.
     
     Returns:
-    - numpy.ndarray: A 3x3 rotation matrix.
+    - (numpy.ndarray): A 3x3 rotation matrix.
     """
     
     axis = axis.lower()
-    if axis == 'x': # Roll
+    if (axis == 'x'): # Roll (X-Axis)
         return np.array([[1, 0, 0],
                          [0, np.cos(theta), -np.sin(theta)],
                          [0, np.sin(theta), np.cos(theta)]])
-    elif axis == 'y': # Pitch
+    elif (axis == 'y'): # Pitch (Y-Axis)
         return np.array([[np.cos(theta), 0, np.sin(theta)],
                          [0, 1, 0],
                          [-np.sin(theta), 0, np.cos(theta)]])
-    elif axis == 'z': # Yaw
+    elif (axis == 'z'): # Yaw (Z-Axis)
         return np.array([[np.cos(theta), -np.sin(theta), 0],
                          [np.sin(theta), np.cos(theta), 0],
                          [0, 0, 1]])
@@ -128,19 +127,19 @@ def rotation_matrix_to_euler(R):
     - R (numpy.ndarray): A 3x3 rotation matrix.
     
     Returns:
-    - numpy.ndarray: An array of Euler angles in the order [Roll, Pitch, Yaw].
+    - (numpy.ndarray): An array of Euler angles in the order [Roll, Pitch, Yaw].
     """
     
     sy = math.sqrt(R[0,0] * R[0,0] +  R[1,0] * R[1,0])
     singular = sy < 1e-6
-    if not singular:
-        x = math.atan2(R[2,1] , R[2,2]) # Roll
-        y = math.atan2(-R[2,0], sy)     # Pitch
-        z = math.atan2(R[1,0], R[0,0])  # Yaw
+    if (not singular):
+        x = math.atan2(R[2,1] , R[2,2])  # Roll (X-Axis)
+        y = math.atan2(-R[2,0], sy)      # Pitch (Y-Axis)
+        z = math.atan2(R[1,0], R[0,0])   # Yaw (Z-Axis)
     else:
-        x = math.atan2(-R[1,2], R[1,1])
-        y = math.atan2(-R[2,0], sy)
-        z = 0
+        x = math.atan2(-R[1,2], R[1,1])  # Roll (X-Axis) in singular case
+        y = math.atan2(-R[2,0], sy)      # Pitch (Y-Axis) in singular case
+        z = 0                            # Yaw (Z-Axis) is set to zero in singular case
         
     return np.array([math.degrees(x), math.degrees(y), math.degrees(z)])
 
@@ -160,26 +159,29 @@ rotational_moves = {
 }
 
 dof_colors = {
-    'X': '#FF4500', 'Y': '#32CD32', 'Z': '#1E90FF', 
-    'ROLL': '#FFD700', 'PITCH': '#BA55D3', 'YAW': '#4682B4',
-    'IDLE': '#A9A9A9'
+    'X': '#FF0000', 'Y': '#00FF00', 'Z': '#0000FF', 
+    'ROLL': '#FFFF00', 'PITCH': '#800080', 'YAW': '#FFA500',
+    'IDLE': '#808080'
 }
 
 log_event("STATUS-01", "Configuration and mapping variables loaded.")
 
-# --- MAIN EXECUTUION ---
+
+
+# Main Execution Block ==============================================================================================================================
 try:
+    # Validate File Path ----------------------------------------------------------------------------------------------------------------------------
     if not os.path.exists(file_path):
         log_event("ERROR-00", f"File access failed. Path does not exist: {file_path}")
         raise FileNotFoundError(f"Cannot find {file_path}")
     
     log_event("STATUS-02", "File path validation successful.")
 
-    # Load Data
+    # Load CSV Data ---------------------------------------------------------------------------------------------------------------------------------
     try:
         df = pd.read_csv(file_path)
         time_col = 'Time(s)'
-        if time_col not in df.columns or 'Direction' not in df.columns:
+        if (time_col not in df.columns) or ('Direction' not in df.columns):
             raise KeyError(f"Missing required columns ('{time_col}' or 'Direction').")
         log_event("STATUS-03", f"CSV Data loaded successfully. Rows: {len(df)}")
     except Exception as e:
@@ -189,18 +191,19 @@ try:
     interval = 30 
     max_time = df[time_col].max()
     num_chunks = int(np.ceil(max_time / interval))
+        
     
-    # ==========================================
-    # PART 1: CHUNKED 3D TRAJECTORY GRAPHS
-    # ==========================================
+    # Generate 3D Trajectory Chunks =================================================================================================================
     log_event("STATUS-04", f"3D Trajectory chunk generation started ({num_chunks} chunks total).")
 
+    # Process each chunk of data to create 3D trajectory plots --------------------------------------------------------------------------------------
     for i in range(num_chunks):
         log_event("STATUS-05", f"Starting processing for 3D chunk {i+1}/{num_chunks}.")
         start_t = i * interval
         end_t = (i + 1) * interval
         chunk_df = df[(df[time_col] >= start_t) & (df[time_col] < end_t)].copy()
         
+        # If the chunk is empty, skip to the next iteration -----------------------------------------------------------------------------------------
         if chunk_df.empty: 
             log_event("STATUS-05", f"Chunk {i+1} is empty, skipping.")
             continue
@@ -224,11 +227,13 @@ try:
         points = [current_pos]
         next_tick_time = start_t + TICK_INTERVAL
 
+        # Process each movement in the chunk to calculate the trajectory and plot it ----------------------------------------------------------------
         try:
             for idx, move in enumerate(directions):
                 curr_time = timestamps[idx]
                 is_absolute_last_point = (i == num_chunks - 1) and (idx == len(directions) - 1)
                 
+                # Determine if the move is a rotation or translation and calculate the next position accordingly ------------------------------------
                 if move in rotational_moves:
                     axis_char, theta = rotational_moves[move]
                     new_rot = get_rotation_matrix(axis_char, theta)
@@ -251,8 +256,8 @@ try:
                     elif 'Z' in move: color = dof_colors['Z']
                     else: color = dof_colors['IDLE']
 
+                # Check if we have reached or passed the next tick time to place a marker and label on the plot -------------------------------------
                 marker_drawn = False
-                
                 if curr_time >= next_tick_time:
                     ax.scatter(current_pos[0], current_pos[1], current_pos[2], color='black', s=15, zorder=5)
                     ax.text(current_pos[0], current_pos[1], current_pos[2], f" {int(next_tick_time)}s", color='black', zorder=10)
@@ -277,6 +282,7 @@ try:
         max_range = np.array([pts[:,0].max()-pts[:,0].min(), 
                               pts[:,1].max()-pts[:,1].min(), 
                               pts[:,2].max()-pts[:,2].min()]).max() / 2.0
+        
         if max_range == 0: max_range = 1.0 
 
         mid_x = (pts[:,0].max()+pts[:,0].min()) * 0.5
@@ -311,11 +317,9 @@ try:
         log_event("STATUS-06", f"3D Plot for chunk {i+1} successfully opened. Waiting for user close...")
         plt.show() 
         log_event("STATUS-07", f"3D Plot for chunk {i+1} closed by user.")
-
-
-    # ==========================================
-    # PART 2: FULL DATA TELEMETRY CALCULATIONS
-    # ==========================================
+    
+    
+    # Process the entire dataset to calculate global position, attitude, velocity, and acceleration -------------------------------------------------
     log_event("STATUS-08", "Full telemetry data processing phase started.")
     try:
         telemetry_df = df.drop_duplicates(subset=[time_col]).sort_values(by=time_col).reset_index(drop=True)
@@ -328,8 +332,9 @@ try:
         positions_list = []
         attitudes_list = []
 
+        # Process each movement in the full dataset to calculate the global trajectory and attitude -------------------------------------------------
         for move in full_directions:
-            if move in rotational_moves:
+            if (move in rotational_moves):
                 axis_char, theta = rotational_moves[move]
                 new_rot = get_rotation_matrix(axis_char, theta)
                 global_rot_matrix = np.dot(new_rot, global_rot_matrix)
@@ -363,16 +368,15 @@ try:
         log_event("ERROR-02", f"Mathematical/Integration error during telemetry calculation: {e}")
         raise e
 
-    # ==========================================
-    # PART 3: GENERATE FULL-TIME TELEMETRY GRAPHS
-    # ==========================================
+    
+    # Generate 2D plots for Absolute Position, Attitude, Velocity, and Acceleration over time -------------------------------------------------------
     log_event("STATUS-11", "Telemetry 2D plots generation phase started.")
     
-    # Graph A: Absolute Position
-    fig_pos = plt.figure(figsize=(10, 5))
-    plt.plot(full_times, pos_x, label='X Position')
-    plt.plot(full_times, pos_y, label='Y Position')
-    plt.plot(full_times, pos_z, label='Z Position')
+    # Absolute Position Graph -----------------------------------------------------------------------------------------------------------------------
+    fig_pos = plt.figure(figsize = (10, 5))
+    plt.plot(full_times, pos_x, label = 'X Position')
+    plt.plot(full_times, pos_y, label = 'Y Position')
+    plt.plot(full_times, pos_z, label = 'Z Position')
     plt.title("Absolute Position")
     plt.xlabel("Time (s)")
     plt.ylabel("Units")
@@ -382,11 +386,12 @@ try:
     log_event("STATUS-12", "Absolute Position plot opened. Waiting for user close...")
     plt.show()
 
-    # Graph B: Attitude (Euler Angles)
-    fig_att = plt.figure(figsize=(10, 5))
-    plt.plot(full_times, roll_arr, label='Roll')
-    plt.plot(full_times, pitch_arr, label='Pitch')
-    plt.plot(full_times, yaw_arr, label='Yaw')
+    
+    # Attutude Graph --------------------------------------------------------------------------------------------------------------------------------
+    fig_att = plt.figure(figsize = (10, 5))
+    plt.plot(full_times, roll_arr, label = 'Roll')
+    plt.plot(full_times, pitch_arr, label = 'Pitch')
+    plt.plot(full_times, yaw_arr, label = 'Yaw')
     plt.title("Attitude (Euler Angles)")
     plt.xlabel("Time (s)")
     plt.ylabel("Degrees")
@@ -396,11 +401,12 @@ try:
     log_event("STATUS-13", "Attitude plot opened. Waiting for user close...")
     plt.show()
 
-    # Graph C: Linear Velocity
+    
+    # Linear Velocity Graph -------------------------------------------------------------------------------------------------------------------------
     fig_vel = plt.figure(figsize=(10, 5))
-    plt.plot(full_times, vel_x, label='Velocity X')
-    plt.plot(full_times, vel_y, label='Velocity Y')
-    plt.plot(full_times, vel_z, label='Velocity Z')
+    plt.plot(full_times, vel_x, label = 'Velocity X')
+    plt.plot(full_times, vel_y, label = 'Velocity Y')
+    plt.plot(full_times, vel_z, label = 'Velocity Z')
     plt.title("Linear Velocity")
     plt.xlabel("Time (s)")
     plt.ylabel("Units / s")
@@ -410,11 +416,12 @@ try:
     log_event("STATUS-14", "Velocity plot opened. Waiting for user close...")
     plt.show()
 
-    # Graph D: Linear Acceleration
-    fig_acc = plt.figure(figsize=(10, 5))
-    plt.plot(full_times, acc_x, label='Accel X')
-    plt.plot(full_times, acc_y, label='Accel Y')
-    plt.plot(full_times, acc_z, label='Accel Z')
+    
+    # Linear Acceleration Graph ---------------------------------------------------------------------------------------------------------------------
+    fig_acc = plt.figure(figsize = (10, 5))
+    plt.plot(full_times, acc_x, label = 'Accel X')
+    plt.plot(full_times, acc_y, label = 'Accel Y')
+    plt.plot(full_times, acc_z, label = 'Accel Z')
     plt.title("Linear Acceleration")
     plt.xlabel("Time (s)")
     plt.ylabel("Units / s²")
