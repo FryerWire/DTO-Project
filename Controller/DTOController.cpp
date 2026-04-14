@@ -122,6 +122,9 @@ char firingMode = 'C';                        // 'C' for Continuous, 'P' for Pul
 chrono::high_resolution_clock::time_point programStartTime;  // Track actual program start time
 string lastKeyFired = "";                     // Tracks last key for Pulse Mode repeat prevention
 string currentKeyPressed = "";                // Tracks currently pressed key
+bool pulseDeactivated = false;                // Tracks if Pulse Mode thrusters have been deactivated after firing
+int noInputCount = 0;                         // Counts consecutive no-input poll cycles for release confirmation
+const int PULSE_RELEASE_CYCLES = 6;           // Number of consecutive no-input cycles (x50ms) to confirm true key release
 vector<int> failedGPIOPins;                   // Tracks GPIO pins that failed during startup
 struct gpiod_chip* gpioChip;                  // GPIO chip handle
 const int ACTIVE_LOW = 0;                     // Set to 1 if using active-low relays, 0 for active-high relays
@@ -573,14 +576,32 @@ int main() {
                 }
             // Operational Mode: Accepts mode selection and movement/rotation inputs ----------------------------------------------------------------
             } else if (programMode == 2) {
+                // Reset release confirmation counter on any input received
+                noInputCount = 0;
                 // In Operational Mode, handle mode switching and movement/rotation key processing --------------------------------------------------
-                if (charInput == '1') { firingMode = 'C'; logActivity("STATUS-112", "Mode Changed: Continuous Mode"); }
-                else if (charInput == '2') { firingMode = 'P'; logActivity("STATUS-113", "Mode Changed: Pulse Mode"); }
-                else if (charInput == '0') { programMode = 0; displayMenu(); }
+                if (charInput == '1') { 
+                    firingMode = 'C'; 
+                    pulseDeactivated = false; 
+                    logActivity("STATUS-112", "Mode Changed: Continuous Mode"); 
+                }
+                else if (charInput == '2') { 
+                    firingMode = 'P'; 
+                    pulseDeactivated = false; 
+                    logActivity("STATUS-113", "Mode Changed: Pulse Mode"); 
+                }
+                else if (charInput == '0') { 
+                    pulseDeactivated = false; 
+                    programMode = 0; 
+                    displayMenu(); 
+                }
                 else {
                     string keyIdString = string(1, toupper(charInput));
                     // Only process if it's a different key than currently tracked
                     if (keyIdString != currentKeyPressed) {
+                        // If switching keys in Pulse Mode, reset deactivation state for the new key
+                        if (firingMode == 'P' && pulseDeactivated) {
+                            pulseDeactivated = false;
+                        }
                         processMovementAction(keyIdString, firingMode);
                         currentKeyPressed = keyIdString;
                     }
@@ -590,15 +611,35 @@ int main() {
         } else {
             // In Operational Mode, if no keys are pressed, ensure all thrusters are turned off
             if (programMode == 2) {
-                // Only turn off and reset if we were previously tracking a key
                 if (!currentKeyPressed.empty()) {
-                    // Log the key release event before deactivating thrusters
-                    logKeyData('F', "--", currentKeyPressed, 'R', firingMode);
-                    // Turn off all thrusters when no key is pressed
-                    for(int i = 0; i <= 11; i++) (void)setGPIOPin(i, 0);
-                    logActivity("STATUS-106", "All Thrusters Deactivated: Key Released (" + currentKeyPressed + ")");
-                    currentKeyPressed = "";
-                    lastKeyFired = "";
+                    if (firingMode == 'P') {
+                        // Pulse Mode: Deactivate thrusters on first no-input cycle, but keep currentKeyPressed
+                        // set so terminal key repeat characters are silently filtered by the != check above.
+                        // Only fully clear state after PULSE_RELEASE_CYCLES consecutive no-input polls confirm
+                        // the key was truly released (not just a gap between repeat characters).
+                        if (!pulseDeactivated) {
+                            for(int i = 0; i <= 11; i++) (void)setGPIOPin(i, 0);
+                            logKeyData('R', "--", "-", 'R', firingMode);
+                            logActivity("STATUS-106", "All Thrusters Deactivated: Key Released (" + currentKeyPressed + ")");
+                            pulseDeactivated = true;
+                            noInputCount = 0;
+                        }
+                        noInputCount++;
+                        if (noInputCount >= PULSE_RELEASE_CYCLES) {
+                            // Sustained silence confirms true key release - allow fresh press of same key
+                            currentKeyPressed = "";
+                            lastKeyFired = "";
+                            pulseDeactivated = false;
+                            noInputCount = 0;
+                        }
+                    } else {
+                        // Continuous Mode: Deactivate and clear immediately
+                        logKeyData('R', "--", "-", 'R', firingMode);
+                        for(int i = 0; i <= 11; i++) (void)setGPIOPin(i, 0);
+                        logActivity("STATUS-106", "All Thrusters Deactivated: Key Released (" + currentKeyPressed + ")");
+                        currentKeyPressed = "";
+                        lastKeyFired = "";
+                    }
                 }
             }
         }
