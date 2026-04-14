@@ -1,441 +1,505 @@
+/*
+DTOManualTesting.cpp
+DTO Manual Testing Program - Windows Simulation of GPIO Thruster Control
 
-"""
-Computation Script for DTO Project
+Features:
+- Simulates GPIO thruster control on Windows using console output in place of physical libgpiod calls, allowing full software-level validation of the controller logic before Raspberry Pi 5 deployment.
+- Logs all key events with elapsed timestamps, event type (Translation/Rotation/Fault), direction codes, key names, and active firing mode to Keybind_Log.csv on every detected key action.
+- Logs all high-level application lifecycle and status events with elapsed timestamps and standardized STATUS/ERROR codes to Activity_Log.csv.
+- Supports Continuous Mode (Caps Lock OFF), where actions fire repeatedly for each detected key press event, and Pulse Mode (Caps Lock ON), where each distinct key identifier fires only once per new press.
+- Maps 12 keybinds (W, S, A, D, E, Q for translation; I, K, U, O, J, L for rotation) to their corresponding six-degree-of-freedom direction codes and logs the mappings identically to the flight controller format.
+- Implements a three-mode structure: Menu Mode for mode selection, Startup Sequence Mode (1) for simulated per-rack GPIO validation across three rack connectors, and Operational Mode (2) for real-time key-to-thruster mapping.
+- Startup Sequence Mode simulates Phase 1 (four individual 1-second ON/OFF pulses per rack) and Phase 2 (four double 0.5-second pulse pairs per rack) with ESC abort support at each sleep boundary.
+- Uses Windows GetAsyncKeyState for non-blocking global key state polling in Operational Mode and _kbhit()/_getch() for menu-mode character input without blocking the main loop.
+- Uses Windows GetKeyState(VK_CAPITAL) to detect Caps Lock state at the time of each key event to dynamically determine the active firing mode without requiring manual mode-switch inputs.
+- Resets both CSV log files to empty with fresh headers at each program launch to ensure clean session data.
+- Uses a software time_counter variable incremented by 0.10 per loop tick in Operational Mode as a simulated elapsed timestamp for log entries.
 
-[STATUS CODES]
-STATUS-00 : Script Initialization Started
-STATUS-01 : Configuration and mapping variables loaded
-STATUS-02 : File path validation successful (File exists)
-STATUS-03 : CSV Data loaded successfully into Pandas DataFrame
-STATUS-04 : 3D Trajectory chunk generation phase started
-STATUS-05 : Starting processing for specific 3D chunk
-STATUS-06 : 3D Plot successfully generated and opened (Waiting for user close)
-STATUS-07 : 3D Plot closed by user
-STATUS-08 : Full telemetry data processing phase started
-STATUS-09 : Global trajectory integration complete
-STATUS-10 : Telemetry derivatives (Velocity/Acceleration) calculated
-STATUS-11 : Telemetry 2D plots generation phase started
-STATUS-12 : Absolute Position plot opened (Waiting for user close)
-STATUS-13 : Attitude plot opened (Waiting for user close)
-STATUS-14 : Velocity plot opened (Waiting for user close)
-STATUS-15 : Acceleration plot opened (Waiting for user close)
-STATUS-16 : Script execution completed successfully
+Functions:
+- main(): Resets and initializes both log files with CSV headers; manages the main loop for menu navigation, Startup Sequence execution, and Operational Mode key polling; performs final activity log finalization on exit.
+- logActivity(string code, string description): Appends a timestamped STATUS or ERROR code entry to Activity_Log.csv using the current time_counter value; silently skips the write if the file cannot be opened.
+- logError(string errorCode, string title): Convenience wrapper around logActivity for ERROR-prefixed codes, providing consistent error logging with a single call site.
+- getVirtualKeyName(int vkCode): Resolves a Windows virtual key code integer to a human-readable string for use in Keybind_Log entries; handles Space, Shift, arrow keys, modifier keys, Enter, and all alphanumeric keys; returns "Key_N" for unmapped codes.
+- logData(char type, string direction, string keyname, char statusChar, char mode): Writes a timestamped key event row to both stdout and Keybind_Log.csv; triggers a STATUS-011 logActivity entry for successful new key registrations (statusChar == 'N' and keyname != "-"); logs ERROR-002 if the file cannot be opened.
+- processAction(int vkCode, char mode): Maps a Windows virtual key code to its translation or rotation direction and calls logData for the matched case; calls logData with type 'F' and direction "--" plus logError for ERROR-004 on any unmapped key code.
+- printMenu(): Prints the main mode-selection menu to stdout listing Menu Mode, Startup Sequence Mode, Operational Mode, and ESC quit instructions.
+- printOperationalHeader(): Prints the Operational Mode header to stdout including Caps Lock firing mode instructions and the return-to-menu keybind.
 
-[ERROR CODES]
-ERROR-00  : File access failed (File not found or inaccessible)
-ERROR-01  : Data parsing failed (Missing expected columns in CSV)
-ERROR-02  : Mathematical or integration calculation error
-ERROR-03  : Unexpected general execution error
-"""
+Codes:
+- STATUS-000: Program Initialization Started
+- STATUS-001: Session Started
+- STATUS-002: Session Ended
+- STATUS-003: Shutdown Successful
+- STATUS-004: Log Directory Verified or Already Exists
+- STATUS-005: Log Directory Created Successfully
+- STATUS-006: Activity Log Opened and Header Written
+- STATUS-007: Keybind Log Opened and Header Written
+- STATUS-008: All Log Files Initialized with CSV Headers
+- STATUS-009: Startup Successful: All Log Files Ready
+- STATUS-010: Mode Changed
+- STATUS-011: Key Registered
+- STATUS-012: Startup Sequence Initiated
+- STATUS-013: Startup Sequence Completed: All GPIO Activated
+- STATUS-014: Rack Connector Test Started
+- STATUS-015: Rack Connector Test Passed
+- STATUS-016: GPIO Pin Activated (ON)
+- STATUS-017: GPIO Pin Deactivated (OFF)
+- STATUS-018: Partial GPIO Activation: Connection Issues Detected
+- STATUS-019: UI Menu Refreshed
+- STATUS-020: Operational Mode Activated
+- STATUS-200: Keybind Log File Reset and Header Written at Session Start
+- STATUS-201: Activity Log File Reset and Header Written at Session Start
+- STATUS-202: Startup Sequence Mode Entered from Menu
+- STATUS-203: Operational Mode Entered from Menu
+- STATUS-204: Returned to Menu Mode from Operational Mode via Input '0'
+- STATUS-205: Caps Lock State Sampled: Continuous Mode Detected
+- STATUS-206: Caps Lock State Sampled: Pulse Mode Detected
+- STATUS-207: Active Virtual Key Code Detected in Operational Mode Polling Loop
+- STATUS-208: Pulse Mode New Key Accepted: Action Dispatched
+- STATUS-209: Pulse Mode Repeat Detected: Idle Entry Logged Instead
+- STATUS-210: No Active Keys Detected: Pulse Tracking Reset and Idle Logged
+- STATUS-211: Virtual Key Code Successfully Resolved to Human-Readable Name
+- STATUS-212: Translation Action Dispatched: Direction Code Written to Log
+- STATUS-213: Rotation Action Dispatched: Direction Code Written to Log
+- STATUS-214: Startup Sequence Phase 1 Tick: GPIO Simulated ON (1-Second Pulse)
+- STATUS-215: Startup Sequence Phase 1 Tick: GPIO Simulated OFF (1-Second Pulse)
+- STATUS-216: Startup Sequence Phase 2 Tick: GPIO Simulated ON (0.5-Second Pulse)
+- STATUS-217: Startup Sequence Phase 2 Tick: GPIO Simulated OFF (0.5-Second Pulse)
+- STATUS-218: Rack Connector All Phases Completed: Test Pass Confirmed
+- STATUS-219: time_counter Reset to 0.0 on Return to Menu Mode
+- STATUS-220: last_key_fired Reset to Empty String on Return to Menu Mode
+- STATUS-221: Input Character Re-Routed from _getch to processAction After '0' Check
+- STATUS-222: Modifier Key Skipped During Virtual Key Scan Loop
+- STATUS-223: Keyboard Input Buffer Flushed After Active Key Processed
+- ERROR-000: Startup Failure: Log Path Inaccessible or Cannot Be Created
+- ERROR-001: Activity Log Write Failure: File Inaccessible
+- ERROR-002: Keybind Log Write Failure: File Inaccessible or Locked
+- ERROR-003: Log Directory Creation Failed: Check Permissions
+- ERROR-004: Incorrect Keybind: No Virtual Key Mapping Found
+- ERROR-005: Startup Sequence Aborted by User via ESC
+- ERROR-006: Rack Connector Test Failed: GPIO Connection Issue on Pin
+- ERROR-007: GPIO Pin Activation Failed: setGPIOPin Returned False
+- ERROR-200: Startup Failure: Keybind_Log.csv Could Not Be Opened for Reset
+- ERROR-201: Startup Failure: Activity_Log.csv Could Not Be Opened for Reset
+- ERROR-202: Shutdown Failure: Activity Log Could Not Be Finalized on Exit
+- ERROR-203: System Key Ghosting Detected: Multiple Simultaneous Keys Masked
+- ERROR-204: Mode Switch Denied: Must Exit Current Sub-Mode Before Switching
+- ERROR-205: _getch Character Consumed Before processAction Could Use It
+- ERROR-206: Virtual Key Code Out of Expected Scan Range (0x08 to 0xFE)
+*/
 
 
 
-# Libraries =========================================================================================================================================
-import os
-import math
-import numpy as np
-import pandas as pd
-from datetime import datetime
-import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
-from mpl_toolkits.mplot3d import Axes3D
+#include <windows.h>  // Required for GetKeyState and GetAsyncKeyState
+#include <iostream>   // For console output
+#include <fstream>    // For file handling
+#include <conio.h>    // For _kbhit() and _getch() to handle keyboard input without blocking
+#include <chrono>     // For high-resolution timing
+#include <thread>     // For sleep functionality to prevent high CPU usage
+#include <string>     // For string handling
+#include <iomanip>    // For output formatting (e.g., fixed and setprecision)
 
 
 
-def log_event(code, message):
-    """
-    log_event: Logs a message with a timestamp and status/error code.
-    
+using namespace std;
+
+
+
+// Global Variables ===============================================================================
+double time_counter = 0.0;
+string last_key_fired = "";      // Tracks the key name to prevent repeat firing in Pulse mode
+bool isStartupMode = false;      // Tracks if the system is in Startup Sequence Mode (1)
+bool isOperationalMode = false;  // Tracks if the system is in Operational Mode (2)
+const string LOG_PATH = "C:\\Users\\maxwe\\OneDrive\\Desktop\\GitHub Repos\\DTO-Project\\Logs\\";
+
+
+
+/*
+    logActivity() - Logs STATUS and ERROR codes to Activity_Log.csv.
+
     Parameters:
-    - code (str)    : A status or error code (e.g., "STATUS-01", "ERROR-02").
-    - message (str) : A descriptive message about the event being logged.
-    """
-    
-    timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]
-    
-    print(f"[{timestamp}] [{code}] {message}")
-
-
-
-log_event("STATUS-00", "Script Initialization Started.")
-
-file_path = r'C:\Users\maxwe\OneDrive\Desktop\GitHub Repos\DTO-Project\Logs\Keybind_Log.csv'
-filename = os.path.basename(file_path)
-
-TICK_INTERVAL = 5.0 
-
-
-
-def format_time(seconds):
-    """
-    format_time: Converts a time in seconds to a "minutes:seconds" string format.
-    
-    Parameters:
-    - seconds (float): Time in seconds to be formatted.
-    
-    Returns:
-    - (str): A string representing the time in "M:SS" format.
-    """
-    
-    minutes = int(seconds // 60)
-    secs = int(seconds % 60)
-    
-    return f"{minutes}:{secs:02d}"
-
-
-
-step_increment = 1.0  
-rot_increment = np.radians(2.0) 
-
-
-
-def get_rotation_matrix(axis, theta):
-    """
-    get_rotation_matrix: Generates a 3D rotation matrix for a given axis and angle.
-    
-    Parameters:
-    - axis (str)    : The axis of rotation ('x', 'y', or 'z').
-    - theta (float) : The rotation angle in radians.
-    
-    Returns:
-    - (numpy.ndarray): A 3x3 rotation matrix.
-    """
-    
-    axis = axis.lower()
-    if (axis == 'x'): # Roll (X-Axis)
-        return np.array([[1, 0, 0],
-                         [0, np.cos(theta), -np.sin(theta)],
-                         [0, np.sin(theta), np.cos(theta)]])
-    elif (axis == 'y'): # Pitch (Y-Axis)
-        return np.array([[np.cos(theta), 0, np.sin(theta)],
-                         [0, 1, 0],
-                         [-np.sin(theta), 0, np.cos(theta)]])
-    elif (axis == 'z'): # Yaw (Z-Axis)
-        return np.array([[np.cos(theta), -np.sin(theta), 0],
-                         [np.sin(theta), np.cos(theta), 0],
-                         [0, 0, 1]])
-    else:
-        return np.eye(3)
-
-
-
-def rotation_matrix_to_euler(R):
-    """
-    rotation_matrix_to_euler: Converts a rotation matrix to Euler angles (Roll, Pitch, Yaw).
-    
-    Parameters:
-    - R (numpy.ndarray): A 3x3 rotation matrix.
-    
-    Returns:
-    - (numpy.ndarray): An array of Euler angles in the order [Roll, Pitch, Yaw].
-    """
-    
-    sy = math.sqrt(R[0,0] * R[0,0] +  R[1,0] * R[1,0])
-    singular = sy < 1e-6
-    if (not singular):
-        x = math.atan2(R[2,1] , R[2,2])  # Roll (X-Axis)
-        y = math.atan2(-R[2,0], sy)      # Pitch (Y-Axis)
-        z = math.atan2(R[1,0], R[0,0])   # Yaw (Z-Axis)
-    else:
-        x = math.atan2(-R[1,2], R[1,1])  # Roll (X-Axis) in singular case
-        y = math.atan2(-R[2,0], sy)      # Pitch (Y-Axis) in singular case
-        z = 0                            # Yaw (Z-Axis) is set to zero in singular case
-        
-    return np.array([math.degrees(x), math.degrees(y), math.degrees(z)])
-
-
-
-base_translation = {
-    '--': [step_increment, 0, 0],
-    '+X': [step_increment, 0, 0], '-X': [-step_increment, 0, 0],
-    '+Y': [0, step_increment, 0], '-Y': [0, -step_increment, 0],
-    '+Z': [0, 0, step_increment], '-Z': [0, 0, -step_increment]
+    - code (string)        : A string representing the specific status or error code (e.g., "STATUS-03" or "ERROR-02").
+    - description (string) : A brief description of the activity or error for context.
+*/
+void logActivity(string code, string description) {
+    ofstream activityFile(LOG_PATH + "Activity_Log.csv", ios_base::app);
+    // Log format: Time(s), Code, Description -----------------------------------------------------
+    if (activityFile.is_open()) {
+        activityFile << fixed << setprecision(2) << time_counter << "," << code << "," << description << endl;
+        activityFile.close();
+    }
 }
 
-rotational_moves = {
-    '+R': ('x', rot_increment),  '-R': ('x', -rot_increment),
-    '+P': ('y', rot_increment),  '-P': ('y', -rot_increment),
-    '+Y_rot': ('z', rot_increment), '-Y_rot': ('z', -rot_increment)
+
+
+/*
+    logError() - Helper function to log errors with specific codes and descriptions.
+
+    Parameters:
+    - errorCode (string) : A string representing the specific error code (e.g., "ERROR-03").
+    - title (string)     : A brief title or description of the error for context.
+*/
+void logError(string errorCode, string title) {
+    logActivity(errorCode, title);
 }
 
-dof_colors = {
-    'X': '#FF0000', 'Y': '#00FF00', 'Z': '#0000FF', 
-    'ROLL': '#FFFF00', 'PITCH': '#800080', 'YAW': '#FFA500',
-    'IDLE': '#808080'
+
+
+/*
+    getVirtualKeyName() - Converts virtual key codes to human-readable names for logging.
+
+    Parameters:
+    - vkCode (int) : The virtual key code of the pressed key.
+
+    Returns:
+    - A string representing the human-readable name of the key (e.g., "Space", "Enter", "A", etc.). For unmapped keys, it returns "Key_" followed by the vkCode.
+*/
+string getVirtualKeyName(int vkCode) {
+    // Common keys with special names -------------------------------------------------------------
+    if (vkCode == VK_SPACE) return "Space";
+    if (vkCode == VK_SHIFT || vkCode == VK_LSHIFT || vkCode == VK_RSHIFT) return "Shift";
+    if (vkCode == VK_UP) return "UpArrow";
+    if (vkCode == VK_DOWN) return "DownArrow";
+    if (vkCode == VK_LEFT) return "LeftArrow";
+    if (vkCode == VK_RIGHT) return "RightArrow";
+    if (vkCode == VK_CONTROL) return "Control";
+    if (vkCode == VK_MENU) return "Alt";
+    if (vkCode == VK_RETURN) return "Enter";
+
+    // Alphanumeric keys (A-Z, 0-9) ---------------------------------------------------------------
+    if ((vkCode >= '0' && vkCode <= '9') || (vkCode >= 'A' && vkCode <= 'Z')) {
+        return string(1, (char)vkCode);
+    }
+    return "Key_" + to_string(vkCode);
 }
 
-log_event("STATUS-01", "Configuration and mapping variables loaded.")
+
+
+/*
+    logData() - Logs key events to Keybind_Log.csv and the console, with status codes for successful registrations and errors.
+
+    Parameters:
+    - type (char)        : 'T' for Translation, 'R' for Rotation, 'F' for Fault/Error.
+    - direction (string) : A string representing the direction of movement (e.g., "+X", "-Y", "+P", etc.) or "--" for faults.
+    - keyname (string)   : The human-readable name of the key that triggered the event.
+    - statusChar (char)  : 'N' for Normal registration, 'E' for Error, used to determine if an activity log entry should be made for successful key registrations.
+    - mode (char)        : 'C' for Continuous mode, 'P' for Pulse mode. Defaults to 'C' if not specified.
+*/
+void logData(char type, string direction, string keyname, char statusChar, char mode = 'C') {
+    // Log to console -----------------------------------------------------------------------------
+    cout << fixed << setprecision(2)
+         << time_counter << "," << mode << "," << type << "," << direction << "," << keyname << endl;
+
+    // Log to Keybind_Log.csv ---------------------------------------------------------------------
+    ofstream outFile(LOG_PATH + "Keybind_Log.csv", ios_base::app);
+    if (outFile.is_open()) {
+        outFile << fixed << setprecision(2)
+                << time_counter << "," << mode << "," << type << "," << direction << "," << keyname << endl;
+        outFile.close();
+
+        // Log Status Code for successful key registration ----------------------------------------
+        if (statusChar == 'N' && keyname != "-") {
+            logActivity("STATUS-011", "Key Registered: " + keyname);
+        }
+
+    } else {
+        logError("ERROR-002", "Write Failure: Keybind CSV file locked");
+    }
+}
 
 
 
-# Main Execution Block ==============================================================================================================================
-try:
-    # Validate File Path ----------------------------------------------------------------------------------------------------------------------------
-    if not os.path.exists(file_path):
-        log_event("ERROR-00", f"File access failed. Path does not exist: {file_path}")
-        raise FileNotFoundError(f"Cannot find {file_path}")
-    
-    log_event("STATUS-02", "File path validation successful.")
+/*
+    processAction() - Map Virtual Keys/Combinations to Directions and Names
 
-    # Load CSV Data ---------------------------------------------------------------------------------------------------------------------------------
-    try:
-        df = pd.read_csv(file_path)
-        time_col = 'Time(s)'
-        if (time_col not in df.columns) or ('Direction' not in df.columns):
-            raise KeyError(f"Missing required columns ('{time_col}' or 'Direction').")
-        log_event("STATUS-03", f"CSV Data loaded successfully. Rows: {len(df)}")
-    except Exception as e:
-        log_event("ERROR-01", f"Data parsing failed: {e}")
-        raise e
+    Parameters:
+    - vkCode (int) : The virtual key code of the pressed key.
+    - mode (char)  : 'C' for Continuous mode, 'P' for Pulse mode
+*/
+void processAction(int vkCode, char mode) {
+    switch (vkCode) {
+        // Translation ----------------------------------------------------------------------------
+        case 'W':      logData('T', "+X", "W", 'N', mode); break;  // Forward
+        case 'S':      logData('T', "-X", "S", 'N', mode); break;  // Backward
+        case 'A':      logData('T', "+Y", "A", 'N', mode); break;  // Left
+        case 'D':      logData('T', "-Y", "D", 'N', mode); break;  // Right
+        case 'E':      logData('T', "+Z", "E", 'N', mode); break;  // Up
+        case 'Q':      logData('T', "-Z", "Q", 'N', mode); break;  // Down
 
-    interval = 30 
-    max_time = df[time_col].max()
-    num_chunks = int(np.ceil(max_time / interval))
-        
-    
-    # Generate 3D Trajectory Chunks =================================================================================================================
-    log_event("STATUS-04", f"3D Trajectory chunk generation started ({num_chunks} chunks total).")
+        // Rotation -------------------------------------------------------------------------------
+        case 'I':      logData('R', "+P", "I", 'N', mode); break;  // Pitch CCW
+        case 'K':      logData('R', "-P", "K", 'N', mode); break;  // Pitch CW
+        case 'O':      logData('R', "+R", "O", 'N', mode); break;  // Roll CCW
+        case 'U':      logData('R', "-R", "U", 'N', mode); break;  // Roll CW
+        case 'L':      logData('R', "+Y", "L", 'N', mode); break;  // Yaw CCW
+        case 'J':      logData('R', "-Y", "J", 'N', mode); break;  // Yaw CW
 
-    # Process each chunk of data to create 3D trajectory plots --------------------------------------------------------------------------------------
-    for i in range(num_chunks):
-        log_event("STATUS-05", f"Starting processing for 3D chunk {i+1}/{num_chunks}.")
-        start_t = i * interval
-        end_t = (i + 1) * interval
-        chunk_df = df[(df[time_col] >= start_t) & (df[time_col] < end_t)].copy()
-        
-        # If the chunk is empty, skip to the next iteration -----------------------------------------------------------------------------------------
-        if chunk_df.empty: 
-            log_event("STATUS-05", f"Chunk {i+1} is empty, skipping.")
-            continue
+        // General Error Handling -----------------------------------------------------------------
+        default:       logData('F', "--", getVirtualKeyName(vkCode), 'E', mode); logError("ERROR-004", "Incorrect Keybind"); break;
+    }
+}
 
-        actual_end_time = chunk_df[time_col].max()
-        display_end_t = actual_end_time if actual_end_time < end_t - 0.1 and actual_end_time == max_time else end_t
 
-        fig = plt.figure(figsize=(10, 8)) 
-        ax = fig.add_subplot(111, projection='3d')
-        
-        ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
-        ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
-        ax.zaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
-        
-        current_pos = np.array([0.0, 0.0, 0.0])
-        current_rot_matrix = np.eye(3) 
-        
-        directions = chunk_df['Direction'].values 
-        timestamps = chunk_df[time_col].values
-        
-        points = [current_pos]
-        next_tick_time = start_t + TICK_INTERVAL
 
-        # Process each movement in the chunk to calculate the trajectory and plot it ----------------------------------------------------------------
-        try:
-            for idx, move in enumerate(directions):
-                curr_time = timestamps[idx]
-                is_absolute_last_point = (i == num_chunks - 1) and (idx == len(directions) - 1)
-                
-                # Determine if the move is a rotation or translation and calculate the next position accordingly ------------------------------------
-                if move in rotational_moves:
-                    axis_char, theta = rotational_moves[move]
-                    new_rot = get_rotation_matrix(axis_char, theta)
-                    current_rot_matrix = np.dot(new_rot, current_rot_matrix)
-                    
-                    if 'R' in move: color = dof_colors['ROLL']
-                    elif 'P' in move: color = dof_colors['PITCH']
-                    elif 'Y_rot' in move: color = dof_colors['YAW']
-                    else: color = dof_colors['IDLE']
-                    
-                    path_vec = np.dot(current_rot_matrix, np.array([step_increment * 0.5, 0, 0]))
-                    next_pos = current_pos + path_vec
-                else:
-                    base_move_vec = np.array(base_translation.get(move, base_translation['--']), dtype=float)
-                    actual_move_vec = np.dot(current_rot_matrix, base_move_vec)
-                    next_pos = current_pos + actual_move_vec
-                    
-                    if 'X' in move: color = dof_colors['X']
-                    elif 'Y' in move: color = dof_colors['Y']
-                    elif 'Z' in move: color = dof_colors['Z']
-                    else: color = dof_colors['IDLE']
+/*
+    printMenu() - Prints the main menu to the console.
+*/
+void printMenu() {
+    cout << "=================================================" << endl;
+    cout << "DTO Program"                                        << endl;
+    cout << "-------------------------------------------------"  << endl;
+    cout << "Program Modes:"                                     << endl;
+    cout << "- 0   : Menu Mode"                                  << endl;
+    cout << "- 1   : Startup Sequence Mode"                      << endl;
+    cout << "- 2   : Operational Mode"                           << endl;
+    cout << "- Esc : Quit Mode"                                  << endl;
+    cout << "================================================="  << endl;
+    cout << ">> ";
+}
 
-                # Check if we have reached or passed the next tick time to place a marker and label on the plot -------------------------------------
-                marker_drawn = False
-                if curr_time >= next_tick_time:
-                    ax.scatter(current_pos[0], current_pos[1], current_pos[2], color='black', s=15, zorder=5)
-                    ax.text(current_pos[0], current_pos[1], current_pos[2], f" {int(next_tick_time)}s", color='black', zorder=10)
-                    next_tick_time += TICK_INTERVAL
-                    marker_drawn = True
 
-                if is_absolute_last_point and not marker_drawn:
-                    ax.scatter(current_pos[0], current_pos[1], current_pos[2], color='black', s=15, zorder=5)
-                    ax.text(current_pos[0], current_pos[1], current_pos[2], f" {curr_time:.1f}s", color='black', zorder=10)
 
-                ax.plot([current_pos[0], next_pos[0]], 
-                        [current_pos[1], next_pos[1]], 
-                        [current_pos[2], next_pos[2]], color=color, linewidth=2)
-                
-                current_pos = next_pos
-                points.append(current_pos)
-        except Exception as e:
-            log_event("ERROR-02", f"Mathematical/Integration error during 3D chunk processing: {e}")
-            raise e
+/*
+    printOperationalHeader() - Prints the operational mode header to the console.
+*/
+void printOperationalHeader() {
+    cout << "================================================="  << endl;
+    cout << "Operational Mode (2)"                               << endl;
+    cout << "-------------------------------------------------"  << endl;
+    cout << "Firing Mode: Caps Lock OFF = Continuous | Caps Lock ON = Pulse" << endl;
+    cout << "Program Modes:"                                     << endl;
+    cout << "- 0   : Return to Menu"                             << endl;
+    cout << "- Esc : Quit Program"                               << endl;
+    cout << "================================================="  << endl;
+    cout << ">> "                                                 << endl;
+}
 
-        pts = np.array(points)
-        max_range = np.array([pts[:,0].max()-pts[:,0].min(), 
-                              pts[:,1].max()-pts[:,1].min(), 
-                              pts[:,2].max()-pts[:,2].min()]).max() / 2.0
-        
-        if max_range == 0: max_range = 1.0 
 
-        mid_x = (pts[:,0].max()+pts[:,0].min()) * 0.5
-        mid_y = (pts[:,1].max()+pts[:,1].min()) * 0.5
-        mid_z = (pts[:,2].max()+pts[:,2].min()) * 0.5
-        
-        buf = max_range * 0.1 
-        ax.set_xlim(mid_x - max_range - buf, mid_x + max_range + buf)
-        ax.set_ylim(mid_y - max_range - buf, mid_y + max_range + buf)
-        ax.set_zlim(mid_z - max_range - buf, mid_z + max_range + buf)
-        ax.set_box_aspect((1, 1, 1)) 
 
-        ax.view_init(elev=20, azim=-50) 
-        ax.set_title(f"Time: {format_time(start_t)} - {format_time(display_end_t)}")
-        ax.set_xlabel('X (Roll)')
-        ax.set_ylabel('Y (Pitch)')
-        ax.set_zlabel('Z (Yaw)')
+/*
+    main() - The entry point of the program.
+*/
+int main() {
+    // Reset the log files and add CSV headers ----------------------------------------------------
+    ofstream resetFile(LOG_PATH + "Keybind_Log.csv", ios::trunc);
+    ofstream resetActivity(LOG_PATH + "Activity_Log.csv", ios::trunc);
 
-        legend_elements = [
-            Line2D([0], [0], color=dof_colors['X'], lw=3, label='X Translation'),
-            Line2D([0], [0], color=dof_colors['Y'], lw=3, label='Y Translation'),
-            Line2D([0], [0], color=dof_colors['Z'], lw=3, label='Z Translation'),
-            Line2D([0], [0], color=dof_colors['ROLL'], lw=3, label='Roll (X Rot)'),
-            Line2D([0], [0], color=dof_colors['PITCH'], lw=3, label='Pitch (Y Rot)'),
-            Line2D([0], [0], color=dof_colors['YAW'], lw=3, label='Yaw (Z Rot)'),
-            Line2D([0], [0], color=dof_colors['IDLE'], lw=3, label='Idle'),
-            Line2D([0], [0], marker='o', color='w', markerfacecolor='black', markersize=6, label=f'Time Marker')
-        ]
-        ax.legend(handles=legend_elements, loc='upper left', bbox_to_anchor=(0.0, 1.1))
-        plt.tight_layout()
+    // Check if files opened successfully before writing headers ----------------------------------
+    if (!resetFile.is_open() || !resetActivity.is_open()) {
+        cerr << "ERROR-000: Startup Failure. Check file path: " << LOG_PATH << endl;
+        return 1;
+    }
 
-        log_event("STATUS-06", f"3D Plot for chunk {i+1} successfully opened. Waiting for user close...")
-        plt.show() 
-        log_event("STATUS-07", f"3D Plot for chunk {i+1} closed by user.")
-    
-    
-    # Process the entire dataset to calculate global position, attitude, velocity, and acceleration -------------------------------------------------
-    log_event("STATUS-08", "Full telemetry data processing phase started.")
-    try:
-        telemetry_df = df.drop_duplicates(subset=[time_col]).sort_values(by=time_col).reset_index(drop=True)
-        full_times = telemetry_df[time_col].values
-        full_directions = telemetry_df['Direction'].values
-        
-        global_pos = np.array([0.0, 0.0, 0.0])
-        global_rot_matrix = np.eye(3) 
-        
-        positions_list = []
-        attitudes_list = []
+    // Initialize CSV Headers ---------------------------------------------------------------------
+    resetFile << "Time(s),Mode,Type,Direction,Key" << endl;
+    resetActivity << "Time(s),Code,Description" << endl;
 
-        # Process each movement in the full dataset to calculate the global trajectory and attitude -------------------------------------------------
-        for move in full_directions:
-            if (move in rotational_moves):
-                axis_char, theta = rotational_moves[move]
-                new_rot = get_rotation_matrix(axis_char, theta)
-                global_rot_matrix = np.dot(new_rot, global_rot_matrix)
-                
-                path_vec = np.dot(global_rot_matrix, np.array([step_increment * 0.5, 0, 0]))
-                global_pos = global_pos + path_vec
-            else:
-                base_move_vec = np.array(base_translation.get(move, base_translation['--']), dtype=float)
-                actual_move_vec = np.dot(global_rot_matrix, base_move_vec)
-                global_pos = global_pos + actual_move_vec
-                
-            positions_list.append(global_pos.copy())
-            attitudes_list.append(rotation_matrix_to_euler(global_rot_matrix))
+    resetFile.close();
+    resetActivity.close();
 
-        positions_arr = np.array(positions_list)
-        attitudes_arr = np.array(attitudes_list)
-        
-        pos_x, pos_y, pos_z = positions_arr[:, 0], positions_arr[:, 1], positions_arr[:, 2]
-        roll_arr, pitch_arr, yaw_arr = attitudes_arr[:, 0], attitudes_arr[:, 1], attitudes_arr[:, 2]
-        log_event("STATUS-09", "Global trajectory integration complete.")
+    logActivity("STATUS-009", "Startup Successful: Files Ready");
+    logActivity("STATUS-001", "Session Started");
 
-        vel_x = np.gradient(pos_x, full_times)
-        vel_y = np.gradient(pos_y, full_times)
-        vel_z = np.gradient(pos_z, full_times)
-        
-        acc_x = np.gradient(vel_x, full_times)
-        acc_y = np.gradient(vel_y, full_times)
-        acc_z = np.gradient(vel_z, full_times)
-        log_event("STATUS-10", "Telemetry derivatives (Velocity/Acceleration) calculated.")
-    except Exception as e:
-        log_event("ERROR-02", f"Mathematical/Integration error during telemetry calculation: {e}")
-        raise e
+    // Display Menu -------------------------------------------------------------------------------
+    printMenu();
 
-    
-    # Generate 2D plots for Absolute Position, Attitude, Velocity, and Acceleration over time -------------------------------------------------------
-    log_event("STATUS-11", "Telemetry 2D plots generation phase started.")
-    
-    # Absolute Position Graph -----------------------------------------------------------------------------------------------------------------------
-    fig_pos = plt.figure(figsize = (10, 5))
-    plt.plot(full_times, pos_x, label = 'X Position')
-    plt.plot(full_times, pos_y, label = 'Y Position')
-    plt.plot(full_times, pos_z, label = 'Z Position')
-    plt.title("Absolute Position")
-    plt.xlabel("Time (s)")
-    plt.ylabel("Units")
-    plt.grid(True)
-    plt.legend()
-    plt.tight_layout()
-    log_event("STATUS-12", "Absolute Position plot opened. Waiting for user close...")
-    plt.show()
+    // Main Loop ----------------------------------------------------------------------------------
+    while (true) {
+        // Exit check -----------------------------------------------------------------------------
+        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) break;
 
-    
-    # Attutude Graph --------------------------------------------------------------------------------------------------------------------------------
-    fig_att = plt.figure(figsize = (10, 5))
-    plt.plot(full_times, roll_arr, label = 'Roll')
-    plt.plot(full_times, pitch_arr, label = 'Pitch')
-    plt.plot(full_times, yaw_arr, label = 'Yaw')
-    plt.title("Attitude (Euler Angles)")
-    plt.xlabel("Time (s)")
-    plt.ylabel("Degrees")
-    plt.grid(True)
-    plt.legend()
-    plt.tight_layout()
-    log_event("STATUS-13", "Attitude plot opened. Waiting for user close...")
-    plt.show()
+        // Menu Mode (not in any sub-mode) --------------------------------------------------------
+        if (!isStartupMode && !isOperationalMode) {
+            if (_kbhit()) {
+                int input = _getch();
 
-    
-    # Linear Velocity Graph -------------------------------------------------------------------------------------------------------------------------
-    fig_vel = plt.figure(figsize=(10, 5))
-    plt.plot(full_times, vel_x, label = 'Velocity X')
-    plt.plot(full_times, vel_y, label = 'Velocity Y')
-    plt.plot(full_times, vel_z, label = 'Velocity Z')
-    plt.title("Linear Velocity")
-    plt.xlabel("Time (s)")
-    plt.ylabel("Units / s")
-    plt.grid(True)
-    plt.legend()
-    plt.tight_layout()
-    log_event("STATUS-14", "Velocity plot opened. Waiting for user close...")
-    plt.show()
+                if (input == '1') {
+                    // Enter Startup Sequence Mode ------------------------------------------------
+                    isStartupMode = true;
+                    cout << "1" << endl;
+                    logActivity("STATUS-010", "Mode Changed: Startup Sequence Mode");
+                    logActivity("STATUS-012", "Sequence Initiated");
 
-    
-    # Linear Acceleration Graph ---------------------------------------------------------------------------------------------------------------------
-    fig_acc = plt.figure(figsize = (10, 5))
-    plt.plot(full_times, acc_x, label = 'Accel X')
-    plt.plot(full_times, acc_y, label = 'Accel Y')
-    plt.plot(full_times, acc_z, label = 'Accel Z')
-    plt.title("Linear Acceleration")
-    plt.xlabel("Time (s)")
-    plt.ylabel("Units / s²")
-    plt.grid(True)
-    plt.legend()
-    plt.tight_layout()
-    log_event("STATUS-15", "Acceleration plot opened. Waiting for user close...")
-    plt.show()
+                    // Startup Sequence Mode Variables & Testing ----------------------------------
+                    int rackConnector0[4] = {0, 1, 2, 3};
+                    int rackConnector1[4] = {4, 5, 6, 7};
+                    int rackConnector2[4] = {8, 9, 10, 11};
 
-    log_event("STATUS-16", "Script execution completed successfully.")
+                    int* connectors[3] = {rackConnector0, rackConnector1, rackConnector2};
 
-except FileNotFoundError:
-    pass # Already logged in the check above
-except KeyError:
-    pass # Already logged in the check above
-except Exception as e:
-    log_event("ERROR-03", f"Unexpected general execution error: {e}")
+                    bool force_exit = false;
+
+                    for (int r = 0; r < 3; r++) {
+                        if (force_exit) break;
+                        double sequence_time = 0.00;
+                        cout << "Rack Connector " << r + 1 << " Test:" << endl;
+                        logActivity("STATUS-014", "Testing Rack Connector " + to_string(r + 1));
+
+                        // Phase 1: 1.0s Pulses ---------------------------------------------------
+                        for (int g = 0; g < 4; g++) {
+                            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { force_exit = true; break; }
+                            cout << fixed << setprecision(2) << sequence_time << " GPIO " << connectors[r][g] << " On" << endl;
+                            logActivity("STATUS-016", "GPIO " + to_string(connectors[r][g]) + " ON");
+                            this_thread::sleep_for(chrono::milliseconds(1000));
+                            sequence_time += 1.00;
+
+                            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { force_exit = true; break; }
+                            cout << fixed << setprecision(2) << sequence_time << " GPIO " << connectors[r][g] << " Off" << endl;
+                            logActivity("STATUS-017", "GPIO " + to_string(connectors[r][g]) + " OFF");
+                            this_thread::sleep_for(chrono::milliseconds(1000));
+                            sequence_time += 1.00;
+                        }
+
+                        // Phase 2: Double 0.5s Pulses --------------------------------------------
+                        for (int g = 0; g < 4; g++) {
+                            if (force_exit) break;
+                            for (int i = 0; i < 2; i++) {
+                                if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { force_exit = true; break; }
+                                cout << fixed << setprecision(2) << sequence_time << " GPIO " << connectors[r][g] << " On" << endl;
+                                logActivity("STATUS-016", "GPIO " + to_string(connectors[r][g]) + " ON (PULSE)");
+                                this_thread::sleep_for(chrono::milliseconds(500));
+                                sequence_time += 0.50;
+
+                                if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { force_exit = true; break; }
+                                cout << fixed << setprecision(2) << sequence_time << " GPIO " << connectors[r][g] << " Off" << endl;
+                                logActivity("STATUS-017", "GPIO " + to_string(connectors[r][g]) + " OFF (PULSE)");
+                                this_thread::sleep_for(chrono::milliseconds(500));
+                                sequence_time += 0.50;
+                            }
+                        }
+                        if (!force_exit) {
+                            cout << "Rack Connector " << r + 1 << " Test Successfully Completed." << endl << endl;
+                            logActivity("STATUS-015", "Rack Connector " + to_string(r + 1) + " PASS");
+                        }
+                    }
+
+                    if (force_exit) {
+                        logError("ERROR-005", "Sequence Aborted by User");
+                        break;
+                    }
+
+                    cout << "All GPIO Successfully Activated." << endl;
+                    logActivity("STATUS-013", "All GPIO Successfully Activated");
+
+                    isStartupMode = false;
+
+                    // Return to menu -------------------------------------------------------------
+                    printMenu();
+                }
+
+                else if (input == '2') {
+                    // Enter Operational Mode -----------------------------------------------------
+                    isOperationalMode = true;
+                    cout << "2" << endl;
+                    logActivity("STATUS-010", "Mode Changed: Operational Mode");
+                    printOperationalHeader();
+                }
+
+                else if (input == 27) { // Esc via _getch
+                    break;
+                }
+            }
+        }
+
+        // Operational Mode (2) Logic -------------------------------------------------------------
+        else if (isOperationalMode) {
+            // Check for '0' to return to menu ----------------------------------------------------
+            if (_kbhit()) {
+                int peeked = _getch();
+                if (peeked == '0') {
+                    isOperationalMode = false;
+                    time_counter = 0.0;
+                    last_key_fired = "";
+                    logActivity("STATUS-010", "Mode Changed: Menu Mode");
+                    printMenu();
+                    continue;
+                }
+                // Put the character back via an internal flag ------------------------------------
+                // Since _getch() consumes the char, re-process it as a VK if possible
+                // For letter keys, push back to processAction directly
+                if (peeked >= 32 && peeked <= 126) {
+                    int vk = toupper(peeked);
+                    bool isCapsOn = (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
+                    char currentMode = isCapsOn ? 'P' : 'C';
+
+                    if (currentMode == 'P') {
+                        string key_id = to_string(vk);
+                        if (key_id != last_key_fired) {
+                            processAction(vk, 'P');
+                            last_key_fired = key_id;
+                        } else {
+                            logData('F', "--", "-", 'N', 'P');
+                        }
+                    } else {
+                        processAction(vk, 'C');
+                    }
+                }
+                continue;
+            }
+
+            bool isCapsOn = (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
+            char currentMode = isCapsOn ? 'P' : 'C';
+
+            int active_vk = 0;
+            string current_key_id = "";
+
+            // Check all virtual keys for activity ------------------------------------------------
+            for (int i = 0x08; i <= 0xFE; i++) {
+                if (GetAsyncKeyState(i) & 0x8000) {
+                    // Skip modifier keys ---------------------------------------------------------
+                    if (i == VK_CONTROL || i == VK_MENU || i == VK_CAPITAL ||
+                        i == VK_LCONTROL || i == VK_RCONTROL) continue;
+
+                    active_vk = i;
+                    current_key_id = to_string(i);
+                    break;
+                }
+            }
+
+            // Process the active key if detected -------------------------------------------------
+            if (active_vk != 0) {
+                if (currentMode == 'C') {
+                    processAction(active_vk, 'C');
+                }
+                else if (currentMode == 'P') {
+                    if (current_key_id != last_key_fired) {
+                        processAction(active_vk, 'P');
+                        last_key_fired = current_key_id;
+                    } else {
+                        logData('F', "--", "-", 'N', 'P');
+                    }
+                }
+                while (_kbhit()) { _getch(); }
+            }
+            // No key activity, reset pulse tracking and log idle --------------------------------
+            else {
+                last_key_fired = "";
+                logData('F', "--", "-", 'N', currentMode);
+            }
+
+            // Increment time only in Operational Mode --------------------------------------------
+            time_counter += 0.10;
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    // Final exit sequence ------------------------------------------------------------------------
+    logActivity("STATUS-002", "Session Ended");
+
+    ofstream finalize(LOG_PATH + "Activity_Log.csv", ios_base::app);
+    if (finalize.is_open()) {
+        finalize << fixed << setprecision(2) << time_counter << ",STATUS-003,Shutdown Successful" << endl;
+        finalize.close();
+        cout << "\nLogging complete. Files saved in: " << LOG_PATH << endl;
+    } else {
+        cerr << "ERROR-202: Shutdown Failed. Activity log could not be finalized." << endl;
+    }
+
+    return 0;
+}
+
+
+
+// Compilation Instructions =======================================================================
+// cd Controller; g++ DTOManualTesting.cpp -o DTOManualTesting; ./DTOManualTesting
