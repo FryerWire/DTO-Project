@@ -7,10 +7,11 @@ Features:
 - Logs all key events and high-level application activities to separate CSV files (Keybind_Log.csv and Activity_Log.csv) with hardware-based elapsed timestamps and standardized STATUS/ERROR codes.
 - Implements a three-mode menu system: Menu Mode (0) for mode selection, Startup Sequence Mode (1) for hardware validation across three rack connectors, and Operational Mode (2) for real-time thruster control.
 - Startup Sequence Mode executes a two-phase GPIO test per rack connector: Phase 1 performs four individual 1-second ON/OFF pulses, and Phase 2 performs four double 0.5-second pulse pairs, tracking and reporting any GPIO failures separately per rack.
-- Operational Mode supports two firing sub-modes: Continuous Mode ('C'), where thrusters fire for the duration of a key hold, and Pulse Mode ('P'), where each key fires only once per new press, preventing repeat firings on hold.
+- Operational Mode fires thrusters continuously for the duration of a key hold and deactivates all thrusters when the key is released.
 - Maps 12 keybinds (W, S, A, D, E, Q for translation; I, K, U, O, J, L for rotation) to specific GPIO pin pairs controlling thruster pairs across all six degrees of freedom.
 - Automatically deactivates all 12 thrusters when no key is detected in Operational Mode, ensuring failsafe thruster shutdown on key release.
 - Uses non-blocking terminal input via POSIX termios and O_NONBLOCK fcntl configuration, with IOCTL byte-available checking to allow real-time key polling without freezing execution.
+- Uses a configurable no-input cycle counter (RELEASE_CYCLES) to bridge terminal key repeat delay gaps, preventing false release/re-fire cycling when a key is held down.
 - Uses chrono::high_resolution_clock for hardware-based timing, preventing OS scheduling lag from affecting key press duration tracking or log timestamps.
 - Performs safe GPIO cleanup on ESC exit, deactivating all thrusters and closing the gpiod chip handle before returning.
 
@@ -21,8 +22,8 @@ Functions:
 - getRelayValue(int val): Translates a logical ON (1) or OFF (0) pin value into the correct gpiod_line_value enum considering the ACTIVE_LOW relay configuration constant.
 - checkKeyboardInput(): Initializes the terminal to raw non-blocking mode on the first call (disabling ICANON and ECHO, setting O_NONBLOCK); on all calls returns the number of bytes available on stdin via IOCTL FIONREAD without consuming any input.
 - logActivity(string code, string description): Appends a timestamped STATUS or ERROR code entry to Activity_Log.csv and echoes it to stdout; silently skips the file write if the log is inaccessible but still prints to console.
-- logKeyData(char type, string direction, string keyName, char statusChar, char mode): Appends a timestamped key event row to Keybind_Log.csv with mode, type, direction, and key name fields; triggers a STATUS-011 logActivity entry for valid new key presses; logs ERROR-002 if the file is inaccessible.
-- processMovementAction(string keyId, char mode): Validates the key against Pulse Mode repeat rules, maps the key to a translation or rotation action, calls logKeyData and setGPIOPin for the two associated thruster pins, and updates lastKeyFired; logs ERROR-004 for unmapped keys.
+- logKeyData(char type, string direction, string keyName, char statusChar): Appends a timestamped key event row to Keybind_Log.csv with type, direction, and key name fields; triggers a STATUS-011 logActivity entry for valid new key presses; logs ERROR-002 if the file is inaccessible.
+- processMovementAction(string keyId): Maps the key to a translation or rotation action, calls logKeyData and setGPIOPin for the two associated thruster pins, and updates currentKeyPressed; logs ERROR-004 for unmapped keys.
 - displayMenu(): Logs a STATUS-019 UI redraw event and prints the mode-appropriate menu to stdout based on the current value of programMode.
 - getElapsedTime(): Returns the number of seconds elapsed since programStartTime using chrono::high_resolution_clock for sub-millisecond precision.
 - formatTimestamp(double t): Formats a floating-point elapsed time value into a "seconds:centiseconds" string (e.g., "12:07") for use in log entries.
@@ -61,8 +62,6 @@ Codes:
 - STATUS-109: stdin Set to O_NONBLOCK: Non-Blocking Reads Active
 - STATUS-110: Translation Action Processed: GPIO Pair Activated
 - STATUS-111: Rotation Action Processed: GPIO Pair Activated
-- STATUS-112: Continuous Firing Mode Active
-- STATUS-113: Pulse Firing Mode Active
 - STATUS-114: Startup Sequence Phase 1 Started: 1-Second Pulses
 - STATUS-115: Startup Sequence Phase 2 Started: Double 0.5-Second Pulses
 - STATUS-116: Rack Connector Failure Summary Logged
@@ -81,7 +80,6 @@ Codes:
 - ERROR-102: GPIO Not Initialized: gpioChip Handle is Null, Cannot Set Pin
 - ERROR-103: GPIO Line Request Failed: gpiod_chip_request_lines Returned Null
 - ERROR-104: GPIO Pin Activation Failure Recorded During Startup Sequence
-- ERROR-105: Pulse Mode Repeat Blocked: Key Already Fired This Press
 - ERROR-106: UI Redraw Failed: Console Output Error
 - ERROR-107: Mode Entry Rejected: Invalid Mode Character Received
 */
@@ -116,15 +114,14 @@ using namespace std;
 // Global Variables =================================================================================================================================
 // Program State Variables --------------------------------------------------------------------------------------------------------------------------
 int programMode = 0;                          // 0 = Menu, 1 = Startup Sequence, 2 = Operational Mode
-char firingMode = 'C';                        // 'C' for Continuous, 'P' for Pulse Mode in Operational Mode
 
 // Logging and Input Tracking Variables -------------------------------------------------------------------------------------------------------------
 chrono::high_resolution_clock::time_point programStartTime;  // Track actual program start time
-string lastKeyFired = "";                     // Tracks last key for Pulse Mode repeat prevention
 string currentKeyPressed = "";                // Tracks currently pressed key
-bool pulseDeactivated = false;                // Tracks if Pulse Mode thrusters have been deactivated after firing
 int noInputCount = 0;                         // Counts consecutive no-input poll cycles for release confirmation
-const int PULSE_RELEASE_CYCLES = 6;           // Number of consecutive no-input cycles (x50ms) to confirm true key release
+const int RELEASE_CYCLES = 8;                 // Number of consecutive no-input cycles (x50ms = 400ms) before confirming key release.
+                                              // Must exceed the terminal key repeat delay (~250-660ms) divided by poll interval (50ms).
+                                              // Too low: false release/re-fire cycling on key hold. Too high: slow thruster shutdown on release.
 vector<int> failedGPIOPins;                   // Tracks GPIO pins that failed during startup
 struct gpiod_chip* gpioChip;                  // GPIO chip handle
 const int ACTIVE_LOW = 0;                     // Set to 1 if using active-low relays, 0 for active-high relays
@@ -136,8 +133,8 @@ const char* gpioChipPath = "/dev/gpiochip4";  // GPIO chip path
 // Function Prototypes ==============================================================================================================================
 void displayMenu();
 void logActivity(string code, string description);
-void processMovementAction(string keyId, char mode);
-void logKeyData(char type, string direction, string keyName, char statusChar, char mode);
+void processMovementAction(string keyId);
+void logKeyData(char type, string direction, string keyName, char statusChar);
 double getElapsedTime();
 
 
@@ -311,24 +308,23 @@ void logActivity(string code, string description) {
 
 
 /*
-    logKeyData - Logs detailed information about key events, including type, direction, key name, status, and mode, with error handling for file access
-                 This function formats the current elapsed time into a string, opens the Keybind_Log.csv file in append mode, and writes a new line containing the timestamp, mode, type of event (translation, rotation, or firing), direction of movement or rotation, key name, and status character. 
+    logKeyData - Logs detailed information about key events, including type, direction, and key name, with error handling for file access
+                 This function formats the current elapsed time into a string, opens the Keybind_Log.csv file in append mode, and writes a new line containing the timestamp, type of event (translation, rotation, or release), direction of movement or rotation, and key name. 
                  If the status character indicates a new key press ('N') and the key name is not "-", it also logs a high-level activity indicating that a key was registered. 
                  If the file cannot be opened for logging key data, it logs an error activity indicating that the Keybind_Log is inaccessible.
 
     Parameters:
-    - type (char)          : A character representing the type of event being logged ('T' for translation, 'R' for rotation, 'F' for firing)
-    - direction (string)   : A string indicating the direction of movement or rotation associated with the key event (e.g., "+X", "-P")
-    - keyName (string)    : The name of the key that triggered the event (e.g., "W", "A", "K")
-    - statusChar (char)   : A character representing the status of the key event ('N' for new press, 'R' for release, 'E' for error)
-    - mode (char)         : A character representing the current firing mode ('C' for Continuous Mode, 'P' for Pulse Mode)
+    - type (char)          : A character representing the type of event being logged ('T' for translation, 'R' for rotation/release)
+    - direction (string)   : A string indicating the direction of movement or rotation associated with the key event (e.g., "+X", "-P", "--" for release)
+    - keyName (string)     : The name of the key that triggered the event (e.g., "W", "A", "K", "-" for release)
+    - statusChar (char)    : A character representing the status of the key event ('N' for new press, 'R' for release, 'E' for error)
 */
-void logKeyData(char type, string direction, string keyName, char statusChar, char mode) {
+void logKeyData(char type, string direction, string keyName, char statusChar) {
     double timeCounter = getElapsedTime();
     string timeString = formatTimestamp(timeCounter);
     ofstream keyLogFile(logDirectoryPath + "Keybind_Log.csv", ios_base::app);
     if (keyLogFile.is_open()) {  
-        keyLogFile << timeString << "," << mode << "," << type << "," << direction << "," << keyName << endl;
+        keyLogFile << timeString << "," << type << "," << direction << "," << keyName << endl;
         keyLogFile.close();
         if (statusChar == 'N' && keyName != "-") {
             logActivity("STATUS-011", "Key Registered: " + keyName);
@@ -341,44 +337,34 @@ void logKeyData(char type, string direction, string keyName, char statusChar, ch
 
 
 /*
-    processMovementAction - Processes a key event for movement or rotation based on the key identifier and current mode, with error handling for invalid keybinds and Pulse Mode repeat prevention
-                            This function first checks if the current mode is Pulse Mode ('P') and if the key being processed is the same as the last key fired. If both conditions are true, it logs an error activity indicating that a repeat action was prevented for that key in Pulse Mode, logs an error entry in the Keybind_Log, and returns without processing the action. 
-                            If the action is valid, it checks the key identifier against known movement and rotation keys, logs the corresponding key data, and sets the appropriate GPIO pins to activate the thrusters. 
-                            If the key identifier does not match any known actions, it logs an error entry in the Keybind_Log and logs an error activity indicating an incorrect keybind. 
-                            Finally, it updates lastKeyFired to track the most recent key event.
+    processMovementAction - Processes a key event for movement or rotation based on the key identifier, with error handling for invalid keybinds
+                            This function checks the key identifier against known movement and rotation keys, logs the corresponding key data, and sets the appropriate GPIO pins to activate the thrusters. 
+                            If the key identifier does not match any known actions, it logs an error entry in the Keybind_Log and logs an error activity indicating an incorrect keybind.
 
     Parameters:
     - keyId (string) : The identifier of the key that triggered the event (e.g., "W", "A", "K")
-    - mode (char)    : The current firing mode ('C' for Continuous Mode, 'P' for Pulse Mode) that affects how the action is processed and logged
 */
-void processMovementAction(string keyId, char mode) {
-    if (mode == 'P' && keyId == lastKeyFired) {
-        logActivity("ERROR-105", "Mode Specific Block: Pulse Mode repeat prevented for " + keyId);
-        logKeyData('F', "--", keyId, 'E', 'P');
-        return;
-    }
-
+void processMovementAction(string keyId) {
     // Translation Mappings -------------------------------------------------------------------------------------------------------------------------
-    if (keyId == "W")      { logKeyData('T', "+X", "W", 'N', mode); (void)setGPIOPin(0, 1); (void)setGPIOPin(8, 1); }   // A1, A2
-    else if (keyId == "S") { logKeyData('T', "-X", "S", 'N', mode); (void)setGPIOPin(5, 1); (void)setGPIOPin(11, 1); }  // F1, F2
-    else if (keyId == "A") { logKeyData('T', "+Y", "A", 'N', mode); (void)setGPIOPin(1, 1); (void)setGPIOPin(7, 1); }   // S1, S2
-    else if (keyId == "D") { logKeyData('T', "-Y", "D", 'N', mode); (void)setGPIOPin(2, 1); (void)setGPIOPin(6, 1); }   // P1, P2
-    else if (keyId == "E") { logKeyData('T', "+Z", "E", 'N', mode); (void)setGPIOPin(4, 1); (void)setGPIOPin(10, 1); }  // B1, B2
-    else if (keyId == "Q") { logKeyData('T', "-Z", "Q", 'N', mode); (void)setGPIOPin(3, 1); (void)setGPIOPin(9, 1); }   // T1, T2
+    if (keyId == "W")      { logKeyData('T', "+X", "W", 'N'); (void)setGPIOPin(0, 1); (void)setGPIOPin(8, 1); }   // A1, A2
+    else if (keyId == "S") { logKeyData('T', "-X", "S", 'N'); (void)setGPIOPin(5, 1); (void)setGPIOPin(11, 1); }  // F1, F2
+    else if (keyId == "A") { logKeyData('T', "+Y", "A", 'N'); (void)setGPIOPin(1, 1); (void)setGPIOPin(7, 1); }   // S1, S2
+    else if (keyId == "D") { logKeyData('T', "-Y", "D", 'N'); (void)setGPIOPin(2, 1); (void)setGPIOPin(6, 1); }   // P1, P2
+    else if (keyId == "E") { logKeyData('T', "+Z", "E", 'N'); (void)setGPIOPin(4, 1); (void)setGPIOPin(10, 1); }  // B1, B2
+    else if (keyId == "Q") { logKeyData('T', "-Z", "Q", 'N'); (void)setGPIOPin(3, 1); (void)setGPIOPin(9, 1); }   // T1, T2
     
     // Rotation Mappings ----------------------------------------------------------------------------------------------------------------------------
-    else if (keyId == "K") { logKeyData('R', "-P", "K", 'N', mode); (void)setGPIOPin(9, 1); (void)setGPIOPin(4, 1); }   // T2, B1
-    else if (keyId == "I") { logKeyData('R', "+P", "I", 'N', mode); (void)setGPIOPin(3, 1); (void)setGPIOPin(10, 1); }  // T1, B2
-    else if (keyId == "U") { logKeyData('R', "-R", "U", 'N', mode); (void)setGPIOPin(6, 1); (void)setGPIOPin(1, 1); }   // P2, S1
-    else if (keyId == "O") { logKeyData('R', "+R", "O", 'N', mode); (void)setGPIOPin(2, 1); (void)setGPIOPin(7, 1); }   // P1, S2
-    else if (keyId == "J") { logKeyData('R', "-Y", "J", 'N', mode); (void)setGPIOPin(0, 1); (void)setGPIOPin(11, 1); }  // A1, F2
-    else if (keyId == "L") { logKeyData('R', "+Y", "L", 'N', mode); (void)setGPIOPin(8, 1); (void)setGPIOPin(5, 1); }   // A2, F1
+    else if (keyId == "K") { logKeyData('R', "-P", "K", 'N'); (void)setGPIOPin(9, 1); (void)setGPIOPin(4, 1); }   // T2, B1
+    else if (keyId == "I") { logKeyData('R', "+P", "I", 'N'); (void)setGPIOPin(3, 1); (void)setGPIOPin(10, 1); }  // T1, B2
+    else if (keyId == "U") { logKeyData('R', "-R", "U", 'N'); (void)setGPIOPin(6, 1); (void)setGPIOPin(1, 1); }   // P2, S1
+    else if (keyId == "O") { logKeyData('R', "+R", "O", 'N'); (void)setGPIOPin(2, 1); (void)setGPIOPin(7, 1); }   // P1, S2
+    else if (keyId == "J") { logKeyData('R', "-Y", "J", 'N'); (void)setGPIOPin(0, 1); (void)setGPIOPin(11, 1); }  // A1, F2
+    else if (keyId == "L") { logKeyData('R', "+Y", "L", 'N'); (void)setGPIOPin(8, 1); (void)setGPIOPin(5, 1); }   // A2, F1
     
     else { 
-        logKeyData('F', "--", keyId, 'E', mode); 
+        logKeyData('F', "--", keyId, 'E'); 
         logActivity("ERROR-004", "Incorrect Keybind"); 
     }
-    lastKeyFired = keyId;
 }
 
 
@@ -397,7 +383,7 @@ void displayMenu() {
     } else if (programMode == 1) {
         cout << "\n=================================================\nStartup Sequence Mode\n-------------------------------------------------\nProgram Modes:\n- Esc : Quit Mode\n=================================================\n>> " << flush;
     } else if (programMode == 2) {
-        cout << "\n=================================================\nOperational Mode (2)\n-------------------------------------------------\nProgram Modes:\n- 1   : Continuous Mode\n- 2   : Pulse Mode\n- Esc : Quit Program\n=================================================\n>> " << flush;
+        cout << "\n=================================================\nOperational Mode (2)\n-------------------------------------------------\nProgram Modes:\n- 0   : Menu Mode\n- Esc : Quit Program\n=================================================\n>> " << flush;
     }
 }
 
@@ -407,6 +393,7 @@ void displayMenu() {
     main - The main entry point of the DTO Controller software, responsible for initialization, main program loop, and cleanup on exit
            This function first attempts to create the log directory and logs the result. It then initializes the GPIO chip and prepares the log files for keybinds and activities, logging the startup status. 
            It enters a main loop where it checks for keyboard input and processes it based on the current program mode. In Operational Mode, it also handles turning off thrusters when no keys are pressed. 
+           A no-input cycle counter (noInputCount) prevents false release/re-fire cycling caused by gaps in terminal key repeat timing. Thrusters only deactivate after RELEASE_CYCLES consecutive empty polls.
            The loop continues until the user presses the ESC key, at which point it performs cleanup by turning off all thrusters, logging session end and shutdown status, closing the GPIO chip if it was initialized, and returning from the program.
 
     Returns:
@@ -429,7 +416,7 @@ int main() {
     ofstream activityLogFile(logDirectoryPath + "Activity_Log.csv", ios::trunc);
     if (keybindLogFile.is_open() && activityLogFile.is_open()) {
         logActivity("STATUS-008", "Path Validated: File Open Successful");
-        keybindLogFile << "Time(s),Mode,Type,Direction,Key" << endl;
+        keybindLogFile << "Time(s),Type,Direction,Key" << endl;
         activityLogFile << "Time(s),Code,Description" << endl;
         keybindLogFile.close(); activityLogFile.close();
         logActivity("STATUS-009", "Startup Successful: Files Ready");
@@ -446,6 +433,8 @@ int main() {
         // Keyboard Input Handling ------------------------------------------------------------------------------------------------------------------
         if (checkKeyboardInput()) {
             unsigned char charInput = getchar();
+            // Reset no-input counter on any input received
+            noInputCount = 0;
             // Handle ESC key for quitting the program ----------------------------------------------------------------------------------------------
             if (charInput == 27) break; // ESC
 
@@ -567,30 +556,22 @@ int main() {
                     
                     programMode = 0; 
                     displayMenu();
-                // Operational Mode: Accepts mode selection inputs and transitions to mode-specific menu --------------------------------------------
+                // Operational Mode: Accepts mode selection inputs and transitions to Operational Mode -----------------------------------------------
                 } else if (charInput == '2') {
                     programMode = 2;
-                    firingMode = 'C'; 
                     logActivity("STATUS-020", "Mode Changed: Operational Mode Active");
                     displayMenu();
                 }
-            // Operational Mode: Accepts mode selection and movement/rotation inputs ----------------------------------------------------------------
+            // Operational Mode: Accepts movement/rotation inputs -----------------------------------------------------------------------------------
             } else if (programMode == 2) {
-                // Reset release confirmation counter on any input received
-                noInputCount = 0;
-                // In Operational Mode, handle mode switching and movement/rotation key processing --------------------------------------------------
-                if (charInput == '1') { 
-                    firingMode = 'C'; 
-                    pulseDeactivated = false; 
-                    logActivity("STATUS-112", "Mode Changed: Continuous Mode"); 
-                }
-                else if (charInput == '2') { 
-                    firingMode = 'P'; 
-                    pulseDeactivated = false; 
-                    logActivity("STATUS-113", "Mode Changed: Pulse Mode"); 
-                }
-                else if (charInput == '0') { 
-                    pulseDeactivated = false; 
+                if (charInput == '0') { 
+                    // Return to menu - deactivate all thrusters first
+                    if (!currentKeyPressed.empty()) {
+                        for(int i = 0; i <= 11; i++) (void)setGPIOPin(i, 0);
+                        logKeyData('N', "--", "-", 'R');
+                        logActivity("STATUS-106", "All Thrusters Deactivated: Key Released (" + currentKeyPressed + ")");
+                        currentKeyPressed = "";
+                    }
                     programMode = 0; 
                     displayMenu(); 
                 }
@@ -598,48 +579,25 @@ int main() {
                     string keyIdString = string(1, toupper(charInput));
                     // Only process if it's a different key than currently tracked
                     if (keyIdString != currentKeyPressed) {
-                        // If switching keys in Pulse Mode, reset deactivation state for the new key
-                        if (firingMode == 'P' && pulseDeactivated) {
-                            pulseDeactivated = false;
-                        }
-                        processMovementAction(keyIdString, firingMode);
+                        processMovementAction(keyIdString);
                         currentKeyPressed = keyIdString;
                     }
                 }
             }
         // Handle thruster deactivation when no keys are pressed in Operational Mode ----------------------------------------------------------------
         } else {
-            // In Operational Mode, if no keys are pressed, ensure all thrusters are turned off
-            if (programMode == 2) {
-                if (!currentKeyPressed.empty()) {
-                    if (firingMode == 'P') {
-                        // Pulse Mode: Deactivate thrusters on first no-input cycle, but keep currentKeyPressed
-                        // set so terminal key repeat characters are silently filtered by the != check above.
-                        // Only fully clear state after PULSE_RELEASE_CYCLES consecutive no-input polls confirm
-                        // the key was truly released (not just a gap between repeat characters).
-                        if (!pulseDeactivated) {
-                            for(int i = 0; i <= 11; i++) (void)setGPIOPin(i, 0);
-                            logKeyData('R', "--", "-", 'R', firingMode);
-                            logActivity("STATUS-106", "All Thrusters Deactivated: Key Released (" + currentKeyPressed + ")");
-                            pulseDeactivated = true;
-                            noInputCount = 0;
-                        }
-                        noInputCount++;
-                        if (noInputCount >= PULSE_RELEASE_CYCLES) {
-                            // Sustained silence confirms true key release - allow fresh press of same key
-                            currentKeyPressed = "";
-                            lastKeyFired = "";
-                            pulseDeactivated = false;
-                            noInputCount = 0;
-                        }
-                    } else {
-                        // Continuous Mode: Deactivate and clear immediately
-                        logKeyData('R', "--", "-", 'R', firingMode);
-                        for(int i = 0; i <= 11; i++) (void)setGPIOPin(i, 0);
-                        logActivity("STATUS-106", "All Thrusters Deactivated: Key Released (" + currentKeyPressed + ")");
-                        currentKeyPressed = "";
-                        lastKeyFired = "";
-                    }
+            // In Operational Mode, if no keys are pressed, count consecutive no-input cycles.
+            // Only deactivate thrusters after RELEASE_CYCLES consecutive empty polls to bridge
+            // the gap between the first key character and when terminal key repeat kicks in.
+            // Without this, holding a key causes: fire -> deactivate (during repeat delay gap) -> re-fire (on repeat).
+            if (programMode == 2 && !currentKeyPressed.empty()) {
+                noInputCount++;
+                if (noInputCount >= RELEASE_CYCLES) {
+                    logKeyData('N', "--", "-", 'R');
+                    for(int i = 0; i <= 11; i++) (void)setGPIOPin(i, 0);
+                    logActivity("STATUS-106", "All Thrusters Deactivated: Key Released (" + currentKeyPressed + ")");
+                    currentKeyPressed = "";
+                    noInputCount = 0;
                 }
             }
         }
