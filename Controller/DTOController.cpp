@@ -19,6 +19,8 @@ Functions:
 - main(): Initializes the log directory, GPIO chip, and log files; runs the primary input polling loop for mode management and thruster control; performs full GPIO shutdown and log finalization on ESC exit.
 - initGPIO(): Attempts to open the GPIO chip at /dev/gpiochip4, falls back to /dev/gpiochip0 on failure, and logs the result; sets the global gpioChip handle used by all pin operations.
 - setGPIOPin(int pinOffset, int pinValue): Allocates a gpiod line settings and request configuration for a single pin, applies the correct active-high or active-low output value via getRelayValue(), releases the line immediately after setting, and frees all resources; returns true on success, false on failure.
+- requestGPIOPin(int pinOffset, int pinValue): Same as setGPIOPin but returns the line request handle WITHOUT releasing it, keeping the pin held in the set state; used for sustained pulses in the startup sequence. Caller must release via releaseGPIORequest().
+- releaseGPIORequest(gpiod_line_request* request): Releases a held GPIO line request obtained from requestGPIOPin(), returning the pin to its default state.
 - getRelayValue(int val): Translates a logical ON (1) or OFF (0) pin value into the correct gpiod_line_value enum considering the ACTIVE_LOW relay configuration constant.
 - checkKeyboardInput(): Initializes the terminal to raw non-blocking mode on the first call (disabling ICANON and ECHO, setting O_NONBLOCK); on all calls returns the number of bytes available on stdin via IOCTL FIONREAD without consuming any input.
 - logActivity(string code, string description): Appends a timestamped STATUS or ERROR code entry to Activity_Log.csv and echoes it to stdout; silently skips the file write if the log is inaccessible but still prints to console.
@@ -135,6 +137,8 @@ void displayMenu();
 void logActivity(string code, string description);
 void processMovementAction(string keyId);
 void logKeyData(char type, string direction, string keyName, char statusChar);
+struct gpiod_line_request* requestGPIOPin(int pinOffset, int pinValue);
+void releaseGPIORequest(struct gpiod_line_request* request);
 double getElapsedTime();
 
 
@@ -247,6 +251,53 @@ bool setGPIOPin(int pinOffset, int pinValue) {
     gpiod_line_config_free(lineConfig);
     gpiod_line_settings_free(lineSettings);
     return success;
+}
+
+
+
+/*
+    requestGPIOPin - Requests a GPIO pin and sets it to the desired value, returning the line request handle WITHOUT releasing it
+                     This function is used when the pin must remain in the set state for a sustained duration (e.g., startup sequence pulses).
+                     The caller is responsible for calling releaseGPIORequest() when the pin should be released.
+                     Returns nullptr on failure (chip not initialized or line request failed).
+
+    Parameters:
+    - pinOffset (int) : The offset of the GPIO pin to set (0-11 for this controller)
+    - pinValue (int)  : The desired state of the pin, where 1 represents ON and 0 represents OFF
+
+    Returns:
+    - gpiod_line_request* : The active line request handle, or nullptr on failure
+*/
+struct gpiod_line_request* requestGPIOPin(int pinOffset, int pinValue) {
+    if (!gpioChip) return nullptr;
+    struct gpiod_line_settings* lineSettings = gpiod_line_settings_new();
+    gpiod_line_settings_set_direction(lineSettings, GPIOD_LINE_DIRECTION_OUTPUT);
+    gpiod_line_settings_set_output_value(lineSettings, getRelayValue(pinValue));
+    struct gpiod_line_config* lineConfig = gpiod_line_config_new();
+    unsigned int offset = (unsigned int)pinOffset;
+    gpiod_line_config_add_line_settings(lineConfig, &offset, 1, lineSettings);
+    struct gpiod_request_config* requestConfig = gpiod_request_config_new();
+    gpiod_request_config_set_consumer(requestConfig, "DTO_Controller");
+    struct gpiod_line_request* lineRequest = gpiod_chip_request_lines(gpioChip, requestConfig, lineConfig);
+
+    gpiod_request_config_free(requestConfig);
+    gpiod_line_config_free(lineConfig);
+    gpiod_line_settings_free(lineSettings);
+    return lineRequest;  // Caller must release via releaseGPIORequest()
+}
+
+
+
+/*
+    releaseGPIORequest - Releases a held GPIO line request, returning the pin to its default state
+                         This function safely releases a line request obtained from requestGPIOPin().
+                         If the request is null, the function does nothing.
+
+    Parameters:
+    - request (gpiod_line_request*) : The line request handle to release, or nullptr
+*/
+void releaseGPIORequest(struct gpiod_line_request* request) {
+    if (request) gpiod_line_request_release(request);
 }
 
 
@@ -470,18 +521,19 @@ int main() {
                             int gpioPin = connectors[rackNum][g];
                             double phaseTime = g * 2.0;
                             
-                            // GPIO ON for 1 second
+                            // GPIO ON for 1 second (held open for full duration)
                             cout << fixed << setprecision(2) << phaseTime << " GPIO " << gpioPin << " On" << endl;
-                            if (!setGPIOPin(gpioPin, 1)) {
+                            struct gpiod_line_request* holdRequest = requestGPIOPin(gpioPin, 1);
+                            if (!holdRequest) {
                                 failedGPIOPins.push_back(gpioPin);
                             }
                             logActivity("STATUS-016", "GPIO " + to_string(gpioPin) + " ON");
                             this_thread::sleep_for(chrono::milliseconds(1000));
                             
-                            // GPIO OFF for 1 second
+                            // GPIO OFF for 1 second (release the held request)
                             phaseTime += 1.0;
                             cout << fixed << setprecision(2) << phaseTime << " GPIO " << gpioPin << " Off" << endl;
-                            setGPIOPin(gpioPin, 0);
+                            releaseGPIORequest(holdRequest);
                             logActivity("STATUS-017", "GPIO " + to_string(gpioPin) + " OFF");
                             this_thread::sleep_for(chrono::milliseconds(1000));
                         }
@@ -497,9 +549,10 @@ int main() {
                             for (int pulse = 0; pulse < 2; pulse++) {
                                 if (checkKeyboardInput() && getchar() == 27) { force_exit = true; break; } // ESC check
                                 
-                                // GPIO ON for 0.5 seconds
+                                // GPIO ON for 0.5 seconds (held open for full duration)
                                 cout << fixed << setprecision(2) << phaseTime << " GPIO " << gpioPin << " On" << endl;
-                                if (!setGPIOPin(gpioPin, 1)) {
+                                struct gpiod_line_request* holdRequest = requestGPIOPin(gpioPin, 1);
+                                if (!holdRequest) {
                                     // Only add to failed list if not already there
                                     if (find(failedGPIOPins.begin(), failedGPIOPins.end(), gpioPin) == failedGPIOPins.end()) {
                                         failedGPIOPins.push_back(gpioPin);
@@ -508,10 +561,10 @@ int main() {
                                 logActivity("STATUS-016", "GPIO " + to_string(gpioPin) + " ON (PULSE)");
                                 this_thread::sleep_for(chrono::milliseconds(500));
                                 
-                                // GPIO OFF for 0.5 seconds
+                                // GPIO OFF for 0.5 seconds (release the held request)
                                 phaseTime += 0.5;
                                 cout << fixed << setprecision(2) << phaseTime << " GPIO " << gpioPin << " Off" << endl;
-                                setGPIOPin(gpioPin, 0);
+                                releaseGPIORequest(holdRequest);
                                 logActivity("STATUS-017", "GPIO " + to_string(gpioPin) + " OFF (PULSE)");
                                 this_thread::sleep_for(chrono::milliseconds(500));
                                 phaseTime += 0.5;
