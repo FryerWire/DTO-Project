@@ -317,7 +317,7 @@ void logActivity(string code, string description) {
     - type (char)          : A character representing the type of event being logged ('T' for translation, 'R' for rotation, 'F' for firing)
     - direction (string)   : A string indicating the direction of movement or rotation associated with the key event (e.g., "+X", "-P")
     - keyName (string)    : The name of the key that triggered the event (e.g., "W", "A", "K")
-    - statusChar (char)   : A character representing the status of the key event ('N' for new press, 'E' for error)
+    - statusChar (char)   : A character representing the status of the key event ('N' for new press, 'R' for release, 'E' for error)
     - mode (char)         : A character representing the current firing mode ('C' for Continuous Mode, 'P' for Pulse Mode)
 */
 void logKeyData(char type, string direction, string keyName, char statusChar, char mode) {
@@ -592,8 +592,11 @@ int main() {
             if (programMode == 2) {
                 // Only turn off and reset if we were previously tracking a key
                 if (!currentKeyPressed.empty()) {
+                    // Log the key release event before deactivating thrusters
+                    logKeyData('F', "--", currentKeyPressed, 'R', firingMode);
                     // Turn off all thrusters when no key is pressed
                     for(int i = 0; i <= 11; i++) (void)setGPIOPin(i, 0);
+                    logActivity("STATUS-106", "All Thrusters Deactivated: Key Released (" + currentKeyPressed + ")");
                     currentKeyPressed = "";
                     lastKeyFired = "";
                 }
@@ -606,6 +609,7 @@ int main() {
     
     // Cleanup and Exit ---------------------------------------------------------------------------
     for(int i = 0; i <= 11; i++) (void)setGPIOPin(i, 0);
+    logActivity("STATUS-107", "All Thrusters Deactivated on Program Exit");
     logActivity("STATUS-002", "Session Ended");
     logActivity("STATUS-003", "Shutdown Successful");
     if(gpioChip) gpiod_chip_close(gpioChip);
