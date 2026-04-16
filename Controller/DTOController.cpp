@@ -121,8 +121,9 @@ int programMode = 0;                          // 0 = Menu, 1 = Startup Sequence,
 chrono::high_resolution_clock::time_point programStartTime;  // Track actual program start time
 string currentKeyPressed = "";                // Tracks currently pressed key
 int noInputCount = 0;                         // Counts consecutive no-input poll cycles for release confirmation
-const int RELEASE_CYCLES = 8;                 // Number of consecutive no-input cycles (x50ms = 400ms) before confirming key release.
+const int RELEASE_CYCLES = 15;                // Number of consecutive no-input cycles (x50ms = 750ms) before confirming key release.
                                               // Must exceed the terminal key repeat delay (~250-660ms) divided by poll interval (50ms).
+                                              // RPi5 key repeat delay is ~600ms, requiring at least 12 cycles; 15 provides a safe buffer.
                                               // Too low: false release/re-fire cycling on key hold. Too high: slow thruster shutdown on release.
 vector<int> failedGPIOPins;                   // Tracks GPIO pins that failed during startup
 struct gpiod_chip* gpioChip;                  // GPIO chip handle
@@ -492,8 +493,9 @@ int main() {
             // Handle input based on current program mode -------------------------------------------------------------------------------------------
             if (programMode == 0) {
                 // Menu Mode: Only accepts mode selection inputs ------------------------------------------------------------------------------------
-                if (charInput == '1') {                                                            
-                    programMode = 1; 
+                if (charInput == '1') {
+                    programMode = 1;
+                    programStartTime = chrono::high_resolution_clock::now();
                     logActivity("STATUS-012", "Sequence Initiated");
                     
                     // Clear previous test failures
@@ -607,11 +609,13 @@ int main() {
                         }
                     }
                     
-                    programMode = 0; 
+                    programMode = 0;
+                    programStartTime = chrono::high_resolution_clock::now();
                     displayMenu();
                 // Operational Mode: Accepts mode selection inputs and transitions to Operational Mode -----------------------------------------------
                 } else if (charInput == '2') {
                     programMode = 2;
+                    programStartTime = chrono::high_resolution_clock::now();
                     logActivity("STATUS-020", "Mode Changed: Operational Mode Active");
                     displayMenu();
                 }
@@ -625,8 +629,9 @@ int main() {
                         logActivity("STATUS-106", "All Thrusters Deactivated: Key Released (" + currentKeyPressed + ")");
                         currentKeyPressed = "";
                     }
-                    programMode = 0; 
-                    displayMenu(); 
+                    programMode = 0;
+                    programStartTime = chrono::high_resolution_clock::now();
+                    displayMenu();
                 }
                 else {
                     string keyIdString = string(1, toupper(charInput));
