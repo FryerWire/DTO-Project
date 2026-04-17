@@ -21,71 +21,40 @@ Functions:
 - rotation_matrix_to_euler(R): Extracts Roll, Pitch, and Yaw Euler angles in degrees from a 3x3 rotation matrix using atan2 decomposition; applies a gimbal lock fallback when the sy component falls below 1e-6.
 
 Codes:
-- STATUS-000: Program Initialization Started
-- STATUS-001: Session Started
-- STATUS-002: Session Ended
-- STATUS-003: Shutdown Successful
-- STATUS-004: Log Directory Verified or Already Exists
-- STATUS-005: Log Directory Created Successfully
-- STATUS-006: Activity Log Opened and Header Written
-- STATUS-007: Keybind Log Opened and Header Written
-- STATUS-008: All Log Files Initialized with CSV Headers
-- STATUS-009: Startup Successful: All Log Files Ready
-- STATUS-010: Mode Changed
-- STATUS-011: Key Registered
-- STATUS-012: Startup Sequence Initiated
-- STATUS-013: Startup Sequence Completed: All GPIO Activated
-- STATUS-014: Rack Connector Test Started
-- STATUS-015: Rack Connector Test Passed
-- STATUS-016: GPIO Pin Activated (ON)
-- STATUS-017: GPIO Pin Deactivated (OFF)
-- STATUS-018: Partial GPIO Activation: Connection Issues Detected
-- STATUS-019: UI Menu Refreshed
-- STATUS-020: Operational Mode Activated
-- STATUS-300: Script Initialization Started: log_event System Online
-- STATUS-301: Configuration and Mapping Variables Loaded: step_increment and rot_increment Set
-- STATUS-302: File Path Validation Successful: os.path.exists Confirmed
-- STATUS-303: CSV Data Loaded into Pandas DataFrame: Row Count Verified
-- STATUS-304: 3D Trajectory Chunk Generation Phase Started: Total Chunk Count Calculated
-- STATUS-305: Processing Started for Specific 3D Chunk: Time Window Defined
-- STATUS-306: 3D Chunk Skipped: Filtered DataFrame for Time Window is Empty
-- STATUS-307: 3D Trajectory Plot Rendered and Displayed to User
-- STATUS-308: 3D Trajectory Plot Closed by User: Proceeding to Next Chunk or Phase
-- STATUS-309: Full Telemetry Data Processing Phase Started: Deduplication and Sort Applied
-- STATUS-310: Global Trajectory Integration Complete: All Position and Attitude Arrays Built
-- STATUS-311: Velocity and Acceleration Derivative Arrays Calculated via numpy.gradient
-- STATUS-312: 2D Telemetry Plot Generation Phase Started
-- STATUS-313: Absolute Position Plot (X/Y/Z vs Time) Displayed to User
-- STATUS-314: Attitude Plot (Roll/Pitch/Yaw vs Time) Displayed to User
-- STATUS-315: Linear Velocity Plot (Vx/Vy/Vz vs Time) Displayed to User
-- STATUS-316: Linear Acceleration Plot (Ax/Ay/Az vs Time) Displayed to User
-- STATUS-317: Script Execution Completed Successfully: All Plots Closed
-- STATUS-318: Single-Axis Rotation Matrix Computed for Current Move
-- STATUS-319: Euler Angles Extracted from Rotation Matrix: Roll/Pitch/Yaw in Degrees
-- STATUS-320: Time-Tick Marker Placed on 3D Plot at Scheduled Interval
-- STATUS-321: Final Absolute Last-Point Marker Placed on 3D Plot
-- STATUS-322: 3D Plot Axis Limits Computed from Point Cloud Bounding Box
-- STATUS-323: max_range Defaulted to 1.0: All Points Collapsed to Single Location
-- STATUS-324: Rotation Move Processed: Current Rotation Matrix Updated by Pre-Multiplication
-- STATUS-325: Translation Move Processed: World-Frame Displacement Applied to Global Position
-- STATUS-326: Unknown Direction Code Encountered in 3D Chunk: Defaulted to base_translation '--'
-- STATUS-327: Unknown Direction Code Encountered in Full Telemetry Pass: Defaulted to Idle Step
-- STATUS-328: Gimbal Lock Singularity Detected: Euler Fallback Applied for Roll and Pitch
-- STATUS-329: 3D Plot Pane Colors Set to White for All Three Axes
-- STATUS-330: 3D Plot View Angle Initialized: elev=20 azim=-50
-- ERROR-000: Startup Failure: Log Path Inaccessible or Cannot Be Created
-- ERROR-001: Activity Log Write Failure: File Inaccessible
-- ERROR-002: Keybind Log Write Failure: File Inaccessible
-- ERROR-003: Log Directory Creation Failed: Check Permissions
-- ERROR-004: Incorrect Keybind: No Mapping Found for Key
-- ERROR-005: Startup Sequence Aborted by User via ESC
-- ERROR-006: Rack Connector Test Failed: GPIO Connection Issue on Pin
-- ERROR-007: GPIO Pin Activation Failed
-- ERROR-300: File Access Failed: Specified Path Does Not Exist
-- ERROR-301: Data Parsing Failed: Required Column Missing from CSV (Time(s) or Direction)
-- ERROR-302: Mathematical or Integration Error During 3D Chunk Processing
-- ERROR-303: Mathematical or Integration Error During Full Telemetry Calculation
-- ERROR-304: Unexpected General Execution Error: Caught by Outer Exception Handler
+- STATUS-300: Init Started: first log_event() succeeded; setup phase starting
+- STATUS-301: Config Loaded: all constants and lookup structures defined
+- STATUS-302: File Validated: CSV file path exists and accessible
+- STATUS-303: CSV Loaded: pd.read_csv() parsed successfully; row count logged
+- STATUS-304: 3D Chunk Phase Started: trajectory segments built; per-chunk loop starting
+- STATUS-305: Processing Chunk N: chunk iteration N; filtering segments
+- STATUS-306: Chunk Skipped: no segments overlap chunk window; continuing
+- STATUS-307: 3D Chunk Saved: PNG written to Images/3D_Chunk_NN.png
+- STATUS-308: 3D Figure Initialized: Axes3D ready for plotting
+- STATUS-309: Telemetry Phase Started: Type-T rows deduplicated and sorted
+- STATUS-310: Trajectory Integrated: positions_arr and attitudes_arr complete
+- STATUS-311: Derivatives Computed: velocity and acceleration arrays calculated
+- STATUS-312: 2D Plot Phase Started: four sequential 2D plots beginning
+- STATUS-313: Position Plot Saved: Images/Position.png written
+- STATUS-314: Attitude Plot Saved: Images/Attitude.png written
+- STATUS-315: Velocity Plot Saved: Images/Velocity.png written
+- STATUS-316: Acceleration Plot Saved: Images/Acceleration.png written
+- STATUS-317: Script Complete: all PNG files written; execution finished
+- STATUS-318: Segment List Built: all segments collected; total count logged
+- STATUS-319: Chunk Segments Prepared: clipping complete; segment count logged
+- STATUS-320: Tick Label Placed: time string label placed on 3D plot
+- STATUS-321: Tick Labels Complete: all labels written for chunk
+- STATUS-322: 3D Axis Limits Applied: uniform cubic axis space set
+- STATUS-323: max_range Defaulted: max_range was 0; overridden to 1.0
+- STATUS-324: Rotation Move Processed: rotation matrix updated
+- STATUS-325: Translation Move Processed: position updated from body frame
+- STATUS-326: Gimbal Lock Detected: sy < 1e-6; fallback Euler computation used
+- STATUS-327: 3D Panes White: axis panes set to white background
+- STATUS-328: 3D View Initialized: camera perspective set
+- ERROR-300: File Access Failed: file path does not exist
+- ERROR-301: Column Missing: Time(s) or Direction column not found
+- ERROR-302: 3D Processing Error: exception during chunk generation; error logged
+- ERROR-303: Telemetry Error: exception during integration or derivative calc
+- ERROR-304: Unexpected Error: non-categorized exception; script ends
 """
 
 
@@ -99,8 +68,8 @@ from datetime import datetime
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
-from mpl_toolkits.mplot3d import Axes3D
+
+from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 
 
 
@@ -121,11 +90,30 @@ def log_event(code, message):
 
 log_event("STATUS-300", "Script Initialization Started.")
 
-file_path = r'C:\Users\maxwe\OneDrive\Desktop\GitHub Repos\DTO-Project\Logs\Keybind_Log.csv'
+file_path = r'C:\Users\maxwe\OneDrive\Desktop\GitHub Repos\DTO-Project\Controller\Logs\Keybind_Logs.csv'
 filename = os.path.basename(file_path)
 images_dir = r'C:\Users\maxwe\OneDrive\Desktop\GitHub Repos\DTO-Project\Images'
 
 TICK_INTERVAL = 5.0 
+
+
+
+def parse_time_value(t):
+    """
+    parse_time_value: Parses a time value that may be in 'SS:cc' (seconds:centiseconds)
+    or standard decimal format, and returns a float in seconds.
+
+    Parameters:
+    - t: The raw time value from the CSV (str, int, or float).
+
+    Returns:
+    - (float): Time in seconds.
+    """
+    s = str(t).strip()
+    if ':' in s:
+        parts = s.split(':')
+        return float(parts[0]) + float(parts[1]) / 100.0
+    return float(s)
 
 
 
@@ -246,6 +234,7 @@ try:
         time_col = 'Time(s)'
         if (time_col not in df.columns) or ('Direction' not in df.columns):
             raise KeyError(f"Missing required columns ('{time_col}' or 'Direction').")
+        df[time_col] = df[time_col].apply(parse_time_value)
         log_event("STATUS-303", f"CSV Data loaded successfully. Rows: {len(df)}")
     except Exception as e:
         log_event("ERROR-301", f"Data parsing failed: {e}")
@@ -263,138 +252,185 @@ try:
 
     os.makedirs(images_dir, exist_ok=True)
 
-    interval = 30
     max_time = df[time_col].max()
-    num_chunks = int(np.ceil(max_time / interval))
-        
-    
-    # Generate 3D Trajectory Chunks =================================================================================================================
-    log_event("STATUS-304", f"3D Trajectory chunk generation started ({num_chunks} chunks total).")
 
-    # Process each chunk of data to create 3D trajectory plots --------------------------------------------------------------------------------------
-    for i in range(num_chunks):
-        log_event("STATUS-305", f"Starting processing for 3D chunk {i+1}/{num_chunks}.")
-        start_t = i * interval
-        end_t = (i + 1) * interval
-        chunk_df = move_df[(move_df[time_col] >= start_t) & (move_df[time_col] < end_t)].copy()
-        
-        # If the chunk is empty, skip to the next iteration -----------------------------------------------------------------------------------------
-        if chunk_df.empty: 
-            log_event("STATUS-306", f"Chunk {i+1} is empty, skipping.")
-            continue
+    # Generate 3D Trajectory Chunks =============================================================================================================
+    CHUNK_DURATION = 30.0
 
-        actual_end_time = chunk_df[time_col].max()
-        display_end_t = actual_end_time if actual_end_time < end_t - 0.1 and actual_end_time == max_time else end_t
+    log_event("STATUS-304", f"3D Trajectory chunk generation phase started. Total chunks: {math.ceil(max_time / CHUNK_DURATION)}")
 
-        fig = plt.figure(figsize=(10, 8)) 
-        ax = fig.add_subplot(111, projection='3d')
-        
-        ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
-        ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
-        ax.zaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
-        
-        current_pos = np.array([0.0, 0.0, 0.0])
-        current_rot_matrix = np.eye(3) 
-        
-        directions = chunk_df['Direction'].values
-        timestamps = chunk_df[time_col].values
-        durations_arr = chunk_df['_duration'].values
-        
-        points = [current_pos]
-        next_tick_time = start_t + TICK_INTERVAL
+    try:
+        chunk_df   = move_df.sort_values(by=time_col).reset_index(drop=True)
+        chunk_dirs = chunk_df['Direction'].values
+        chunk_times = chunk_df[time_col].values
+        chunk_durs  = chunk_df['_duration'].values
 
-        # Process each movement in the chunk to calculate the trajectory and plot it ----------------------------------------------------------------
-        try:
-            for idx, move in enumerate(directions):
-                curr_time = timestamps[idx]
-                is_absolute_last_point = (i == num_chunks - 1) and (idx == len(directions) - 1)
-                
-                # Determine if the move is a rotation or translation and calculate the next position accordingly ------------------------------------
-                duration = durations_arr[idx]
-                if move in rotational_moves:
-                    axis_char, theta = rotational_moves[move]
-                    new_rot = get_rotation_matrix(axis_char, theta * duration)
-                    current_rot_matrix = np.dot(new_rot, current_rot_matrix)
+        # Build full trajectory as segments: (t, duration, from_pos, to_pos, color_key)
+        segments = []
+        curr_pos = np.array([0.0, 0.0, 0.0])
+        curr_rot = np.eye(3)
 
-                    if 'R' in move: color = dof_colors['ROLL']
-                    elif 'P' in move: color = dof_colors['PITCH']
-                    elif 'Y_rot' in move: color = dof_colors['YAW']
-                    else: color = dof_colors['IDLE']
+        for idx, move in enumerate(chunk_dirs):
+            t        = chunk_times[idx]
+            duration = chunk_durs[idx]
 
-                    path_vec = np.dot(current_rot_matrix, np.array([step_increment * 0.5, 0, 0])) * duration
-                    next_pos = current_pos + path_vec
-                else:
-                    base_move_vec = np.array(base_translation.get(move, base_translation['--']), dtype=float)
-                    actual_move_vec = np.dot(current_rot_matrix, base_move_vec) * duration
-                    next_pos = current_pos + actual_move_vec
+            if move in rotational_moves:
+                axis_char, theta = rotational_moves[move]
+                new_rot  = get_rotation_matrix(axis_char, theta * duration)
+                curr_rot = np.dot(new_rot, curr_rot)
+                path_vec = np.dot(curr_rot, np.array([step_increment * 0.5, 0, 0])) * duration
+                next_p   = curr_pos + path_vec
+                if   'R'     in move: color_key = 'ROLL'
+                elif 'P'     in move: color_key = 'PITCH'
+                elif 'Y_rot' in move: color_key = 'YAW'
+                else:                 color_key = 'IDLE'
+            else:
+                base_vec = np.array(base_translation.get(move, base_translation['--']), dtype=float)
+                next_p   = curr_pos + np.dot(curr_rot, base_vec) * duration
+                if   'X' in move: color_key = 'X'
+                elif 'Y' in move: color_key = 'Y'
+                elif 'Z' in move: color_key = 'Z'
+                else:             color_key = 'IDLE'
 
-                    if 'X' in move: color = dof_colors['X']
-                    elif 'Y' in move: color = dof_colors['Y']
-                    elif 'Z' in move: color = dof_colors['Z']
-                    else: color = dof_colors['IDLE']
+            segments.append((t, duration, curr_pos.copy(), next_p.copy(), color_key))
+            curr_pos = next_p
 
-                # Check if we have reached or passed the next tick time to place a marker and label on the plot -------------------------------------
-                marker_drawn = False
-                if curr_time >= next_tick_time:
-                    ax.scatter(current_pos[0], current_pos[1], current_pos[2], color='black', s=15, zorder=5)
-                    ax.text(current_pos[0], current_pos[1], current_pos[2], f" {int(next_tick_time)}s", color='black', zorder=10)
-                    next_tick_time += TICK_INTERVAL
-                    marker_drawn = True
+        log_event("STATUS-318", f"Full trajectory segment list built: {len(segments)} segments from {len(chunk_dirs)} movement rows.")
+        total_chunks = math.ceil(max_time / CHUNK_DURATION)
 
-                if is_absolute_last_point and not marker_drawn:
-                    ax.scatter(current_pos[0], current_pos[1], current_pos[2], color='black', s=15, zorder=5)
-                    ax.text(current_pos[0], current_pos[1], current_pos[2], f" {curr_time:.1f}s", color='black', zorder=10)
+        for chunk_idx in range(total_chunks):
+            t_start   = chunk_idx * CHUNK_DURATION
+            t_end     = t_start + CHUNK_DURATION
+            chunk_num = chunk_idx + 1
 
-                ax.plot([current_pos[0], next_pos[0]], 
-                        [current_pos[1], next_pos[1]], 
-                        [current_pos[2], next_pos[2]], color=color, linewidth=2)
-                
-                current_pos = next_pos
-                points.append(current_pos)
-        except Exception as e:
-            log_event("ERROR-302", f"Mathematical/Integration error during 3D chunk processing: {e}")
-            raise e
+            log_event("STATUS-305", f"Processing chunk {chunk_num}: {format_time(t_start)} - {format_time(t_end)}")
 
-        pts = np.array(points)
-        max_range = np.array([pts[:,0].max()-pts[:,0].min(), 
-                              pts[:,1].max()-pts[:,1].min(), 
-                              pts[:,2].max()-pts[:,2].min()]).max() / 2.0
-        
-        if max_range == 0: max_range = 1.0 
+            # Include any segment that overlaps this chunk window, clipped to [t_start, t_end]
+            chunk_segs = []
+            for (t, dur, fp, tp, ck) in segments:
+                seg_end = t + dur
+                if seg_end <= t_start or t >= t_end:
+                    continue
+                clip_fp, clip_tp = fp.copy(), tp.copy()
+                if t < t_start and dur > 0:
+                    a = (t_start - t) / dur
+                    clip_fp = fp + (tp - fp) * a
+                if seg_end > t_end and dur > 0:
+                    a = (t_end - t) / dur
+                    clip_tp = fp + (tp - fp) * a
+                chunk_segs.append((t, dur, clip_fp, clip_tp, ck))
 
-        mid_x = (pts[:,0].max()+pts[:,0].min()) * 0.5
-        mid_y = (pts[:,1].max()+pts[:,1].min()) * 0.5
-        mid_z = (pts[:,2].max()+pts[:,2].min()) * 0.5
-        
-        buf = max_range * 0.1 
-        ax.set_xlim(mid_x - max_range - buf, mid_x + max_range + buf)
-        ax.set_ylim(mid_y - max_range - buf, mid_y + max_range + buf)
-        ax.set_zlim(mid_z - max_range - buf, mid_z + max_range + buf)
-        ax.set_box_aspect((1, 1, 1)) 
+            log_event("STATUS-319", f"Chunk {chunk_num}: {len(chunk_segs)} segments prepared in window [{format_time(t_start)}, {format_time(t_end)}].")
 
-        ax.view_init(elev=20, azim=-50) 
-        ax.set_title(f"Time: {format_time(start_t)} - {format_time(display_end_t)}")
-        ax.set_xlabel('X (Roll)')
-        ax.set_ylabel('Y (Pitch)')
-        ax.set_zlabel('Z (Yaw)')
+            if not chunk_segs:
+                log_event("STATUS-306", f"Chunk {chunk_num} skipped: no data in time window.")
+                continue
 
-        legend_elements = [
-            Line2D([0], [0], color=dof_colors['X'], lw=3, label='X Translation'),
-            Line2D([0], [0], color=dof_colors['Y'], lw=3, label='Y Translation'),
-            Line2D([0], [0], color=dof_colors['Z'], lw=3, label='Z Translation'),
-            Line2D([0], [0], color=dof_colors['ROLL'], lw=3, label='Roll (X Rot)'),
-            Line2D([0], [0], color=dof_colors['PITCH'], lw=3, label='Pitch (Y Rot)'),
-            Line2D([0], [0], color=dof_colors['YAW'], lw=3, label='Yaw (Z Rot)'),
-            Line2D([0], [0], color=dof_colors['IDLE'], lw=3, label='Idle'),
-            Line2D([0], [0], marker='o', color='w', markerfacecolor='black', markersize=6, label=f'Time Marker')
-        ]
-        ax.legend(handles=legend_elements, loc='upper left', bbox_to_anchor=(0.0, 1.1))
-        plt.tight_layout()
+            fig = plt.figure(figsize=(10, 8))
+            ax  = fig.add_subplot(111, projection='3d')
+            log_event("STATUS-308", f"Chunk {chunk_num}: 3D figure initialized.")
+            ax.set_facecolor('white')
+            ax.xaxis.pane.set_facecolor('white')
+            ax.yaxis.pane.set_facecolor('white')
+            ax.zaxis.pane.set_facecolor('white')
+            log_event("STATUS-327", f"Chunk {chunk_num}: 3D plot pane colors set to white.")
 
-        chunk_filename = os.path.join(images_dir, f"3D_Chunk_{i+1:02d}.png")
-        plt.savefig(chunk_filename, dpi=150, bbox_inches='tight')
-        plt.close(fig)
-        log_event("STATUS-307", f"3D Plot for chunk {i+1} saved to: {chunk_filename}")
+            # Group consecutive same-color segments using nan separators
+            color_xs = {k: [] for k in dof_colors}
+            color_ys = {k: [] for k in dof_colors}
+            color_zs = {k: [] for k in dof_colors}
+            all_chunk_pts = []
+
+            prev_ck = None
+            for (t, dur, fp, tp, ck) in chunk_segs:
+                if prev_ck is not None and ck != prev_ck:
+                    color_xs[prev_ck].append(np.nan)
+                    color_ys[prev_ck].append(np.nan)
+                    color_zs[prev_ck].append(np.nan)
+                color_xs[ck].extend([fp[0], tp[0]])
+                color_ys[ck].extend([fp[1], tp[1]])
+                color_zs[ck].extend([fp[2], tp[2]])
+                all_chunk_pts.extend([fp, tp])
+                prev_ck = ck
+
+            # Axis limits from chunk bounding box (computed first so max_range is available for offsets)
+            pts_arr   = np.array(all_chunk_pts)
+            max_range = max(
+                pts_arr[:, 0].max() - pts_arr[:, 0].min(),
+                pts_arr[:, 1].max() - pts_arr[:, 1].min(),
+                pts_arr[:, 2].max() - pts_arr[:, 2].min()
+            ) / 2.0
+            if max_range == 0:
+                max_range = 1.0
+                log_event("STATUS-323", f"Chunk {chunk_num}: max_range defaulted to 1.0.")
+
+            text_offset = max_range * 0.08
+
+            dof_labels = {
+                'X': 'X Translation', 'Y': 'Y Translation', 'Z': 'Z Translation',
+                'ROLL': 'Roll (X Rot)', 'PITCH': 'Pitch (Y Rot)', 'YAW': 'Yaw (Z Rot)', 'IDLE': 'Idle'
+            }
+            plotted_keys = set()
+            for ck in dof_colors:
+                xs = [v for v in color_xs[ck] if not (isinstance(v, float) and math.isnan(v))]
+                if not xs:
+                    continue
+                label = dof_labels[ck] if ck not in plotted_keys else None
+                plotted_keys.add(ck)
+                ax.plot(color_xs[ck], color_ys[ck], color_zs[ck],
+                        color=dof_colors[ck], linewidth=2, label=label)
+
+            # Interpolate position at tick_t using the global segments list so the
+            # label placement matches the actual trajectory regardless of chunk boundaries.
+            def interp_pos_at(t_query):
+                best = None
+                for seg in segments:
+                    if seg[0] <= t_query:
+                        best = seg
+                    else:
+                        break
+                if best is None:
+                    return None
+                t_seg, dur_seg, fp_seg, tp_seg, _ = best
+                alpha = max(0.0, min((t_query - t_seg) / dur_seg, 1.0)) if dur_seg > 0 else 0.0
+                return fp_seg + (tp_seg - fp_seg) * alpha
+
+            tick_t = math.ceil(t_start / TICK_INTERVAL) * TICK_INTERVAL
+            while tick_t <= min(t_end, max_time):
+                pos = interp_pos_at(tick_t)
+                if pos is not None:
+                    ax.text(pos[0] + text_offset, pos[1] + text_offset, pos[2] + text_offset,
+                            f"{int(tick_t)}s", fontsize=8)
+                    log_event("STATUS-320", f"Chunk {chunk_num}: tick label placed at {int(tick_t)}s.")
+                tick_t += TICK_INTERVAL
+
+            log_event("STATUS-321", f"Chunk {chunk_num}: tick labels placed.")
+            mid_x = (pts_arr[:, 0].max() + pts_arr[:, 0].min()) * 0.5
+            mid_y = (pts_arr[:, 1].max() + pts_arr[:, 1].min()) * 0.5
+            mid_z = (pts_arr[:, 2].max() + pts_arr[:, 2].min()) * 0.5
+            buf   = max_range * 0.1
+            ax.set_xlim(mid_x - max_range - buf, mid_x + max_range + buf)
+            ax.set_ylim(mid_y - max_range - buf, mid_y + max_range + buf)
+            ax.set_zlim(mid_z - max_range - buf, mid_z + max_range + buf)
+            log_event("STATUS-322", f"Chunk {chunk_num}: axis limits computed from bounding box.")
+
+            ax.set_xlabel('X (Roll)')
+            ax.set_ylabel('Y (Pitch)')
+            ax.set_zlabel('Z (Yaw)')
+            ax.set_title(f"3D Trajectory Chunk {chunk_num}: {format_time(t_start)} – {format_time(min(t_end, max_time))}")
+            ax.view_init(elev=20, azim=-50)
+            log_event("STATUS-328", f"Chunk {chunk_num}: view angle set to elev=20, azim=-50.")
+            ax.legend(loc='upper left', fontsize=8)
+
+            plt.tight_layout()
+            chunk_filename = f"3D_Chunk_{chunk_num:02d}.png"
+            plt.savefig(os.path.join(images_dir, chunk_filename), dpi=150, bbox_inches='tight')
+            plt.close(fig)
+            log_event("STATUS-307", f"3D Trajectory chunk {chunk_num} saved: {chunk_filename}")
+
+    except Exception as e:
+        log_event("ERROR-302", f"Error during 3D chunk generation: {e}")
+        raise e
     
     
     # Process the entire dataset to calculate global position, attitude, velocity, and acceleration -------------------------------------------------

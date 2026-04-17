@@ -31,59 +31,50 @@ Functions:
 - formatTimestamp(double t): Formats a floating-point elapsed time value into a "seconds:centiseconds" string (e.g., "12:07") for use in log entries.
 
 Codes:
-- STATUS-000: Program Initialization Started
-- STATUS-001: Session Started
-- STATUS-002: Session Ended
-- STATUS-003: Shutdown Successful
-- STATUS-004: Log Directory Verified or Already Exists
-- STATUS-005: Log Directory Created Successfully
-- STATUS-006: Activity Log Opened and Header Written
-- STATUS-007: Keybind Log Opened and Header Written
-- STATUS-008: All Log Files Initialized with CSV Headers
-- STATUS-009: Startup Successful: All Log Files Ready
-- STATUS-010: Mode Changed
-- STATUS-011: Key Registered
-- STATUS-012: Startup Sequence Initiated
-- STATUS-013: Startup Sequence Completed: All GPIO Activated
-- STATUS-014: Rack Connector Test Started
-- STATUS-015: Rack Connector Test Passed
-- STATUS-016: GPIO Pin Activated (ON)
-- STATUS-017: GPIO Pin Deactivated (OFF)
-- STATUS-018: Partial GPIO Activation: Connection Issues Detected
-- STATUS-019: UI Menu Refreshed
-- STATUS-020: Operational Mode Activated
-- STATUS-100: GPIO Chip Opened Successfully at Primary Path (gpiochip4)
-- STATUS-101: GPIO Chip Opened Successfully via Fallback Path (gpiochip0)
-- STATUS-102: GPIO Line Settings Object Allocated
-- STATUS-103: GPIO Line Configured as Output with Target Value
-- STATUS-104: GPIO Line Request Submitted to Chip
-- STATUS-105: GPIO Line Request Released After Set
-- STATUS-106: All 12 Thrusters Deactivated on Key Release
-- STATUS-107: All 12 Thrusters Deactivated on Program Exit
-- STATUS-108: Terminal Configured for Raw Non-Blocking Input Mode
-- STATUS-109: stdin Set to O_NONBLOCK: Non-Blocking Reads Active
-- STATUS-110: Translation Action Processed: GPIO Pair Activated
-- STATUS-111: Rotation Action Processed: GPIO Pair Activated
-- STATUS-114: Startup Sequence Phase 1 Started: 1-Second Pulses
-- STATUS-115: Startup Sequence Phase 2 Started: Double 0.5-Second Pulses
-- STATUS-116: Rack Connector Failure Summary Logged
-- STATUS-117: Duplicate GPIO Failure Entry Suppressed
-- STATUS-118: Force Exit Triggered by ESC During Startup Sequence
-- ERROR-000: Startup Failure: Log Path Inaccessible or Cannot Be Created
-- ERROR-001: Activity Log Write Failure: File Inaccessible
-- ERROR-002: Keybind Log Write Failure: File Inaccessible
-- ERROR-003: Log Directory Creation Failed: Check Permissions
-- ERROR-004: Incorrect Keybind: No Mapping Found for Key
-- ERROR-005: Startup Sequence Aborted by User via ESC
-- ERROR-006: Rack Connector Test Failed: GPIO Connection Issue on Pin
-- ERROR-007: GPIO Pin Activation Failed: setGPIOPin Returned False
-- ERROR-100: GPIO Chip Access Failed: gpiochip4 Not Found at Primary Path
-- ERROR-101: GPIO Chip Access Failed: gpiochip0 Fallback Also Failed
-- ERROR-102: GPIO Not Initialized: gpioChip Handle is Null, Cannot Set Pin
-- ERROR-103: GPIO Line Request Failed: gpiod_chip_request_lines Returned Null
-- ERROR-104: GPIO Pin Activation Failure Recorded During Startup Sequence
-- ERROR-106: UI Redraw Failed: Console Output Error
-- ERROR-107: Mode Entry Rejected: Invalid Mode Character Received
+- STATUS-001: Session Started: main loop entered after all file and GPIO initialization succeeded
+- STATUS-002: Session Ended: ESC received, main loop exited, cleanup beginning
+- STATUS-003: Shutdown Successful: all GPIO pins deactivated, chip handle closed, program returning 0
+- STATUS-005: Log Dir Created: mkdir -p returned 0 for logDirectoryPath
+- STATUS-008: Log Files Opened: Keybind_Log.csv and Activity_Log.csv created with headers
+- STATUS-009: Startup Complete: all files ready for logging, session logging active
+- STATUS-011: Key Registered: valid keybind matched in processMovementAction and written to Keybind_Log.csv
+- STATUS-012: Startup Initiated: user pressed '1' in Menu Mode, GPIO validation starting
+- STATUS-013: All GPIO Activated: all 12 GPIO successfully activated, no pins in failedGPIOPins
+- STATUS-014: Rack Test Started: outer rack loop entered for this connector, Phase 1 and Phase 2 pending
+- STATUS-015: Rack Test Passed: all four pins in this rack activated without failure in both phases
+- STATUS-016: GPIO ON: requestGPIOPin returned a valid handle for this pin in Phase 1 or Phase 2
+- STATUS-017: GPIO OFF: releaseGPIORequest called for this pin after its pulse duration elapsed
+- STATUS-018: Partial Activation: startup complete with some failures, one or more pins in failedGPIOPins
+- STATUS-019: Menu Refreshed: displayMenu() called, mode-appropriate menu text printed to stdout
+- STATUS-020: Operational Mode: user pressed '2' in Menu Mode, real-time keybind polling now active
+- STATUS-100: GPIO Chip Primary Path: gpiod_chip_open(/dev/gpiochip4) succeeded, gpioChip handle valid
+- STATUS-101: GPIO Chip Fallback Path: primary /dev/gpiochip4 failed, gpiod_chip_open(/dev/gpiochip0) succeeded
+- STATUS-102: Raw Input Configured: tcsetattr() disabled ICANON and ECHO on stdin
+- STATUS-103: stdin Non-Blocking: fcntl() set O_NONBLOCK flag, getchar() will not block
+- STATUS-104: Translation Dispatched: key matched a translation action, both GPIO thruster pins set to ON
+- STATUS-105: Rotation Dispatched: key matched a rotation action, both GPIO thruster pins set to ON
+- STATUS-106: Thrusters Deactivated (Key Release): noInputCount reached RELEASE_CYCLES threshold, key release confirmed
+- STATUS-107: Thrusters Deactivated (Exit): ESC cleanup path set all 12 pins to 0 before shutdown
+- STATUS-108: GPIO Line Requested: requestGPIOPin returned a valid handle to be released after sleep
+- STATUS-109: GPIO Line Released: releaseGPIORequest called to return pin to default state
+- STATUS-110: Phase 1 Started: four individual 1-second ON/OFF pulses beginning on this connector
+- STATUS-111: Phase 2 Started: four double 0.5-second pulse pairs beginning on this connector
+- STATUS-112: Duplicate Failure Suppressed: pin already present in failedGPIOPins, std::find blocked re-insertion
+- STATUS-113: Force Exit During Startup: ESC byte detected via checkKeyboardInput, force_exit set to true
+- STATUS-114: Returned to Menu: '0' pressed, all thrusters deactivated, programMode reset to 0
+- ERROR-000: Log Open Failed: keybindLogFile or activityLogFile not is_open(), returning 1
+- ERROR-002: Keybind Log Write Failed: Keybind_Log.csv could not be opened in append mode inside logKeyData()
+- ERROR-003: Log Dir Creation Failed: system(mkdir -p) returned non-zero, log directory may not exist
+- ERROR-004: Invalid Keybind: key received in Operational Mode has no matching entry in processMovementAction
+- ERROR-005: Startup Aborted by ESC: ESC detected during startup sequence, force_exit was set and sequence halted
+- ERROR-006: GPIO Activation Failed: requestGPIOPin returned null for a pin in this rack during Phase 1 or Phase 2
+- ERROR-007: Failed Pin Summary: one or more pins remain in failedGPIOPins after all three rack tests completed
+- ERROR-100: GPIO Init Failed: both gpiod_chip_open(/dev/gpiochip4) and /dev/gpiochip0 returned null
+- ERROR-101: GPIO Primary Path Failed: gpiod_chip_open(/dev/gpiochip4) returned null, fallback to /dev/gpiochip0 initiated
+- ERROR-102: GPIO Not Initialized: gpioChip handle is null in setGPIOPin or requestGPIOPin, returning false immediately
+- ERROR-103: GPIO Line Request Failed: gpiod_chip_request_lines returned null for the target pin offset in setGPIOPin
+- ERROR-104: GPIO Request Failed (Startup): requestGPIOPin returned null, pin added to failedGPIOPins
+- ERROR-105: Invalid Menu Input: character received in Menu Mode does not match '1', '2', or ESC, discarded silently
 */
 
 
@@ -203,15 +194,16 @@ enum gpiod_line_value getRelayValue(int val) {
 void initGPIO() {
     gpioChip = gpiod_chip_open(gpioChipPath);
     if (!gpioChip) {
-        gpioChip = gpiod_chip_open("/dev/gpiochip0"); 
+        logActivity("ERROR-101", "GPIO Primary Path Failed: /dev/gpiochip4 inaccessible, attempting fallback to /dev/gpiochip0");
+        gpioChip = gpiod_chip_open("/dev/gpiochip0");
         if (!gpioChip) {
-            logActivity("ERROR-303", "GPIO Chip Failure: Cannot find chip4 or chip0");
-
+            logActivity("ERROR-100", "GPIO Init Failed: Both /dev/gpiochip4 and /dev/gpiochip0 returned null");
             return;
         }
+        logActivity("STATUS-101", "GPIO Chip Fallback Path: /dev/gpiochip0 opened successfully");
+        return;
     }
-
-    logActivity("STATUS-306", "GPIO Init Success: Controller linked to hardware");
+    logActivity("STATUS-100", "GPIO Chip Primary Path: /dev/gpiochip4 opened successfully");
 }
 
 
@@ -318,13 +310,15 @@ int checkKeyboardInput() {
         termios terminalSettings;
         tcgetattr(STDIN_FILENO_ID, &terminalSettings);
         terminalSettings.c_lflag &= ~ICANON;
-        terminalSettings.c_lflag &= ~ECHO; 
+        terminalSettings.c_lflag &= ~ECHO;
         tcsetattr(STDIN_FILENO_ID, TCSANOW, &terminalSettings);
         setbuf(stdin, NULL);
-        
+        logActivity("STATUS-102", "Raw Input Configured: tcsetattr() disabled ICANON and ECHO");
+
         int oldflags = fcntl(STDIN_FILENO_ID, F_GETFL, 0);
         fcntl(STDIN_FILENO_ID, F_SETFL, oldflags | O_NONBLOCK);
-        
+        logActivity("STATUS-103", "stdin Non-Blocking: fcntl() set O_NONBLOCK flag");
+
         isInputInitialized = true;
     }
 
@@ -382,7 +376,7 @@ void logKeyData(char type, string direction, string keyName, char statusChar) {
             logActivity("STATUS-011", "Key Registered: " + keyName);
         }
     } else {
-        logActivity("ERROR-002", "Write Failure: Keybind_Log is inaccessible");
+        logActivity("ERROR-002", "Keybind Log Write Failed: Keybind_Log.csv inaccessible");
     }
 }
 
@@ -415,7 +409,7 @@ void processMovementAction(string keyId) {
     
     else { 
         logKeyData('F', "--", keyId, 'E'); 
-        logActivity("ERROR-004", "Incorrect Keybind"); 
+        logActivity("ERROR-004", "Invalid Keybind");
     }
 }
 
@@ -429,7 +423,7 @@ void processMovementAction(string keyId) {
                   Finally, it prompts the user for input with a ">> " symbol.
 */
 void displayMenu() {
-    logActivity("STATUS-019", "UI Redraw: Menu refreshed");
+    logActivity("STATUS-019", "Menu Refreshed: displayMenu() called");
     if (programMode == 0) {
         cout << "\n=================================================\nDTO Program\n-------------------------------------------------\nProgram Modes:\n- 0   : Menu Mode\n- 1   : Startup Sequence Mode\n- 2   : Operational Mode\n- Esc : Quit Mode\n=================================================\n>> " << flush;
     } else if (programMode == 1) {
@@ -457,9 +451,9 @@ int main() {
 
     // Initialization and Setup ---------------------------------------------------------------------------------------------------------------------
     if (system(("mkdir -p " + logDirectoryPath).c_str()) == 0) {
-        logActivity("STATUS-005", "Directory Created: Log storage ready");
+        logActivity("STATUS-005", "Log Dir Created: Logs/ directory created successfully");
     } else {
-        logActivity("ERROR-003", "Dir Creation Fail: Check permissions");
+        logActivity("ERROR-003", "Log Dir Creation Failed: mkdir returned non-zero exit code");
     }
 
     // GPIO Initialization and Log File Preparation -------------------------------------------------------------------------------------------------
@@ -467,13 +461,13 @@ int main() {
     ofstream keybindLogFile(logDirectoryPath + "Keybind_Log.csv", ios::trunc);
     ofstream activityLogFile(logDirectoryPath + "Activity_Log.csv", ios::trunc);
     if (keybindLogFile.is_open() && activityLogFile.is_open()) {
-        logActivity("STATUS-008", "Path Validated: File Open Successful");
+        logActivity("STATUS-008", "Log Files Opened: Both CSV files opened with headers written");
         keybindLogFile << "Time(s),Type,Direction,Key" << endl;
         activityLogFile << "Time(s),Code,Description" << endl;
         keybindLogFile.close(); activityLogFile.close();
-        logActivity("STATUS-009", "Startup Successful: Files Ready");
-    } else { 
-        logActivity("ERROR-000", "Startup Failure: Path Inaccessible");
+        logActivity("STATUS-009", "Startup Complete: All files ready for logging");
+    } else {
+        logActivity("ERROR-000", "Log Open Failed: Log files could not be opened; exit code 1");
         return 1; 
     }
 
@@ -496,7 +490,7 @@ int main() {
                 if (charInput == '1') {
                     programMode = 1;
                     programStartTime = chrono::high_resolution_clock::now();
-                    logActivity("STATUS-012", "Sequence Initiated");
+                    logActivity("STATUS-012", "Startup Initiated: GPIO validation starting");
                     
                     // Clear previous test failures
                     failedGPIOPins.clear();
@@ -514,7 +508,7 @@ int main() {
                         if (force_exit) break;
                         
                         cout << "\nRack Connector " << (rackNum + 1) << " Test:" << endl;
-                        logActivity("STATUS-014", "Testing Rack Connector " + to_string(rackNum + 1));
+                        logActivity("STATUS-014", "Rack Test Started: Rack connector " + to_string(rackNum + 1) + " test beginning");
                         
                         // Phase 1: Individual 1 second ON/OFF pulses for each GPIO
                         for (int g = 0; g < 4; g++) {
@@ -529,14 +523,14 @@ int main() {
                             if (!holdRequest) {
                                 failedGPIOPins.push_back(gpioPin);
                             }
-                            logActivity("STATUS-016", "GPIO " + to_string(gpioPin) + " ON");
+                            logActivity("STATUS-016", "GPIO ON: GPIO pin " + to_string(gpioPin) + " activated");
                             this_thread::sleep_for(chrono::milliseconds(1000));
-                            
+
                             // GPIO OFF for 1 second (release the held request)
                             phaseTime += 1.0;
                             cout << fixed << setprecision(2) << phaseTime << " GPIO " << gpioPin << " Off" << endl;
                             releaseGPIORequest(holdRequest);
-                            logActivity("STATUS-017", "GPIO " + to_string(gpioPin) + " OFF");
+                            logActivity("STATUS-017", "GPIO OFF: GPIO pin " + to_string(gpioPin) + " deactivated");
                             this_thread::sleep_for(chrono::milliseconds(1000));
                         }
                         
@@ -560,14 +554,14 @@ int main() {
                                         failedGPIOPins.push_back(gpioPin);
                                     }
                                 }
-                                logActivity("STATUS-016", "GPIO " + to_string(gpioPin) + " ON (PULSE)");
+                                logActivity("STATUS-016", "GPIO ON: GPIO pin " + to_string(gpioPin) + " activated (pulse)");
                                 this_thread::sleep_for(chrono::milliseconds(500));
-                                
+
                                 // GPIO OFF for 0.5 seconds (release the held request)
                                 phaseTime += 0.5;
                                 cout << fixed << setprecision(2) << phaseTime << " GPIO " << gpioPin << " Off" << endl;
                                 releaseGPIORequest(holdRequest);
-                                logActivity("STATUS-017", "GPIO " + to_string(gpioPin) + " OFF (PULSE)");
+                                logActivity("STATUS-017", "GPIO OFF: GPIO pin " + to_string(gpioPin) + " deactivated (pulse)");
                                 this_thread::sleep_for(chrono::milliseconds(500));
                                 phaseTime += 0.5;
                             }
@@ -584,12 +578,12 @@ int main() {
                         if (!rackFailedPins.empty()) {
                             for (int failedPin : rackFailedPins) {
                                 cout << "Rack Connector " << (rackNum + 1) << " Test Failed: GPIO " << failedPin << " Connection issue" << endl;
-                                logActivity("ERROR-006", "Rack Connector " + to_string(rackNum + 1) + " Test Failed: GPIO " + to_string(failedPin) + " Connection issue");
+                                logActivity("ERROR-006", "GPIO Activation Failed: Rack " + to_string(rackNum + 1) + " GPIO " + to_string(failedPin) + " failed");
                             }
                             cout << endl;
                         } else {
                             cout << "Rack Connector " << (rackNum + 1) << " Test Successfully Completed.\n" << endl;
-                            logActivity("STATUS-015", "Rack Connector " + to_string(rackNum + 1) + " Test Successfully Completed");
+                            logActivity("STATUS-015", "Rack Test Passed: Rack connector " + to_string(rackNum + 1) + " all phases completed");
                         }
                     }
                     
@@ -598,14 +592,14 @@ int main() {
                         int successCount = 12 - failedGPIOPins.size();
                         if (failedGPIOPins.empty()) {
                             cout << "All 12/12 GPIO Successfully Activated." << endl;
-                            logActivity("STATUS-013", "Sequence Complete: All 12/12 GPIO Successfully Activated");
+                            logActivity("STATUS-013", "All GPIO Activated: All 12 pins activated without error");
                         } else {
                             cout << successCount << "/12 GPIO Successfully Activated." << endl;
                             for (int pin : failedGPIOPins) {
                                 cout << "Rack Connector " << ((pin / 4) + 1) << " Test Failed: GPIO " << pin << " Connection issue" << endl;
-                                logActivity("ERROR-007", "Connection Failed: GPIO " + to_string(pin));
+                                logActivity("ERROR-007", "Failed Pin Summary: GPIO " + to_string(pin) + " in failedGPIOPins");
                             }
-                            logActivity("STATUS-018", "Sequence Complete: " + to_string(successCount) + "/12 GPIO activated, " + to_string(failedGPIOPins.size()) + " connection issues detected");
+                            logActivity("STATUS-018", "Partial Activation: " + to_string(successCount) + "/12 GPIO activated, " + to_string(failedGPIOPins.size()) + " failures detected");
                         }
                     }
                     
@@ -616,7 +610,7 @@ int main() {
                 } else if (charInput == '2') {
                     programMode = 2;
                     programStartTime = chrono::high_resolution_clock::now();
-                    logActivity("STATUS-020", "Mode Changed: Operational Mode Active");
+                    logActivity("STATUS-020", "Operational Mode: User pressed '2'; polling loop ready");
                     displayMenu();
                 }
             // Operational Mode: Accepts movement/rotation inputs -----------------------------------------------------------------------------------
@@ -626,11 +620,12 @@ int main() {
                     if (!currentKeyPressed.empty()) {
                         for(int i = 0; i <= 11; i++) (void)setGPIOPin(i, 0);
                         logKeyData('N', "--", "-", 'R');
-                        logActivity("STATUS-106", "All Thrusters Deactivated: Key Released (" + currentKeyPressed + ")");
+                        logActivity("STATUS-106", "Thrusters Deactivated (Key Release): " + currentKeyPressed);
                         currentKeyPressed = "";
                     }
                     programMode = 0;
                     programStartTime = chrono::high_resolution_clock::now();
+                    logActivity("STATUS-114", "Returned to Menu: GPIO deactivated, menu shown");
                     displayMenu();
                 }
                 else {
@@ -653,7 +648,7 @@ int main() {
                 if (noInputCount >= RELEASE_CYCLES) {
                     logKeyData('N', "--", "-", 'R');
                     for(int i = 0; i <= 11; i++) (void)setGPIOPin(i, 0);
-                    logActivity("STATUS-106", "All Thrusters Deactivated: Key Released (" + currentKeyPressed + ")");
+                    logActivity("STATUS-106", "Thrusters Deactivated (Key Release): " + currentKeyPressed);
                     currentKeyPressed = "";
                     noInputCount = 0;
                 }
@@ -666,7 +661,7 @@ int main() {
     
     // Cleanup and Exit ---------------------------------------------------------------------------
     for(int i = 0; i <= 11; i++) (void)setGPIOPin(i, 0);
-    logActivity("STATUS-107", "All Thrusters Deactivated on Program Exit");
+    logActivity("STATUS-107", "Thrusters Deactivated (Exit): ESC exit path; all 12 OFF");
     logActivity("STATUS-002", "Session Ended");
     logActivity("STATUS-003", "Shutdown Successful");
     if(gpioChip) gpiod_chip_close(gpioChip);

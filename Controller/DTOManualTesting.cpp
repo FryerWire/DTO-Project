@@ -24,31 +24,33 @@ Functions:
 - checkKeyboardInput(): Returns non-zero if keyboard input is available, using Windows _kbhit(). Mirrors DTOController's POSIX checkKeyboardInput() interface.
 
 Codes:
-- STATUS-001: Session Started
-- STATUS-002: Session Ended
-- STATUS-003: Shutdown Successful
-- STATUS-005: Log Directory Created Successfully
-- STATUS-008: All Log Files Initialized with CSV Headers
-- STATUS-009: Startup Successful: All Log Files Ready
-- STATUS-010: Mode Changed
-- STATUS-011: Key Registered
-- STATUS-012: Startup Sequence Initiated
-- STATUS-013: Startup Sequence Completed: All GPIO Activated
-- STATUS-014: Rack Connector Test Started
-- STATUS-015: Rack Connector Test Passed
-- STATUS-016: GPIO Pin Activated (ON)
-- STATUS-017: GPIO Pin Deactivated (OFF)
-- STATUS-019: UI Menu Refreshed
-- STATUS-020: Operational Mode Activated
-- STATUS-106: All 12 Thrusters Deactivated on Key Release
-- STATUS-107: All 12 Thrusters Deactivated on Program Exit
-- STATUS-110: Translation Action Processed: GPIO Pair Activated
-- STATUS-111: Rotation Action Processed: GPIO Pair Activated
-- ERROR-000: Startup Failure: Log Path Inaccessible or Cannot Be Created
-- ERROR-002: Keybind Log Write Failure: File Inaccessible
-- ERROR-003: Log Directory Creation Failed: Check Permissions
-- ERROR-004: Incorrect Keybind: No Mapping Found for Key
-- ERROR-005: Startup Sequence Aborted by User via ESC
+- STATUS-001: Session Started: main loop entered after all file initialization succeeded
+- STATUS-002: Session Ended: ESC received, main loop exited, cleanup beginning
+- STATUS-003: Shutdown Successful: [SIM] All GPIO OFF written, program returning 0
+- STATUS-005: Log Dir Created: Windows mkdir returned 0 for logDirectoryPath
+- STATUS-008: Log Files Opened: Keybind_Log.csv and Activity_Log.csv created with headers
+- STATUS-009: Startup Complete: file validation passed, session logging active
+- STATUS-011: Key Registered: valid keybind matched in processMovementAction and written to Keybind_Log.csv
+- STATUS-012: Startup Initiated: user pressed '1' in Menu Mode, simulated three-rack test sequence beginning
+- STATUS-013: All GPIO Activated: hardcoded 12/12 pass, no real hardware
+- STATUS-014: Rack Test Started: outer rack loop entered for this connector, simulated Phase 1 and Phase 2 pending
+- STATUS-015: Rack Test Passed: all four pins simulated successfully for this rack, pass message printed
+- STATUS-016: GPIO ON: simulated ON event printed to console and logged for this pin in Phase 1 or Phase 2
+- STATUS-017: GPIO OFF: simulated OFF event printed to console and logged for this pin after its sleep
+- STATUS-019: Menu Refreshed: displayMenu() called, mode-appropriate menu text printed to stdout
+- STATUS-020: Operational Mode: user pressed '2' in Menu Mode, simulated keybind polling now active
+- STATUS-106: Thrusters Deactivated (Key Release): noInputCount reached RELEASE_CYCLES threshold, [SIM] All GPIO OFF written
+- STATUS-107: Thrusters Deactivated (Exit): ESC cleanup path wrote [SIM] All GPIO OFF before shutdown
+- STATUS-200: Translation Simulated: [SIM] GPIO pair console output written and direction logged to Keybind_Log.csv
+- STATUS-201: Rotation Simulated: [SIM] GPIO pair console output written and direction logged to Keybind_Log.csv
+- STATUS-202: GPIO Deactivated (Simulated): [SIM] All GPIO OFF written to stdout on key release or mode exit
+- STATUS-203: Startup Simulated: 12/12 GPIO always reported activated, no real hardware to fail
+- STATUS-204: ESC Detected (Startup): GetAsyncKeyState detected ESC; aborting startup
+- ERROR-000: Log Open Failed: keybindLogFile or activityLogFile not is_open(), returning 1
+- ERROR-002: Keybind Log Write Failed: Keybind_Log.csv could not be opened in append mode inside logKeyData()
+- ERROR-200: mkdir Failed: system() mkdir command failed on Windows
+- ERROR-004: Invalid Keybind: key received in Operational Mode has no matching entry in processMovementAction
+- ERROR-005: Startup Aborted by ESC: GetAsyncKeyState detected VK_ESCAPE, sequence halted early
 */
 
 
@@ -167,7 +169,7 @@ void logKeyData(char type, string direction, string keyName, char statusChar) {
             logActivity("STATUS-011", "Key Registered: " + keyName);
         }
     } else {
-        logActivity("ERROR-002", "Write Failure: Keybind_Log is inaccessible");
+        logActivity("ERROR-002", "Keybind Log Write Failed: Keybind_Log.csv inaccessible");
     }
 }
 
@@ -183,24 +185,24 @@ void logKeyData(char type, string direction, string keyName, char statusChar) {
 */
 void processMovementAction(string keyId) {
     // Translation Mappings -------------------------------------------------------------------------------------------------------------------------
-    if (keyId == "W")      { logKeyData('T', "+X", "W", 'N'); cout << "[SIM] GPIO 0 ON | GPIO 8 ON"   << endl; logActivity("STATUS-110", "Translation +X: GPIO 0, 8 Activated");  }  // A1, A2
-    else if (keyId == "S") { logKeyData('T', "-X", "S", 'N'); cout << "[SIM] GPIO 5 ON | GPIO 11 ON"  << endl; logActivity("STATUS-110", "Translation -X: GPIO 5, 11 Activated"); }  // F1, F2
-    else if (keyId == "A") { logKeyData('T', "+Y", "A", 'N'); cout << "[SIM] GPIO 1 ON | GPIO 7 ON"   << endl; logActivity("STATUS-110", "Translation +Y: GPIO 1, 7 Activated");  }  // S1, S2
-    else if (keyId == "D") { logKeyData('T', "-Y", "D", 'N'); cout << "[SIM] GPIO 2 ON | GPIO 6 ON"   << endl; logActivity("STATUS-110", "Translation -Y: GPIO 2, 6 Activated");  }  // P1, P2
-    else if (keyId == "E") { logKeyData('T', "+Z", "E", 'N'); cout << "[SIM] GPIO 4 ON | GPIO 10 ON"  << endl; logActivity("STATUS-110", "Translation +Z: GPIO 4, 10 Activated"); }  // B1, B2
-    else if (keyId == "Q") { logKeyData('T', "-Z", "Q", 'N'); cout << "[SIM] GPIO 3 ON | GPIO 9 ON"   << endl; logActivity("STATUS-110", "Translation -Z: GPIO 3, 9 Activated");  }  // T1, T2
+    if (keyId == "W")      { logKeyData('T', "+X", "W", 'N'); cout << "[SIM] GPIO 0 ON | GPIO 8 ON"   << endl; logActivity("STATUS-200","Translation Simulated: +X GPIO 0, 8 activated");  }  // A1, A2
+    else if (keyId == "S") { logKeyData('T', "-X", "S", 'N'); cout << "[SIM] GPIO 5 ON | GPIO 11 ON"  << endl; logActivity("STATUS-200","Translation Simulated: -X GPIO 5, 11 activated"); }  // F1, F2
+    else if (keyId == "A") { logKeyData('T', "+Y", "A", 'N'); cout << "[SIM] GPIO 1 ON | GPIO 7 ON"   << endl; logActivity("STATUS-200","Translation Simulated: +Y GPIO 1, 7 activated");  }  // S1, S2
+    else if (keyId == "D") { logKeyData('T', "-Y", "D", 'N'); cout << "[SIM] GPIO 2 ON | GPIO 6 ON"   << endl; logActivity("STATUS-200","Translation Simulated: -Y GPIO 2, 6 activated");  }  // P1, P2
+    else if (keyId == "E") { logKeyData('T', "+Z", "E", 'N'); cout << "[SIM] GPIO 4 ON | GPIO 10 ON"  << endl; logActivity("STATUS-200","Translation Simulated: +Z GPIO 4, 10 activated"); }  // B1, B2
+    else if (keyId == "Q") { logKeyData('T', "-Z", "Q", 'N'); cout << "[SIM] GPIO 3 ON | GPIO 9 ON"   << endl; logActivity("STATUS-200","Translation Simulated: -Z GPIO 3, 9 activated");  }  // T1, T2
 
     // Rotation Mappings ----------------------------------------------------------------------------------------------------------------------------
-    else if (keyId == "K") { logKeyData('R', "-P", "K", 'N'); cout << "[SIM] GPIO 9 ON | GPIO 4 ON"   << endl; logActivity("STATUS-111", "Rotation -P: GPIO 9, 4 Activated");   }  // T2, B1
-    else if (keyId == "I") { logKeyData('R', "+P", "I", 'N'); cout << "[SIM] GPIO 3 ON | GPIO 10 ON"  << endl; logActivity("STATUS-111", "Rotation +P: GPIO 3, 10 Activated");  }  // T1, B2
-    else if (keyId == "U") { logKeyData('R', "-R", "U", 'N'); cout << "[SIM] GPIO 6 ON | GPIO 1 ON"   << endl; logActivity("STATUS-111", "Rotation -R: GPIO 6, 1 Activated");   }  // P2, S1
-    else if (keyId == "O") { logKeyData('R', "+R", "O", 'N'); cout << "[SIM] GPIO 2 ON | GPIO 7 ON"   << endl; logActivity("STATUS-111", "Rotation +R: GPIO 2, 7 Activated");   }  // P1, S2
-    else if (keyId == "J") { logKeyData('R', "-Y", "J", 'N'); cout << "[SIM] GPIO 0 ON | GPIO 11 ON"  << endl; logActivity("STATUS-111", "Rotation -Y: GPIO 0, 11 Activated");  }  // A1, F2
-    else if (keyId == "L") { logKeyData('R', "+Y", "L", 'N'); cout << "[SIM] GPIO 8 ON | GPIO 5 ON"   << endl; logActivity("STATUS-111", "Rotation +Y: GPIO 8, 5 Activated");   }  // A2, F1
+    else if (keyId == "K") { logKeyData('R', "-P", "K", 'N'); cout << "[SIM] GPIO 9 ON | GPIO 4 ON"   << endl; logActivity("STATUS-201","Rotation Simulated: -P GPIO 9, 4 activated");   }  // T2, B1
+    else if (keyId == "I") { logKeyData('R', "+P", "I", 'N'); cout << "[SIM] GPIO 3 ON | GPIO 10 ON"  << endl; logActivity("STATUS-201","Rotation Simulated: +P GPIO 3, 10 activated");  }  // T1, B2
+    else if (keyId == "U") { logKeyData('R', "-R", "U", 'N'); cout << "[SIM] GPIO 6 ON | GPIO 1 ON"   << endl; logActivity("STATUS-201","Rotation Simulated: -R GPIO 6, 1 activated");   }  // P2, S1
+    else if (keyId == "O") { logKeyData('R', "+R", "O", 'N'); cout << "[SIM] GPIO 2 ON | GPIO 7 ON"   << endl; logActivity("STATUS-201","Rotation Simulated: +R GPIO 2, 7 activated");   }  // P1, S2
+    else if (keyId == "J") { logKeyData('R', "-Y", "J", 'N'); cout << "[SIM] GPIO 0 ON | GPIO 11 ON"  << endl; logActivity("STATUS-201","Rotation Simulated: -Y GPIO 0, 11 activated");  }  // A1, F2
+    else if (keyId == "L") { logKeyData('R', "+Y", "L", 'N'); cout << "[SIM] GPIO 8 ON | GPIO 5 ON"   << endl; logActivity("STATUS-201","Rotation Simulated: +Y GPIO 8, 5 activated");   }  // A2, F1
 
     else {
         logKeyData('F', "--", keyId, 'E');
-        logActivity("ERROR-004", "Incorrect Keybind: No Mapping Found for Key");
+        logActivity("ERROR-004", "Invalid Keybind: No mapping found for key");
     }
 }
 
@@ -211,7 +213,7 @@ void processMovementAction(string keyId) {
                   Matches DTOController displayMenu() output exactly.
 */
 void displayMenu() {
-    logActivity("STATUS-019", "UI Redraw: Menu refreshed");
+    logActivity("STATUS-019", "Menu Refreshed: displayMenu() called");
     if (programMode == 0) {
         cout << "\n=================================================\nDTO Program\n-------------------------------------------------\nProgram Modes:\n- 0   : Menu Mode\n- 1   : Startup Sequence Mode\n- 2   : Operational Mode\n- Esc : Quit Mode\n=================================================\n>> " << flush;
     } else if (programMode == 1) {
@@ -251,22 +253,22 @@ int main() {
 
     // Initialization and Setup ---------------------------------------------------------------------------------------------------------------------
     if (system(("mkdir " + logDirectoryPath + " 2>nul").c_str()) == 0) {
-        logActivity("STATUS-005", "Directory Created: Log storage ready");
+        logActivity("STATUS-005", "Log Dir Created: Logs/ directory created successfully");
     } else {
-        logActivity("ERROR-003", "Dir Creation Fail: Check permissions");
+        logActivity("ERROR-200", "mkdir Failed: system() mkdir command failed on Windows");
     }
 
     // Log File Initialization ----------------------------------------------------------------------------------------------------------------------
     ofstream keybindLogFile(logDirectoryPath + "Keybind_Log.csv", ios::trunc);
     ofstream activityLogFile(logDirectoryPath + "Activity_Log.csv", ios::trunc);
     if (keybindLogFile.is_open() && activityLogFile.is_open()) {
-        logActivity("STATUS-008", "Path Validated: File Open Successful");
+        logActivity("STATUS-008", "Log Files Opened: Both CSV files opened with headers written");
         keybindLogFile << "Time(s),Type,Direction,Key" << endl;
         activityLogFile << "Time(s),Code,Description" << endl;
         keybindLogFile.close(); activityLogFile.close();
-        logActivity("STATUS-009", "Startup Successful: Files Ready");
+        logActivity("STATUS-009", "Startup Complete: All files ready for logging");
     } else {
-        logActivity("ERROR-000", "Startup Failure: Path Inaccessible");
+        logActivity("ERROR-000", "Log Open Failed: Log files could not be opened; exit code 1");
         return 1;
     }
 
@@ -288,7 +290,7 @@ int main() {
                 // Menu Mode: Only accepts mode selection inputs ------------------------------------------------------------------------------------
                 if (charInput == '1') {
                     programMode = 1;
-                    logActivity("STATUS-012", "Sequence Initiated");
+                    logActivity("STATUS-012", "Startup Initiated: GPIO validation starting");
                     displayMenu();
 
                     // Rack Connector Definitions (organized by rack)
@@ -304,7 +306,7 @@ int main() {
                         if (force_exit) break;
 
                         cout << "\nRack Connector " << (rackNum + 1) << " Test:" << endl;
-                        logActivity("STATUS-014", "Testing Rack Connector " + to_string(rackNum + 1));
+                        logActivity("STATUS-014", "Rack Test Started: Rack connector " + to_string(rackNum + 1) + " test beginning");
 
                         // Phase 1: Individual 1-second ON/OFF pulses for each GPIO
                         for (int g = 0; g < 4; g++) {
@@ -314,12 +316,12 @@ int main() {
                             double phaseTime = g * 2.0;
 
                             cout << fixed << setprecision(2) << phaseTime << " GPIO " << gpioPin << " On" << endl;
-                            logActivity("STATUS-016", "GPIO " + to_string(gpioPin) + " ON");
+                            logActivity("STATUS-016", "GPIO ON: GPIO pin " + to_string(gpioPin) + " activated");
                             this_thread::sleep_for(chrono::milliseconds(1000));
 
                             phaseTime += 1.0;
                             cout << fixed << setprecision(2) << phaseTime << " GPIO " << gpioPin << " Off" << endl;
-                            logActivity("STATUS-017", "GPIO " + to_string(gpioPin) + " OFF");
+                            logActivity("STATUS-017", "GPIO OFF: GPIO pin " + to_string(gpioPin) + " deactivated");
                             this_thread::sleep_for(chrono::milliseconds(1000));
                         }
 
@@ -334,12 +336,12 @@ int main() {
                                 if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { force_exit = true; break; }
 
                                 cout << fixed << setprecision(2) << phaseTime << " GPIO " << gpioPin << " On" << endl;
-                                logActivity("STATUS-016", "GPIO " + to_string(gpioPin) + " ON (PULSE)");
+                                logActivity("STATUS-016", "GPIO ON: GPIO pin " + to_string(gpioPin) + " activated (pulse)");
                                 this_thread::sleep_for(chrono::milliseconds(500));
 
                                 phaseTime += 0.5;
                                 cout << fixed << setprecision(2) << phaseTime << " GPIO " << gpioPin << " Off" << endl;
-                                logActivity("STATUS-017", "GPIO " + to_string(gpioPin) + " OFF (PULSE)");
+                                logActivity("STATUS-017", "GPIO OFF: GPIO pin " + to_string(gpioPin) + " deactivated (pulse)");
                                 this_thread::sleep_for(chrono::milliseconds(500));
                                 phaseTime += 0.5;
                             }
@@ -347,16 +349,16 @@ int main() {
 
                         if (!force_exit) {
                             cout << "Rack Connector " << (rackNum + 1) << " Test Successfully Completed.\n" << endl;
-                            logActivity("STATUS-015", "Rack Connector " + to_string(rackNum + 1) + " Test Successfully Completed");
+                            logActivity("STATUS-015", "Rack Test Passed: Rack connector " + to_string(rackNum + 1) + " all phases completed");
                         }
                     }
 
                     if (force_exit) {
-                        logActivity("ERROR-005", "Startup Sequence Aborted by User via ESC");
+                        logActivity("ERROR-005", "Startup Aborted by ESC: ESC pressed during startup sequence");
                     } else {
                         // Hardcoded 12/12 success — no real GPIO hardware to fail
                         cout << "All 12/12 GPIO Successfully Activated." << endl;
-                        logActivity("STATUS-013", "Sequence Complete: All 12/12 GPIO Successfully Activated");
+                        logActivity("STATUS-013", "All GPIO Activated: All 12 pins activated without error");
                     }
 
                     programMode = 0;
@@ -365,7 +367,7 @@ int main() {
                 // Operational Mode: Transitions to Operational Mode --------------------------------------------------------------------------------
                 } else if (charInput == '2') {
                     programMode = 2;
-                    logActivity("STATUS-020", "Mode Changed: Operational Mode Active");
+                    logActivity("STATUS-020", "Operational Mode: User pressed '2'; polling loop ready");
                     displayMenu();
                 }
             // Operational Mode: Accepts movement/rotation inputs -----------------------------------------------------------------------------------
@@ -375,10 +377,11 @@ int main() {
                     if (!currentKeyPressed.empty()) {
                         cout << "[SIM] All GPIO OFF" << endl;
                         logKeyData('N', "--", "-", 'R');
-                        logActivity("STATUS-106", "All Thrusters Deactivated: Key Released (" + currentKeyPressed + ")");
+                        logActivity("STATUS-106", "Thrusters Deactivated (Key Release): " + currentKeyPressed);
                         currentKeyPressed = "";
                     }
                     programMode = 0;
+                    logActivity("STATUS-114", "Returned to Menu: GPIO deactivated, menu shown");
                     displayMenu();
                 } else {
                     string keyIdString = string(1, toupper(charInput));
@@ -396,7 +399,7 @@ int main() {
                 if (noInputCount >= RELEASE_CYCLES) {
                     logKeyData('N', "--", "-", 'R');
                     cout << "[SIM] All GPIO OFF" << endl;
-                    logActivity("STATUS-106", "All Thrusters Deactivated: Key Released (" + currentKeyPressed + ")");
+                    logActivity("STATUS-106", "Thrusters Deactivated (Key Release): " + currentKeyPressed);
                     currentKeyPressed = "";
                     noInputCount = 0;
                 }
@@ -409,7 +412,7 @@ int main() {
 
     // Cleanup and Exit -----------------------------------------------------------------------------------------------------------------------------
     cout << "[SIM] All GPIO OFF" << endl;
-    logActivity("STATUS-107", "All Thrusters Deactivated on Program Exit");
+    logActivity("STATUS-107", "Thrusters Deactivated (Exit): ESC exit path; all 12 OFF");
     logActivity("STATUS-002", "Session Ended");
     logActivity("STATUS-003", "Shutdown Successful");
     return 0;

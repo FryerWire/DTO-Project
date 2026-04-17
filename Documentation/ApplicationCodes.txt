@@ -1,158 +1,196 @@
 DTO PROJECT - MASTER STATUS AND ERROR CODE REFERENCE
-Generated: April 11, 2026
-Format: CODE-XXX, Title, Description
-Scope: 0XX = General (all files) | 1XX = DTOController.cpp | 2XX = DTOManualTesting.cpp | 3XX = computations.py
+Generated: April 16, 2026
+Format: CODE-XXX | Title | Full Description
+Scope: 0XX = General (DTOController + DTOManualTesting) | 1XX = DTOController.cpp only | 2XX = DTOManualTesting.cpp only | 3XX = computations.py only
 ================================================================================================================================================
 
 
-GENERAL CODES (0XX) - Apply across all three project files
+GENERAL CODES (0XX) - Emitted by both DTOController.cpp and DTOManualTesting.cpp
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
-STATUS-000, Program Initialization Started, The program or script has begun execution and is entering its initialization phase before any file I/O or hardware access occurs.
-STATUS-001, Session Started, All initialization steps have completed successfully and the main operational loop or processing pipeline has begun.
-STATUS-002, Session Ended, The main loop or processing pipeline has exited cleanly, either by user request or natural completion, and cleanup is about to begin.
-STATUS-003, Shutdown Successful, All cleanup operations including file finalization and hardware deactivation have completed and the program is returning.
-STATUS-004, Log Directory Verified or Already Exists, The target log directory was confirmed to exist prior to log file creation; no new directory was needed.
-STATUS-005, Log Directory Created Successfully, The target log directory did not exist and was successfully created by the program before log files were opened.
-STATUS-006, Activity Log Opened and Header Written, The Activity_Log.csv file was opened successfully in write mode and the CSV header row was written.
-STATUS-007, Keybind Log Opened and Header Written, The Keybind_Log.csv file was opened successfully in write mode and the CSV header row was written.
-STATUS-008, All Log Files Initialized with CSV Headers, Both Activity_Log.csv and Keybind_Log.csv were opened, verified, and had their header rows written before the session began.
-STATUS-009, Startup Successful: All Log Files Ready, All pre-session validation and file initialization steps passed and the program confirmed readiness to begin logging.
-STATUS-010, Mode Changed, The program transitioned from one operating mode to another; the new mode name is included in the description field.
-STATUS-011, Key Registered, A valid keybind was received, matched to a known action, and successfully written to Keybind_Log.csv; the key name is included in the description.
-STATUS-012, Startup Sequence Initiated, The user triggered the Startup Sequence Mode and the multi-rack GPIO validation procedure is beginning.
-STATUS-013, Startup Sequence Completed: All GPIO Activated, All three rack connector tests completed without any GPIO failures and all 12 pins were successfully activated.
-STATUS-014, Rack Connector Test Started, The GPIO activation test sequence for a specific rack connector has begun; the rack number is included in the description.
-STATUS-015, Rack Connector Test Passed, All four GPIO pins in the specified rack connector completed both Phase 1 and Phase 2 testing without any failures.
-STATUS-016, GPIO Pin Activated (ON), A specific GPIO pin was commanded ON during the startup sequence; the pin number and pulse type are included in the description.
-STATUS-017, GPIO Pin Deactivated (OFF), A specific GPIO pin was commanded OFF during the startup sequence; the pin number and pulse type are included in the description.
-STATUS-018, Partial GPIO Activation: Connection Issues Detected, The startup sequence completed but one or more GPIO pins failed to activate; the count of successful and failed pins is logged.
-STATUS-019, UI Menu Refreshed, The program wrote the current mode's menu text to stdout; logged before each menu print to track interface redraws.
-STATUS-020, Operational Mode Activated, The program entered Operational Mode and is now ready to accept real-time movement and rotation keybind inputs.
+STATUS-001 | Session Started | main() entered the primary while-loop after all file and GPIO initialization completed; the first loop iteration is about to begin.
 
-ERROR-000, Startup Failure: Log Path Inaccessible or Cannot Be Created, The program could not open one or both required log files during startup initialization; execution cannot continue and the program returns with exit code 1.
-ERROR-001, Activity Log Write Failure: File Inaccessible, An attempt to append a log entry to Activity_Log.csv failed because the file could not be opened in append mode.
-ERROR-002, Keybind Log Write Failure: File Inaccessible, An attempt to append a key event row to Keybind_Log.csv failed because the file could not be opened in append mode.
-ERROR-003, Log Directory Creation Failed: Check Permissions, The mkdir command or equivalent returned a non-zero exit code indicating the log directory could not be created; likely a permissions issue.
-ERROR-004, Incorrect Keybind: No Mapping Found for Key, A key input was received in Operational Mode that does not match any defined translation or rotation action; the unrecognized key name is included in the description.
-ERROR-005, Startup Sequence Aborted by User via ESC, The user pressed ESC during the startup sequence before all rack connector tests completed; the remaining tests were skipped.
-ERROR-006, Rack Connector Test Failed: GPIO Connection Issue on Pin, A specific GPIO pin within a rack connector test returned a failure signal; the rack number and pin number are included in the description.
-ERROR-007, GPIO Pin Activation Failed, A call to the GPIO set function returned false or an equivalent failure indicator for a specific pin; the pin number is included in the description.
+STATUS-002 | Session Ended | The ESC key was detected and the main while-loop exited cleanly; the cleanup and shutdown sequence is beginning.
+
+STATUS-003 | Shutdown Successful | All GPIO pins have been deactivated, log files have been finalized, and the program is returning exit code 0.
+
+STATUS-005 | Log Directory Created Successfully | The mkdir command targeting logDirectoryPath returned exit code 0, confirming the Logs/ directory was created and is ready for file I/O.
+
+STATUS-008 | Both Log Files Opened and CSV Headers Written | Both Keybind_Log.csv and Activity_Log.csv were opened successfully with ios::trunc and their CSV header rows were written before the session began.
+
+STATUS-009 | Startup Complete: All Files Ready for Logging | All pre-session validation steps passed; both log files are open, verified, and ready to receive entries for the current session.
+
+STATUS-011 | Key Registered | A key input was matched to a known translation or rotation action in processMovementAction() and a corresponding row was successfully written to Keybind_Log.csv.
+
+STATUS-012 | Startup Sequence Initiated | The user pressed '1' in Menu Mode; programMode was set to 1 and the three-rack GPIO validation loop is beginning.
+
+STATUS-013 | Startup Sequence Complete: All 12 GPIO Successfully Activated | All three rack connector tests completed and failedGPIOPins is empty; all 12 pins were activated without error.
+
+STATUS-014 | Rack Connector Test Started | The outer rack loop entered a new iteration; the rack number is included in the description and both Phase 1 and Phase 2 are about to execute for this connector.
+
+STATUS-015 | Rack Connector Test Passed | All four GPIO pins in this rack connector completed both Phase 1 (four 1-second pulses) and Phase 2 (four double 0.5-second pulses) without any activation failure.
+
+STATUS-016 | GPIO Pin Activated (ON) | A specific GPIO pin was commanded ON during the startup sequence; the pin number and pulse type (standard or PULSE) are included in the description.
+
+STATUS-017 | GPIO Pin Deactivated (OFF) | A specific GPIO pin was commanded OFF during the startup sequence after its pulse duration elapsed; the pin number and pulse type are included in the description.
+
+STATUS-018 | Startup Sequence Complete: Partial Activation Detected | All three rack tests completed but failedGPIOPins is non-empty; the count of successful and failed pins is included in the description.
+
+STATUS-019 | UI Menu Refreshed | displayMenu() was called; a STATUS-019 entry is written before printing the mode-appropriate menu to stdout so UI redraws are traceable in the activity log.
+
+STATUS-020 | Operational Mode Activated | The user pressed '2' in Menu Mode; programMode was set to 2 and the polling loop is now ready to accept real-time movement and rotation keybind inputs.
+
+ERROR-000 | Startup Failure: Log Files Could Not Be Opened | Either keybindLogFile or activityLogFile was not is_open() after the ios::trunc open attempt; the program logs this entry and returns exit code 1 immediately.
+
+ERROR-002 | Keybind Log Write Failure | An attempt to open Keybind_Log.csv in append mode inside logKeyData() failed; the key event was not written to disk. The logActivity call still succeeds for console output.
+
+ERROR-003 | Log Directory Creation Failed | The system() mkdir command returned a non-zero exit code; the Logs/ directory may not exist and subsequent log file opens may fail.
+
+ERROR-004 | Incorrect Keybind | A character was received in Operational Mode that does not match any key in the translation or rotation maps inside processMovementAction(); the unrecognized key is logged and no GPIO action is taken.
+
+ERROR-005 | Startup Sequence Aborted by User via ESC | An ESC input was detected during the startup sequence before all three rack connector tests completed; force_exit was set to true and remaining rack iterations were skipped.
+
+ERROR-006 | Rack Connector Test Failed | A specific GPIO pin within a rack connector test failed to activate; the rack number and pin number are included in the description and the pin is added to failedGPIOPins.
+
+ERROR-007 | GPIO Activation Failed: Summary Entry | After all rack tests, one or more pins remain in failedGPIOPins; a separate ERROR-007 entry is written per failed pin before the STATUS-018 partial activation summary.
 
 
 DTCONTROLLER.CPP SPECIFIC CODES (1XX)
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
-STATUS-100, GPIO Chip Opened Successfully at Primary Path (gpiochip4), The gpiod_chip_open call to /dev/gpiochip4 succeeded and the global gpioChip handle is now valid.
-STATUS-101, GPIO Chip Opened Successfully via Fallback Path (gpiochip0), The primary gpiochip4 path failed but the fallback call to /dev/gpiochip0 succeeded and the gpioChip handle is now valid.
-STATUS-102, GPIO Line Settings Object Allocated, A new gpiod_line_settings struct was successfully allocated via gpiod_line_settings_new() for a pending pin operation.
-STATUS-103, GPIO Line Configured as Output with Target Value, The line settings direction was set to GPIOD_LINE_DIRECTION_OUTPUT and the output value was set via getRelayValue() for the target pin.
-STATUS-104, GPIO Line Request Submitted to Chip, gpiod_chip_request_lines() was called with the configured line settings and request config for the target pin offset.
-STATUS-105, GPIO Line Request Released After Set, The gpiod_line_request returned from the chip was released immediately after the pin value was committed, freeing the line for future requests.
-STATUS-106, All 12 Thrusters Deactivated on Key Release, No key was detected in the Operational Mode polling loop while currentKeyPressed was non-empty; all 12 GPIO pins were set to 0 and tracking variables were cleared.
-STATUS-107, All 12 Thrusters Deactivated on Program Exit, The ESC exit path set all 12 GPIO pins to 0 before closing the chip handle and returning, ensuring all thrusters are off on shutdown.
-STATUS-108, Terminal Configured for Raw Non-Blocking Input Mode, On the first call to checkKeyboardInput(), tcsetattr disabled ICANON and ECHO on stdin so characters are available without waiting for Enter.
-STATUS-109, stdin Set to O_NONBLOCK: Non-Blocking Reads Active, fcntl set the O_NONBLOCK flag on stdin so getchar() will not block when no input is available.
-STATUS-110, Translation Action Processed: GPIO Pair Activated, A translation keybind was matched in processMovementAction and both associated GPIO thruster pins were commanded ON.
-STATUS-111, Rotation Action Processed: GPIO Pair Activated, A rotation keybind was matched in processMovementAction and both associated GPIO thruster pins were commanded ON.
-STATUS-112, Continuous Firing Mode Active, The user pressed '1' in Operational Mode, switching firingMode to 'C' so thrusters fire continuously for the duration of each key hold.
-STATUS-113, Pulse Firing Mode Active, The user pressed '2' in Operational Mode, switching firingMode to 'P' so each key fires only once per new press regardless of hold duration.
-STATUS-114, Startup Sequence Phase 1 Started: 1-Second Pulses, The outer rack connector loop entered Phase 1 where each of the four GPIO pins is individually activated for 1000ms then deactivated for 1000ms.
-STATUS-115, Startup Sequence Phase 2 Started: Double 0.5-Second Pulses, The outer rack connector loop entered Phase 2 where each of the four GPIO pins receives two rapid 500ms ON/OFF pulse pairs.
-STATUS-116, Rack Connector Failure Summary Logged, After all rack tests completed, the final summary of failed pin counts and successful activation counts was written to the activity log.
-STATUS-117, Duplicate GPIO Failure Entry Suppressed, During Phase 2 of the startup sequence, a GPIO pin that already appeared in failedGPIOPins was not added again, preventing duplicate failure records.
-STATUS-118, Force Exit Triggered by ESC During Startup Sequence, An ESC byte was detected via checkKeyboardInput() during a Phase 1 or Phase 2 sleep boundary; force_exit was set to true and all remaining rack tests were skipped.
+STATUS-100 | GPIO Chip Opened at Primary Path | gpiod_chip_open("/dev/gpiochip4") returned a non-null handle; the global gpioChip variable is valid and all subsequent pin operations will use gpiochip4.
 
-ERROR-100, GPIO Chip Access Failed: gpiochip4 Not Found at Primary Path, The first gpiod_chip_open call targeting /dev/gpiochip4 returned null, indicating the chip is not accessible at the primary path.
-ERROR-101, GPIO Chip Access Failed: gpiochip0 Fallback Also Failed, Both the primary /dev/gpiochip4 and fallback /dev/gpiochip0 gpiod_chip_open calls returned null; GPIO is completely unavailable.
-ERROR-102, GPIO Not Initialized: gpioChip Handle is Null, Cannot Set Pin, setGPIOPin was called but gpioChip is null because initGPIO() failed or was not called; the function returns false immediately.
-ERROR-103, GPIO Line Request Failed: gpiod_chip_request_lines Returned Null, The gpiod_chip_request_lines call for a specific pin returned a null pointer; the pin could not be set and setGPIOPin returns false.
-ERROR-104, GPIO Pin Activation Failure Recorded During Startup Sequence, setGPIOPin returned false for a specific pin during Phase 1 or Phase 2 of the startup sequence; the pin number was added to failedGPIOPins.
-ERROR-105, Pulse Mode Repeat Blocked: Key Already Fired This Press, processMovementAction detected that the incoming keyId matches lastKeyFired while firingMode is 'P'; the action was suppressed and a fault entry was written to the keybind log.
-ERROR-106, UI Redraw Failed: Console Output Error, An error occurred while writing the menu text to stdout in displayMenu(); the menu may not have been displayed correctly.
-ERROR-107, Mode Entry Rejected: Invalid Mode Character Received, A character was received in Menu Mode that does not correspond to '1', '2', or ESC; it was silently discarded with no mode change.
+STATUS-101 | GPIO Chip Opened via Fallback Path | The primary /dev/gpiochip4 path failed; gpiod_chip_open("/dev/gpiochip0") succeeded and returned a valid gpioChip handle for all subsequent pin operations.
+
+STATUS-102 | Terminal Configured for Raw Non-Blocking Input | On the first call to checkKeyboardInput(), tcsetattr() disabled ICANON and ECHO on stdin so individual keystrokes are available without waiting for Enter.
+
+STATUS-103 | stdin O_NONBLOCK Flag Set | fcntl() F_SETFL applied the O_NONBLOCK flag to stdin; getchar() will now return immediately with EOF instead of blocking when no input is available.
+
+STATUS-104 | Translation Keybind Dispatched | A translation key (W/S/A/D/E/Q) was matched in processMovementAction(); logKeyData() was called and both associated GPIO thruster pins were set to ON via setGPIOPin().
+
+STATUS-105 | Rotation Keybind Dispatched | A rotation key (I/K/U/O/J/L) was matched in processMovementAction(); logKeyData() was called and both associated GPIO thruster pins were set to ON via setGPIOPin().
+
+STATUS-106 | All 12 Thrusters Deactivated on Key Release | noInputCount reached the RELEASE_CYCLES threshold in the no-input else branch; all 12 GPIO pins were set to 0, currentKeyPressed was cleared, and noInputCount was reset. Also emitted by DTOManualTesting.cpp for the same condition.
+
+STATUS-107 | All 12 Thrusters Deactivated on Program Exit | The ESC exit path set all 12 GPIO pins to 0 via setGPIOPin() before closing the gpiod chip handle and returning; guarantees all thrusters are off on shutdown. Also emitted by DTOManualTesting.cpp for the same condition.
+
+STATUS-108 | GPIO Line Request Held for Startup Pulse | requestGPIOPin() returned a non-null line request handle for a pin during the startup sequence; the handle will be passed to releaseGPIORequest() after the sleep duration.
+
+STATUS-109 | Held GPIO Line Request Released After Pulse Duration | releaseGPIORequest() was called with a valid line request handle obtained from requestGPIOPin(); the GPIO pin returns to its default state and the line is freed.
+
+STATUS-110 | Startup Sequence Phase 1 Entered for Rack | The inner Phase 1 for-loop began for this rack connector; four individual 1-second ON/OFF pulses are about to execute on GPIO pins 0-3, 4-7, or 8-11.
+
+STATUS-111 | Startup Sequence Phase 2 Entered for Rack | The inner Phase 2 for-loop began for this rack connector; four double 0.5-second pulse pairs are about to execute on this rack's four GPIO pins.
+
+STATUS-112 | Duplicate GPIO Failure Entry Suppressed | During Phase 2 of the startup sequence, std::find confirmed the current gpioPin is already in failedGPIOPins; the duplicate push_back was skipped to keep failure records accurate.
+
+STATUS-113 | ESC Force Exit Triggered During Startup | An ESC byte was detected via checkKeyboardInput() at a Phase 1 or Phase 2 boundary check; force_exit was set to true, breaking the inner loops and skipping all remaining rack iterations.
+
+STATUS-114 | Returned to Menu from Operational Mode | The user pressed '0' while in Operational Mode; if currentKeyPressed was non-empty all 12 GPIO pins were first deactivated, then programMode was reset to 0 and displayMenu() was called.
+
+ERROR-100 | GPIO Chip Initialization Failed | Both gpiod_chip_open("/dev/gpiochip4") and the fallback gpiod_chip_open("/dev/gpiochip0") returned null; gpioChip remains null and all subsequent setGPIOPin() and requestGPIOPin() calls will return false or nullptr.
+
+ERROR-101 | GPIO Primary Path Failed: Fallback Initiated | gpiod_chip_open("/dev/gpiochip4") returned null; this error is logged before attempting the /dev/gpiochip0 fallback so the primary failure is traceable even if the fallback succeeds.
+
+ERROR-102 | GPIO Not Initialized: gpioChip is Null | setGPIOPin() or requestGPIOPin() was called but gpioChip is null because initGPIO() failed or was never called; the function returns false or nullptr immediately without attempting any libgpiod calls.
+
+ERROR-103 | GPIO Line Request Failed | gpiod_chip_request_lines() returned null for a specific pin offset inside setGPIOPin(); the pin could not be set to the desired value and the function returns false after freeing all allocated structs.
+
+ERROR-104 | GPIO Pin Request Failed During Startup Sequence | requestGPIOPin() returned null for a pin during Phase 1 or Phase 2 of the startup sequence; the pin number was added to failedGPIOPins for the final summary report.
+
+ERROR-105 | Unrecognized Menu Input Received | A character was received in Menu Mode that does not match '1', '2', or ESC (27); no mode change is performed and the character is discarded silently.
 
 
 DTOMANUALTESTING.CPP SPECIFIC CODES (2XX)
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
-STATUS-200, Keybind Log File Reset and Header Written at Session Start, Keybind_Log.csv was opened with ios::trunc at program launch, erasing any previous session data, and the CSV header row was written.
-STATUS-201, Activity Log File Reset and Header Written at Session Start, Activity_Log.csv was opened with ios::trunc at program launch, erasing any previous session data, and the CSV header row was written.
-STATUS-202, Startup Sequence Mode Entered from Menu, The user pressed '1' in Menu Mode; isStartupMode was set to true and the simulated rack connector test sequence began.
-STATUS-203, Operational Mode Entered from Menu, The user pressed '2' in Menu Mode; isOperationalMode was set to true and printOperationalHeader() was called to display the mode interface.
-STATUS-204, Returned to Menu Mode from Operational Mode via Input '0', The user pressed '0' while in Operational Mode; isOperationalMode was set to false, time_counter and last_key_fired were reset, and printMenu() was called.
-STATUS-205, Caps Lock State Sampled: Continuous Mode Detected, GetKeyState(VK_CAPITAL) returned a state with the low bit clear; currentMode was set to 'C' for this polling iteration.
-STATUS-206, Caps Lock State Sampled: Pulse Mode Detected, GetKeyState(VK_CAPITAL) returned a state with the low bit set; currentMode was set to 'P' for this polling iteration.
-STATUS-207, Active Virtual Key Code Detected in Operational Mode Polling Loop, GetAsyncKeyState(i) returned a high bit set for a non-modifier virtual key code during the 0x08-to-0xFE scan loop.
-STATUS-208, Pulse Mode New Key Accepted: Action Dispatched, The current_key_id did not match last_key_fired in Pulse Mode; processAction was called and last_key_fired was updated to the new key ID.
-STATUS-209, Pulse Mode Repeat Detected: Idle Entry Logged Instead, The current_key_id matched last_key_fired in Pulse Mode; logData was called with type 'F', direction "--", and keyname "-" instead of firing the action again.
-STATUS-210, No Active Keys Detected: Pulse Tracking Reset and Idle Logged, The virtual key scan loop found no active non-modifier keys; last_key_fired was cleared and logData was called with the idle fault entry.
-STATUS-211, Virtual Key Code Successfully Resolved to Human-Readable Name, getVirtualKeyName() matched the vkCode to a named key (Space, Shift, arrow, modifier, alphanumeric) and returned the string name.
-STATUS-212, Translation Action Dispatched: Direction Code Written to Log, processAction matched a translation virtual key (W/S/A/D/E/Q) and called logData with type 'T' and the corresponding direction code.
-STATUS-213, Rotation Action Dispatched: Direction Code Written to Log, processAction matched a rotation virtual key (I/K/O/U/L/J) and called logData with type 'R' and the corresponding direction code.
-STATUS-214, Startup Sequence Phase 1 Tick: GPIO Simulated ON (1-Second Pulse), A Phase 1 ON event was printed to console and logged as STATUS-016 before the 1000ms sleep for a specific GPIO pin.
-STATUS-215, Startup Sequence Phase 1 Tick: GPIO Simulated OFF (1-Second Pulse), A Phase 1 OFF event was printed to console and logged as STATUS-017 after the 1000ms ON sleep for a specific GPIO pin.
-STATUS-216, Startup Sequence Phase 2 Tick: GPIO Simulated ON (0.5-Second Pulse), A Phase 2 ON event was printed to console and logged as STATUS-016 before the 500ms sleep for a specific GPIO pin pulse.
-STATUS-217, Startup Sequence Phase 2 Tick: GPIO Simulated OFF (0.5-Second Pulse), A Phase 2 OFF event was printed to console and logged as STATUS-017 after the 500ms ON sleep for a specific GPIO pin pulse.
-STATUS-218, Rack Connector All Phases Completed: Test Pass Confirmed, Both Phase 1 and Phase 2 completed for a specific rack connector without ESC interruption; STATUS-015 was logged and the pass message was printed.
-STATUS-219, time_counter Reset to 0.0 on Return to Menu Mode, When the user returned to Menu Mode from Operational Mode, time_counter was set to 0.0 to reset elapsed time tracking for the next session.
-STATUS-220, last_key_fired Reset to Empty String on Return to Menu Mode, When the user returned to Menu Mode from Operational Mode, last_key_fired was cleared to prevent stale Pulse Mode state from persisting.
-STATUS-221, Input Character Re-Routed from _getch to processAction After '0' Check, A _getch character in Operational Mode was not '0', so it was converted to uppercase virtual key code and passed directly to processAction.
-STATUS-222, Modifier Key Skipped During Virtual Key Scan Loop, During the GetAsyncKeyState scan from 0x08 to 0xFE, a VK_CONTROL, VK_MENU, VK_CAPITAL, VK_LCONTROL, or VK_RCONTROL key was active but was explicitly skipped.
-STATUS-223, Keyboard Input Buffer Flushed After Active Key Processed, After processAction completed for an active key in Operational Mode, the while(_kbhit()) loop drained any remaining buffered input to prevent duplicate processing.
+STATUS-200 | Translation Action Simulated | A translation key (W/S/A/D/E/Q) was matched in processMovementAction(); logKeyData() was called and the corresponding [SIM] GPIO pair console output was written to stdout in place of real GPIO activation.
 
-ERROR-200, Startup Failure: Keybind_Log.csv Could Not Be Opened for Reset, The ios::trunc open of Keybind_Log.csv at program start failed; execution cannot continue and the program prints the path and returns exit code 1.
-ERROR-201, Startup Failure: Activity_Log.csv Could Not Be Opened for Reset, The ios::trunc open of Activity_Log.csv at program start failed; execution cannot continue and the program prints the path and returns exit code 1.
-ERROR-202, Shutdown Failure: Activity Log Could Not Be Finalized on Exit, The final append to Activity_Log.csv after the main loop exited failed; the STATUS-003 shutdown entry was not written and the error is printed to stderr.
-ERROR-203, System Key Ghosting Detected: Multiple Simultaneous Keys Masked, Hardware key ghosting prevented one or more simultaneous key states from being reported by GetAsyncKeyState due to keyboard matrix limitations.
-ERROR-204, Mode Switch Denied: Must Exit Current Sub-Mode Before Switching, An attempt was made to enter a new mode while already in a sub-mode (isStartupMode or isOperationalMode is true) that requires explicit exit first.
-ERROR-205, _getch Character Consumed Before processAction Could Use It, A character read via _getch() in the Operational Mode _kbhit branch was neither '0' nor a printable ASCII character and could not be re-routed to processAction.
-ERROR-206, Virtual Key Code Out of Expected Scan Range (0x08 to 0xFE), A virtual key code was detected or referenced that falls outside the 0x08 to 0xFE range scanned by the GetAsyncKeyState loop in Operational Mode.
+STATUS-201 | Rotation Action Simulated | A rotation key (I/K/U/O/J/L) was matched in processMovementAction(); logKeyData() was called and the corresponding [SIM] GPIO pair console output was written to stdout in place of real GPIO activation.
+
+STATUS-202 | All Simulated GPIO Deactivated | [SIM] All GPIO OFF was written to stdout when the key release threshold was reached or when the user pressed '0' to exit Operational Mode; mirrors the DTOController hardware deactivation behavior.
+
+STATUS-203 | Startup Sequence Simulated Successfully | All three rack connector tests completed the simulated phase loops without ESC interruption; the hardcoded "All 12/12 GPIO Successfully Activated" message was printed and STATUS-013 was logged.
+
+STATUS-204 | ESC Detected via GetAsyncKeyState During Startup | GetAsyncKeyState(VK_ESCAPE) returned a value with the high bit set inside a Phase 1 or Phase 2 boundary check; force_exit was set to true and remaining rack iterations were skipped.
+
+ERROR-200 | Windows mkdir Failed to Create Log Directory | The system("mkdir ./Logs/ 2>nul") command returned a non-zero exit code; the Logs/ directory may not exist and subsequent log file opens may fail.
 
 
 COMPUTATIONS.PY SPECIFIC CODES (3XX)
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
-STATUS-300, Script Initialization Started: log_event System Online, The first log_event call has executed successfully, confirming the logging function is operational and the script has begun its initialization sequence.
-STATUS-301, Configuration and Mapping Variables Loaded: step_increment and rot_increment Set, All configuration constants including step_increment, rot_increment, base_translation, rotational_moves, and dof_colors dictionaries have been defined and are ready for use.
-STATUS-302, File Path Validation Successful: os.path.exists Confirmed, os.path.exists() returned True for the specified CSV file path, confirming the file is accessible before attempting to load it with pandas.
-STATUS-303, CSV Data Loaded into Pandas DataFrame: Row Count Verified, pd.read_csv() successfully parsed the file and both required columns (Time(s) and Direction) were confirmed present; the total row count is included in the description.
-STATUS-304, 3D Trajectory Chunk Generation Phase Started: Total Chunk Count Calculated, The interval and max_time values were used to calculate num_chunks and the chunk generation for loop is about to begin.
-STATUS-305, Processing Started for Specific 3D Chunk: Time Window Defined, The chunk loop entered a new iteration; start_t and end_t were computed and the DataFrame was filtered to the chunk's time window.
-STATUS-306, 3D Chunk Skipped: Filtered DataFrame for Time Window is Empty, After filtering the DataFrame to the chunk's time window, chunk_df.empty returned True and the iteration was skipped via continue.
-STATUS-307, 3D Trajectory Plot Rendered and Displayed to User, plt.show() was called for a chunk's completed 3D figure; execution is blocked until the user closes the plot window.
-STATUS-308, 3D Trajectory Plot Closed by User: Proceeding to Next Chunk or Phase, The user closed the chunk's 3D plot window; plt.show() returned and execution resumed at the next chunk iteration or the full telemetry phase.
-STATUS-309, Full Telemetry Data Processing Phase Started: Deduplication and Sort Applied, drop_duplicates and sort_values were applied to the full DataFrame to produce a clean time-ordered telemetry series for global integration.
-STATUS-310, Global Trajectory Integration Complete: All Position and Attitude Arrays Built, The full_directions loop finished; positions_arr and attitudes_arr have been assembled covering the entire session timeline.
-STATUS-311, Velocity and Acceleration Derivative Arrays Calculated via numpy.gradient, np.gradient was applied to pos_x, pos_y, pos_z using full_times as spacing to produce vel and acc arrays for all three axes.
-STATUS-312, 2D Telemetry Plot Generation Phase Started, All prerequisite arrays (position, attitude, velocity, acceleration) are ready and the four sequential 2D plot generation calls are beginning.
-STATUS-313, Absolute Position Plot (X/Y/Z vs Time) Displayed to User, The Absolute Position figure with pos_x, pos_y, pos_z plotted against full_times was completed and plt.show() was called.
-STATUS-314, Attitude Plot (Roll/Pitch/Yaw vs Time) Displayed to User, The Attitude figure with roll_arr, pitch_arr, yaw_arr in degrees plotted against full_times was completed and plt.show() was called.
-STATUS-315, Linear Velocity Plot (Vx/Vy/Vz vs Time) Displayed to User, The Linear Velocity figure with vel_x, vel_y, vel_z plotted against full_times was completed and plt.show() was called.
-STATUS-316, Linear Acceleration Plot (Ax/Ay/Az vs Time) Displayed to User, The Linear Acceleration figure with acc_x, acc_y, acc_z plotted against full_times was completed and plt.show() was called.
-STATUS-317, Script Execution Completed Successfully: All Plots Closed, All chunk plots and all four 2D telemetry plots were displayed and closed by the user; log_event STATUS-317 is the final log entry before the script exits.
-STATUS-318, Single-Axis Rotation Matrix Computed for Current Move, get_rotation_matrix() was called for a rotation direction code and returned a valid 3x3 numpy array for the specified axis and angle.
-STATUS-319, Euler Angles Extracted from Rotation Matrix: Roll/Pitch/Yaw in Degrees, rotation_matrix_to_euler() completed and returned a numpy array of [roll, pitch, yaw] in degrees from the current cumulative rotation matrix.
-STATUS-320, Time-Tick Marker Placed on 3D Plot at Scheduled Interval, curr_time reached or exceeded next_tick_time; a black scatter marker and text label were drawn at the current position and next_tick_time was advanced by TICK_INTERVAL.
-STATUS-321, Final Absolute Last-Point Marker Placed on 3D Plot, is_absolute_last_point was True and no tick marker had already been drawn; a black scatter marker with the exact curr_time label was placed at the final trajectory point.
-STATUS-322, 3D Plot Axis Limits Computed from Point Cloud Bounding Box, The bounding box of all accumulated trajectory points was computed, max_range was derived, midpoints were calculated, and set_xlim/ylim/zlim were applied with a 10% buffer.
-STATUS-323, max_range Defaulted to 1.0: All Points Collapsed to Single Location, The computed max_range was 0.0 because all trajectory points are identical; it was overridden to 1.0 to prevent zero-range axis limits from collapsing the 3D plot.
-STATUS-324, Rotation Move Processed: Current Rotation Matrix Updated by Pre-Multiplication, A direction code was found in rotational_moves; get_rotation_matrix returned a new rotation matrix which was pre-multiplied into current_rot_matrix via np.dot.
-STATUS-325, Translation Move Processed: World-Frame Displacement Applied to Global Position, A direction code was looked up in base_translation; the body-frame vector was rotated to world frame via np.dot with current_rot_matrix and added to current_pos.
-STATUS-326, Unknown Direction Code Encountered in 3D Chunk: Defaulted to base_translation '--', A direction value from the chunk DataFrame was not found in rotational_moves and was not a key in base_translation; the '--' fallback (positive X step) was used.
-STATUS-327, Unknown Direction Code Encountered in Full Telemetry Pass: Defaulted to Idle Step, A direction value from the full telemetry DataFrame was not found in rotational_moves and was not a recognized translation code; the '--' fallback was applied.
-STATUS-328, Gimbal Lock Singularity Detected: Euler Fallback Applied for Roll and Pitch, rotation_matrix_to_euler detected sy < 1e-6 indicating a near-singular rotation matrix; the alternate atan2 expressions were used for roll and pitch and yaw was set to 0.
-STATUS-329, 3D Plot Pane Colors Set to White for All Three Axes, ax.xaxis/yaxis/zaxis.set_pane_color was called with RGBA (1, 1, 1, 1) for each axis pane to produce a clean white background on the 3D figure.
-STATUS-330, 3D Plot View Angle Initialized: elev=20 azim=-50, ax.view_init was called with elev=20 and azim=-50 to set the default camera angle for the 3D trajectory chunk plot.
+STATUS-300 | Script Initialization Started | The first log_event() call executed successfully, confirming the logging function is operational; the script is entering its configuration and variable setup phase.
 
-ERROR-300, File Access Failed: Specified Path Does Not Exist, os.path.exists() returned False for the configured file_path value; a FileNotFoundError is raised after logging and the except block silently passes since it was already logged.
-ERROR-301, Data Parsing Failed: Required Column Missing from CSV (Time(s) or Direction), pd.read_csv succeeded but the resulting DataFrame is missing the 'Time(s)' or 'Direction' column; a KeyError is raised after logging with the missing column name.
-ERROR-302, Mathematical or Integration Error During 3D Chunk Processing, An exception was raised inside the per-chunk movement integration loop; the error message is included in the description and the exception is re-raised to the outer handler.
-ERROR-303, Mathematical or Integration Error During Full Telemetry Calculation, An exception was raised during the full-dataset integration or np.gradient derivative calculation; the error message is included and the exception is re-raised.
-ERROR-304, Unexpected General Execution Error: Caught by Outer Exception Handler, An exception that is not FileNotFoundError or KeyError reached the outermost except block; the error message is logged and execution ends.
+STATUS-301 | Configuration Variables Loaded | All configuration constants and lookup structures have been defined: step_increment, rot_increment (in radians), base_translation dict, rotational_moves dict, and dof_colors dict are all ready for use.
+
+STATUS-302 | File Path Validated | os.path.exists() returned True for the configured file_path value, confirming the Keybind CSV is accessible before attempting pd.read_csv().
+
+STATUS-303 | CSV Data Loaded | pd.read_csv() parsed the file successfully; both the Time(s) and Direction columns were confirmed present in df.columns, and the Time(s) column was converted to float via parse_time_value(). Total row count is logged.
+
+STATUS-304 | 3D Chunk Phase Started | The full trajectory segment list was built by iterating all Type-T movement rows; total_chunks was calculated from math.ceil(max_time / CHUNK_DURATION) and the per-chunk for-loop is about to begin.
+
+STATUS-305 | Processing Chunk N | The chunk for-loop entered a new iteration; t_start and t_end were computed, and the segment clipping loop is filtering and trimming all segments that overlap this time window.
+
+STATUS-306 | Chunk Skipped | After the segment clipping loop, chunk_segs is empty because no segments overlap this chunk's [t_start, t_end] window; the iteration continues to the next chunk via continue.
+
+STATUS-307 | 3D Trajectory Chunk Saved to PNG | plt.savefig() completed writing the chunk figure to Images/3D_Chunk_NN.png at 150 dpi; plt.close(fig) was called immediately after to release the figure from memory.
+
+STATUS-308 | 3D Chunk Figure Initialized | plt.figure() and add_subplot(111, projection='3d') were called for this chunk; the Axes3D object is ready for pane color setup and trajectory plotting.
+
+STATUS-309 | Full Telemetry Processing Phase Started | The telemetry processing block was entered; Type-T rows were deduplicated on Time(s) and sorted ascending so the integration loop will process events in correct chronological order.
+
+STATUS-310 | Global Trajectory Integration Complete | The full_directions for-loop finished processing all deduplicated movement rows; positions_arr and attitudes_arr (Roll/Pitch/Yaw in degrees) have been assembled covering the entire session timeline.
+
+STATUS-311 | Velocity and Acceleration Arrays Computed | numpy.gradient() was applied to pos_x, pos_y, and pos_z using full_times as the non-uniform spacing argument, producing vel_x/y/z; a second gradient pass on the velocity arrays produced acc_x/y/z.
+
+STATUS-312 | 2D Telemetry Plot Phase Started | All prerequisite arrays (positions, attitudes, velocities, accelerations) are fully built; the four sequential 2D plot generation and save calls are beginning.
+
+STATUS-313 | Absolute Position Plot Saved | The Absolute Position figure with pos_x, pos_y, pos_z plotted against full_times was completed; plt.savefig() wrote Images/Position.png at 150 dpi and the figure was closed.
+
+STATUS-314 | Attitude Plot Saved | The Attitude figure with roll_arr, pitch_arr, yaw_arr in degrees plotted against full_times was completed; plt.savefig() wrote Images/Attitude.png at 150 dpi and the figure was closed.
+
+STATUS-315 | Linear Velocity Plot Saved | The Linear Velocity figure with vel_x, vel_y, vel_z plotted against full_times was completed; plt.savefig() wrote Images/Velocity.png at 150 dpi and the figure was closed.
+
+STATUS-316 | Linear Acceleration Plot Saved | The Linear Acceleration figure with acc_x, acc_y, acc_z plotted against full_times was completed; plt.savefig() wrote Images/Acceleration.png at 150 dpi and the figure was closed.
+
+STATUS-317 | Script Execution Completed Successfully | All chunk PNG files and all four 2D telemetry PNG files have been written to the Images directory; this is the final log_event() call before the script exits.
+
+STATUS-318 | Full Trajectory Segment List Built | The segment construction for-loop over all Type-T movement rows completed; total segment count and source row count are logged before the per-chunk plotting loop begins.
+
+STATUS-319 | Chunk Segments Prepared | The segment clipping loop for this chunk finished; cross-boundary segments were trimmed so clip_fp and clip_tp fall exactly on the chunk boundaries, and the total number of segments in this window is logged.
+
+STATUS-320 | Tick Label Placed on 3D Plot | interp_pos_at() returned a valid position for this tick time; ax.text() was called with the interpolated coordinates offset by text_offset to place the time string label on the 3D figure.
+
+STATUS-321 | All Tick Labels Placed for Chunk | The tick label while-loop completed for this chunk without raising an exception; all time labels from the first valid tick up to min(t_end, max_time) have been written to the figure.
+
+STATUS-322 | 3D Axis Limits Applied | The bounding box of all_chunk_pts was computed via pts_arr; max_range, mid_x, mid_y, mid_z, and buf were derived, and set_xlim(), set_ylim(), set_zlim() were called to produce a uniform cubic axis space.
+
+STATUS-323 | max_range Defaulted to 1.0 | The computed max_range was 0.0 because all trajectory points in this chunk are identical (vehicle did not move); it was overridden to 1.0 to prevent zero-extent axis limits from collapsing the 3D plot.
+
+STATUS-324 | Full Telemetry Rotation Move Processed | A direction code was matched in rotational_moves during the full telemetry integration loop; get_rotation_matrix() produced a new rotation matrix that was pre-multiplied into global_rot_matrix via np.dot().
+
+STATUS-325 | Full Telemetry Translation Move Processed | A direction code was matched in base_translation during the full telemetry integration loop; the body-frame vector was rotated to world frame via np.dot(global_rot_matrix, base_move_vec) and added to global_pos.
+
+STATUS-326 | Gimbal Lock Detected | rotation_matrix_to_euler() computed sy < 1e-6, indicating a near-singular rotation matrix; the alternate fallback atan2 expressions were used for roll and pitch and yaw was forced to 0 degrees.
+
+STATUS-327 | 3D Plot Pane Colors Set to White | ax.xaxis.pane.set_facecolor('white'), ax.yaxis.pane.set_facecolor('white'), and ax.zaxis.pane.set_facecolor('white') were called to produce a clean white background on all three axis panes.
+
+STATUS-328 | 3D Plot View Angle Initialized | ax.view_init(elev=20, azim=-50) was called to set the default camera perspective for this chunk's 3D trajectory figure before saving to PNG.
+
+ERROR-300 | File Access Failed | os.path.exists() returned False for the configured file_path value; a FileNotFoundError is raised after logging and the outermost except FileNotFoundError handler silently passes since the error was already recorded.
+
+ERROR-301 | Data Parsing Failed: Column Missing | pd.read_csv() succeeded but the resulting DataFrame is missing the Time(s) or Direction column; a KeyError is raised after logging and the outermost except KeyError handler silently passes.
+
+ERROR-302 | 3D Chunk Processing Error | An exception was raised inside the chunk generation try block during segment building, clipping, or matplotlib figure operations; the error message is included in the description and the exception is re-raised to the outer handler.
+
+ERROR-303 | Telemetry Integration Error | An exception was raised during the full-dataset integration for-loop or during the numpy.gradient derivative calculation; the error message is included and the exception is re-raised to the outer handler.
+
+ERROR-304 | Unexpected General Error | An exception that is neither FileNotFoundError nor KeyError reached the outermost except block; the error message is logged and script execution ends without further processing.
 
 
 ================================================================================================================================================
 END OF CODE REFERENCE
-Total Codes: 57 STATUS codes | 29 ERROR codes | 86 total
+Total Codes: 47 STATUS codes | 22 ERROR codes | 69 total
+Breakdown: 20 shared 0XX | 15 DTOController 1XX | 10 DTOManualTesting 2XX | 29 computations.py 3XX | 7 shared errors | 8 controller errors | 1 manual testing error | 6 computations errors
 ================================================================================================================================================
