@@ -1,6 +1,5 @@
-
 # Overview
-The DTO-Project/Lecture folder is responsible for holding all lecture material for the project. 
+The DTO-Project/Lecture folder is responsible for holding all lecture and procedural material related to the project, covering the DTO mission, GPIO hardware, and physical harness construction.
 
 # File Tree
 ```
@@ -13,8 +12,7 @@ DTO-Project/
 ```
 
 ## File Tree Description
-- **DTO_Lecture.pdf** Contains information about the DTO project.
-- **GPIO_Lecture.pdf** Contains information about GPIO.
-- **Harness_Build_Procedure.pdf** Contains information about the harness build procedure.
-- **README.md** General overview of project folder. 
-
+- **DTO_Lecture.pdf** Lecture material covering the Design Test Objective, mission goals, and drone system overview.
+- **GPIO_Lecture.pdf** Lecture material covering GPIO fundamentals, libgpiod usage, and Raspberry Pi 5 hardware interfacing.
+- **Harness_Build_Procedure.pdf** Step-by-step procedure for physically constructing the thruster wiring harness used in the DTO hardware setup.
+- **README.md** General overview of project folder.

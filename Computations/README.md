@@ -1,9 +1,5 @@
-
-
 # Overview
-The DTO-Project/Computations folder is responsible for providing all post data analysis. 
-
-# Info (Such as current information like links, description, notes, ...)
+The DTO-Project/Computations folder is responsible for providing all post-session data analysis, including 3D trajectory visualization and 2D telemetry plots derived from controller log output.
 
 # File Tree
 ```
@@ -14,6 +10,5 @@ DTO-Project/
 ```
 
 ## File Tree Description
-- **compuation.py** EMPTY DOCUMENT.
-- **README.md** General overview of project folder. 
-
+- **compuation.py** Reads Keybind_Log.csv output from DTOController or DTOManualTesting, reconstructs a 6-DOF trajectory via sequential rotation matrices and body-frame translations, generates segmented 3D trajectory chunk PNGs, and produces four 2D telemetry plots (position, attitude, velocity, acceleration) saved to the Images/ directory.
+- **README.md** General overview of project folder.
