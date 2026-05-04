@@ -90,9 +90,9 @@ def log_event(code, message):
 
 log_event("STATUS-300", "Script Initialization Started.")
 
-file_path = r'C:\Users\maxwe\OneDrive\Desktop\GitHub Repos\DTO-Project\Controller\Logs\Keybind_Logs.csv'
+file_path = r'C:\Users\maxwe\OneDrive\Desktop\DTO-Project\Controller\Logs\Keybind_Logs.csv'
 filename = os.path.basename(file_path)
-images_dir = r'C:\Users\maxwe\OneDrive\Desktop\GitHub Repos\DTO-Project\Images'
+images_dir = r'C:\Users\maxwe\OneDrive\Desktop\DTO-Project\Images'
 
 TICK_INTERVAL = 5.0 
 

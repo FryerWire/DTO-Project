@@ -1,7 +1,7 @@
 # DTO Project
 Spring Semester Senior Design GOAT Drone Design Test Objective Code Repository
 
-**Code Written By:** Maxwell Seery and Stren
+**Code Written By:** Maxwell Seery
 
 ---
 

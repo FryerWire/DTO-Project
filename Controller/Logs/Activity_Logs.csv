@@ -1,702 +1,1923 @@
-0.00,STATUS-103,Directory Created: Log storage ready
-0.00,STATUS-101,Path Validated: File Open Successful
-0.00,STATUS-000,Startup Successful: Files Ready
-0.00,STATUS-001,Session Started
-0.00,STATUS-402,UI Redraw: Menu refreshed
-0.00,STATUS-103,Directory Created: Log storage ready
-0.00,STATUS-101,Path Validated: File Open Successful
-0.00,STATUS-000,Startup Successful: Files Ready
-0.00,STATUS-001,Session Started
-0.00,STATUS-402,UI Redraw: Menu refreshed
-0.00,STATUS-300,Mode Changed: Operational Mode Active
-0.00,STATUS-402,UI Redraw: Menu refreshed
-0.20,ERROR-301,System Ghosting: Non-printable scan code ignored
-1.60,STATUS-03,Key Registered: W
-1.60,STATUS-304,GPIO 0 ON (Simulated)
-1.60,STATUS-304,GPIO 8 ON (Simulated)
-3.10,STATUS-03,Key Registered: W
-3.10,STATUS-304,GPIO 0 ON (Simulated)
-3.10,STATUS-304,GPIO 8 ON (Simulated)
-3.50,STATUS-03,Key Registered: A
-3.50,STATUS-304,GPIO 1 ON (Simulated)
-3.50,STATUS-304,GPIO 7 ON (Simulated)
-3.70,STATUS-03,Key Registered: S
-3.70,STATUS-304,GPIO 5 ON (Simulated)
-3.70,STATUS-304,GPIO 11 ON (Simulated)
-3.90,STATUS-03,Key Registered: D
-3.90,STATUS-304,GPIO 2 ON (Simulated)
-3.90,STATUS-304,GPIO 6 ON (Simulated)
-4.00,STATUS-03,Key Registered: W
-4.00,STATUS-304,GPIO 0 ON (Simulated)
-4.00,STATUS-304,GPIO 8 ON (Simulated)
-4.20,STATUS-03,Key Registered: A
-4.20,STATUS-304,GPIO 1 ON (Simulated)
-4.20,STATUS-304,GPIO 7 ON (Simulated)
-4.30,STATUS-03,Key Registered: S
-4.30,STATUS-304,GPIO 5 ON (Simulated)
-4.30,STATUS-304,GPIO 11 ON (Simulated)
-4.40,STATUS-03,Key Registered: D
-4.40,STATUS-304,GPIO 2 ON (Simulated)
-4.40,STATUS-304,GPIO 6 ON (Simulated)
-4.50,STATUS-03,Key Registered: W
-4.50,STATUS-304,GPIO 0 ON (Simulated)
-4.50,STATUS-304,GPIO 8 ON (Simulated)
-4.60,STATUS-03,Key Registered: A
-4.60,STATUS-304,GPIO 1 ON (Simulated)
-4.60,STATUS-304,GPIO 7 ON (Simulated)
-4.70,STATUS-03,Key Registered: S
-4.70,STATUS-304,GPIO 5 ON (Simulated)
-4.70,STATUS-304,GPIO 11 ON (Simulated)
-4.80,STATUS-03,Key Registered: D
-4.80,STATUS-304,GPIO 2 ON (Simulated)
-4.80,STATUS-304,GPIO 6 ON (Simulated)
-5.00,STATUS-03,Key Registered: W
-5.00,STATUS-304,GPIO 0 ON (Simulated)
-5.00,STATUS-304,GPIO 8 ON (Simulated)
-5.10,STATUS-03,Key Registered: A
-5.10,STATUS-304,GPIO 1 ON (Simulated)
-5.10,STATUS-304,GPIO 7 ON (Simulated)
-5.20,STATUS-03,Key Registered: S
-5.20,STATUS-304,GPIO 5 ON (Simulated)
-5.20,STATUS-304,GPIO 11 ON (Simulated)
-5.30,STATUS-03,Key Registered: D
-5.30,STATUS-304,GPIO 2 ON (Simulated)
-5.30,STATUS-304,GPIO 6 ON (Simulated)
-5.60,STATUS-300,Mode Changed: Pulse Mode (Caps Lock ON)
-6.30,STATUS-300,Mode Changed: Continuous Mode (Caps Lock OFF)
-6.50,STATUS-03,Key Registered: W
-6.50,STATUS-304,GPIO 0 ON (Simulated)
-6.50,STATUS-304,GPIO 8 ON (Simulated)
-6.70,STATUS-300,Mode Changed: Pulse Mode (Caps Lock ON)
-6.80,STATUS-03,Key Registered: S
-6.80,STATUS-304,GPIO 5 ON (Simulated)
-6.80,STATUS-304,GPIO 11 ON (Simulated)
-7.10,STATUS-03,Key Registered: D
-7.10,STATUS-304,GPIO 2 ON (Simulated)
-7.10,STATUS-304,GPIO 6 ON (Simulated)
-7.20,STATUS-03,Key Registered: W
-7.20,STATUS-304,GPIO 0 ON (Simulated)
-7.20,STATUS-304,GPIO 8 ON (Simulated)
-7.30,STATUS-03,Key Registered: A
-7.30,STATUS-304,GPIO 1 ON (Simulated)
-7.30,STATUS-304,GPIO 7 ON (Simulated)
-7.40,STATUS-03,Key Registered: S
-7.40,STATUS-304,GPIO 5 ON (Simulated)
-7.40,STATUS-304,GPIO 11 ON (Simulated)
-7.50,STATUS-03,Key Registered: D
-7.50,STATUS-304,GPIO 2 ON (Simulated)
-7.50,STATUS-304,GPIO 6 ON (Simulated)
-7.70,STATUS-300,Mode Changed: Continuous Mode (Caps Lock OFF)
-9.10,STATUS-03,Key Registered: W
-9.10,STATUS-304,GPIO 0 ON (Simulated)
-9.10,STATUS-304,GPIO 8 ON (Simulated)
-9.30,STATUS-03,Key Registered: D
-9.30,STATUS-304,GPIO 2 ON (Simulated)
-9.30,STATUS-304,GPIO 6 ON (Simulated)
-9.50,STATUS-03,Key Registered: S
-9.50,STATUS-304,GPIO 5 ON (Simulated)
-9.50,STATUS-304,GPIO 11 ON (Simulated)
-9.60,STATUS-03,Key Registered: A
-9.60,STATUS-304,GPIO 1 ON (Simulated)
-9.60,STATUS-304,GPIO 7 ON (Simulated)
-9.70,STATUS-03,Key Registered: W
-9.70,STATUS-304,GPIO 0 ON (Simulated)
-9.70,STATUS-304,GPIO 8 ON (Simulated)
-9.80,STATUS-03,Key Registered: D
-9.80,STATUS-304,GPIO 2 ON (Simulated)
-9.80,STATUS-304,GPIO 6 ON (Simulated)
-10.00,STATUS-03,Key Registered: S
-10.00,STATUS-304,GPIO 5 ON (Simulated)
-10.00,STATUS-304,GPIO 11 ON (Simulated)
-10.40,ERROR-03,Incorrect Keybind
-10.80,ERROR-03,Incorrect Keybind
-11.00,ERROR-03,Incorrect Keybind
-11.20,ERROR-03,Incorrect Keybind
-11.40,ERROR-03,Incorrect Keybind
-12.60,ERROR-03,Incorrect Keybind
-12.80,ERROR-03,Incorrect Keybind
-13.20,STATUS-03,Key Registered: E
-13.20,STATUS-304,GPIO 4 ON (Simulated)
-13.20,STATUS-304,GPIO 10 ON (Simulated)
-14.10,STATUS-03,Key Registered: E
-14.10,STATUS-304,GPIO 4 ON (Simulated)
-14.10,STATUS-304,GPIO 10 ON (Simulated)
-14.40,STATUS-03,Key Registered: W
-14.40,STATUS-304,GPIO 0 ON (Simulated)
-14.40,STATUS-304,GPIO 8 ON (Simulated)
-15.10,STATUS-03,Key Registered: A
-15.10,STATUS-304,GPIO 1 ON (Simulated)
-15.10,STATUS-304,GPIO 7 ON (Simulated)
-15.20,STATUS-03,Key Registered: S
-15.20,STATUS-304,GPIO 5 ON (Simulated)
-15.20,STATUS-304,GPIO 11 ON (Simulated)
-15.30,STATUS-03,Key Registered: D
-15.30,STATUS-304,GPIO 2 ON (Simulated)
-15.30,STATUS-304,GPIO 6 ON (Simulated)
-15.40,STATUS-03,Key Registered: W
-15.40,STATUS-304,GPIO 0 ON (Simulated)
-15.40,STATUS-304,GPIO 8 ON (Simulated)
-15.60,STATUS-03,Key Registered: A
-15.60,STATUS-304,GPIO 1 ON (Simulated)
-15.60,STATUS-304,GPIO 7 ON (Simulated)
-15.70,STATUS-03,Key Registered: S
-15.70,STATUS-304,GPIO 5 ON (Simulated)
-15.70,STATUS-304,GPIO 11 ON (Simulated)
-15.80,STATUS-03,Key Registered: D
-15.80,STATUS-304,GPIO 2 ON (Simulated)
-15.80,STATUS-304,GPIO 6 ON (Simulated)
-15.90,STATUS-03,Key Registered: W
-15.90,STATUS-304,GPIO 0 ON (Simulated)
-15.90,STATUS-304,GPIO 8 ON (Simulated)
-16.10,STATUS-03,Key Registered: A
-16.10,STATUS-304,GPIO 1 ON (Simulated)
-16.10,STATUS-304,GPIO 7 ON (Simulated)
-16.20,STATUS-03,Key Registered: S
-16.20,STATUS-304,GPIO 5 ON (Simulated)
-16.20,STATUS-304,GPIO 11 ON (Simulated)
-16.30,STATUS-03,Key Registered: D
-16.30,STATUS-304,GPIO 2 ON (Simulated)
-16.30,STATUS-304,GPIO 6 ON (Simulated)
-16.40,STATUS-03,Key Registered: W
-16.40,STATUS-304,GPIO 0 ON (Simulated)
-16.40,STATUS-304,GPIO 8 ON (Simulated)
-16.60,STATUS-03,Key Registered: A
-16.60,STATUS-304,GPIO 1 ON (Simulated)
-16.60,STATUS-304,GPIO 7 ON (Simulated)
-16.70,STATUS-03,Key Registered: S
-16.70,STATUS-304,GPIO 5 ON (Simulated)
-16.70,STATUS-304,GPIO 11 ON (Simulated)
-16.80,STATUS-03,Key Registered: D
-16.80,STATUS-304,GPIO 2 ON (Simulated)
-16.80,STATUS-304,GPIO 6 ON (Simulated)
-16.90,STATUS-03,Key Registered: W
-16.90,STATUS-304,GPIO 0 ON (Simulated)
-16.90,STATUS-304,GPIO 8 ON (Simulated)
-17.10,STATUS-03,Key Registered: A
-17.10,STATUS-304,GPIO 1 ON (Simulated)
-17.10,STATUS-304,GPIO 7 ON (Simulated)
-17.20,STATUS-03,Key Registered: S
-17.20,STATUS-304,GPIO 5 ON (Simulated)
-17.20,STATUS-304,GPIO 11 ON (Simulated)
-17.30,STATUS-03,Key Registered: D
-17.30,STATUS-304,GPIO 2 ON (Simulated)
-17.30,STATUS-304,GPIO 6 ON (Simulated)
-17.50,STATUS-03,Key Registered: W
-17.50,STATUS-304,GPIO 0 ON (Simulated)
-17.50,STATUS-304,GPIO 8 ON (Simulated)
-17.60,STATUS-03,Key Registered: A
-17.60,STATUS-304,GPIO 1 ON (Simulated)
-17.60,STATUS-304,GPIO 7 ON (Simulated)
-17.80,STATUS-03,Key Registered: S
-17.80,STATUS-304,GPIO 5 ON (Simulated)
-17.80,STATUS-304,GPIO 11 ON (Simulated)
-17.90,STATUS-03,Key Registered: D
-17.90,STATUS-304,GPIO 2 ON (Simulated)
-17.90,STATUS-304,GPIO 6 ON (Simulated)
-18.10,STATUS-03,Key Registered: W
-18.10,STATUS-304,GPIO 0 ON (Simulated)
-18.10,STATUS-304,GPIO 8 ON (Simulated)
-18.20,STATUS-03,Key Registered: A
-18.20,STATUS-304,GPIO 1 ON (Simulated)
-18.20,STATUS-304,GPIO 7 ON (Simulated)
-18.30,STATUS-03,Key Registered: S
-18.30,STATUS-304,GPIO 5 ON (Simulated)
-18.30,STATUS-304,GPIO 11 ON (Simulated)
-18.40,STATUS-03,Key Registered: D
-18.40,STATUS-304,GPIO 2 ON (Simulated)
-18.40,STATUS-304,GPIO 6 ON (Simulated)
-18.60,STATUS-03,Key Registered: W
-18.60,STATUS-304,GPIO 0 ON (Simulated)
-18.60,STATUS-304,GPIO 8 ON (Simulated)
-18.70,STATUS-03,Key Registered: A
-18.70,STATUS-304,GPIO 1 ON (Simulated)
-18.70,STATUS-304,GPIO 7 ON (Simulated)
-18.90,STATUS-03,Key Registered: S
-18.90,STATUS-304,GPIO 5 ON (Simulated)
-18.90,STATUS-304,GPIO 11 ON (Simulated)
-19.00,STATUS-03,Key Registered: D
-19.00,STATUS-304,GPIO 2 ON (Simulated)
-19.00,STATUS-304,GPIO 6 ON (Simulated)
-19.10,STATUS-03,Key Registered: W
-19.10,STATUS-304,GPIO 0 ON (Simulated)
-19.10,STATUS-304,GPIO 8 ON (Simulated)
-19.30,STATUS-03,Key Registered: A
-19.30,STATUS-304,GPIO 1 ON (Simulated)
-19.30,STATUS-304,GPIO 7 ON (Simulated)
-20.10,STATUS-002,Session Ended
-20.10,STATUS-003,Shutdown Successful
-0.00,STATUS-103,Directory Created: Log storage ready
-0.00,STATUS-101,Path Validated: File Open Successful
-0.00,STATUS-000,Startup Successful: Files Ready
-0.00,STATUS-001,Session Started
-0.00,STATUS-402,UI Redraw: Menu refreshed
-0.00,STATUS-300,Mode Changed: Operational Mode Active
-0.00,STATUS-402,UI Redraw: Menu refreshed
-1.00,STATUS-03,Key Registered: W
-1.00,STATUS-304,GPIO 0 ON (Simulated)
-1.00,STATUS-304,GPIO 8 ON (Simulated)
-1.50,STATUS-03,Key Registered: W
-1.50,STATUS-304,GPIO 0 ON (Simulated)
-1.50,STATUS-304,GPIO 8 ON (Simulated)
-1.60,STATUS-03,Key Registered: W
-1.60,STATUS-304,GPIO 0 ON (Simulated)
-1.60,STATUS-304,GPIO 8 ON (Simulated)
-1.70,STATUS-03,Key Registered: W
-1.70,STATUS-304,GPIO 0 ON (Simulated)
-1.70,STATUS-304,GPIO 8 ON (Simulated)
-1.80,STATUS-03,Key Registered: W
-1.80,STATUS-304,GPIO 0 ON (Simulated)
-1.80,STATUS-304,GPIO 8 ON (Simulated)
-1.90,STATUS-03,Key Registered: W
-1.90,STATUS-304,GPIO 0 ON (Simulated)
-1.90,STATUS-304,GPIO 8 ON (Simulated)
-2.00,STATUS-03,Key Registered: W
-2.00,STATUS-304,GPIO 0 ON (Simulated)
-2.00,STATUS-304,GPIO 8 ON (Simulated)
-2.10,STATUS-03,Key Registered: W
-2.10,STATUS-304,GPIO 0 ON (Simulated)
-2.10,STATUS-304,GPIO 8 ON (Simulated)
-2.20,STATUS-03,Key Registered: W
-2.20,STATUS-304,GPIO 0 ON (Simulated)
-2.20,STATUS-304,GPIO 8 ON (Simulated)
-2.30,STATUS-03,Key Registered: W
-2.30,STATUS-304,GPIO 0 ON (Simulated)
-2.30,STATUS-304,GPIO 8 ON (Simulated)
-2.40,STATUS-03,Key Registered: W
-2.40,STATUS-304,GPIO 0 ON (Simulated)
-2.40,STATUS-304,GPIO 8 ON (Simulated)
-2.50,STATUS-03,Key Registered: W
-2.50,STATUS-304,GPIO 0 ON (Simulated)
-2.50,STATUS-304,GPIO 8 ON (Simulated)
-2.60,STATUS-03,Key Registered: W
-2.60,STATUS-304,GPIO 0 ON (Simulated)
-2.60,STATUS-304,GPIO 8 ON (Simulated)
-2.70,STATUS-03,Key Registered: W
-2.70,STATUS-304,GPIO 0 ON (Simulated)
-2.70,STATUS-304,GPIO 8 ON (Simulated)
-2.80,STATUS-03,Key Registered: W
-2.80,STATUS-304,GPIO 0 ON (Simulated)
-2.80,STATUS-304,GPIO 8 ON (Simulated)
-2.90,STATUS-03,Key Registered: W
-2.90,STATUS-304,GPIO 0 ON (Simulated)
-2.90,STATUS-304,GPIO 8 ON (Simulated)
-3.00,STATUS-03,Key Registered: W
-3.00,STATUS-304,GPIO 0 ON (Simulated)
-3.00,STATUS-304,GPIO 8 ON (Simulated)
-3.10,STATUS-03,Key Registered: W
-3.10,STATUS-304,GPIO 0 ON (Simulated)
-3.10,STATUS-304,GPIO 8 ON (Simulated)
-3.20,STATUS-03,Key Registered: W
-3.20,STATUS-304,GPIO 0 ON (Simulated)
-3.20,STATUS-304,GPIO 8 ON (Simulated)
-3.30,STATUS-03,Key Registered: W
-3.30,STATUS-304,GPIO 0 ON (Simulated)
-3.30,STATUS-304,GPIO 8 ON (Simulated)
-3.40,STATUS-03,Key Registered: W
-3.40,STATUS-304,GPIO 0 ON (Simulated)
-3.40,STATUS-304,GPIO 8 ON (Simulated)
-3.50,STATUS-300,Mode Changed: Pulse Mode (Caps Lock ON)
-3.50,STATUS-03,Key Registered: W
-3.50,STATUS-304,GPIO 0 ON (Simulated)
-3.50,STATUS-304,GPIO 8 ON (Simulated)
-3.60,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-3.60,ERROR-03,Incorrect Keybind
-3.70,STATUS-03,Key Registered: W
-3.70,STATUS-304,GPIO 0 ON (Simulated)
-3.70,STATUS-304,GPIO 8 ON (Simulated)
-3.80,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-3.80,ERROR-03,Incorrect Keybind
-3.90,STATUS-03,Key Registered: W
-3.90,STATUS-304,GPIO 0 ON (Simulated)
-3.90,STATUS-304,GPIO 8 ON (Simulated)
-4.00,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-4.00,ERROR-03,Incorrect Keybind
-4.10,STATUS-03,Key Registered: W
-4.10,STATUS-304,GPIO 0 ON (Simulated)
-4.10,STATUS-304,GPIO 8 ON (Simulated)
-4.20,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-4.20,ERROR-03,Incorrect Keybind
-4.30,STATUS-03,Key Registered: W
-4.30,STATUS-304,GPIO 0 ON (Simulated)
-4.30,STATUS-304,GPIO 8 ON (Simulated)
-4.40,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-4.40,ERROR-03,Incorrect Keybind
-4.50,STATUS-03,Key Registered: W
-4.50,STATUS-304,GPIO 0 ON (Simulated)
-4.50,STATUS-304,GPIO 8 ON (Simulated)
-4.60,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-4.60,ERROR-03,Incorrect Keybind
-4.70,STATUS-03,Key Registered: W
-4.70,STATUS-304,GPIO 0 ON (Simulated)
-4.70,STATUS-304,GPIO 8 ON (Simulated)
-4.80,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-4.80,ERROR-03,Incorrect Keybind
-4.90,STATUS-03,Key Registered: W
-4.90,STATUS-304,GPIO 0 ON (Simulated)
-4.90,STATUS-304,GPIO 8 ON (Simulated)
-5.00,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-5.00,ERROR-03,Incorrect Keybind
-5.10,STATUS-03,Key Registered: W
-5.10,STATUS-304,GPIO 0 ON (Simulated)
-5.10,STATUS-304,GPIO 8 ON (Simulated)
-5.20,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-5.20,ERROR-03,Incorrect Keybind
-5.50,STATUS-03,Key Registered: W
-5.50,STATUS-304,GPIO 0 ON (Simulated)
-5.50,STATUS-304,GPIO 8 ON (Simulated)
-5.60,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-5.60,ERROR-03,Incorrect Keybind
-5.70,STATUS-03,Key Registered: W
-5.70,STATUS-304,GPIO 0 ON (Simulated)
-5.70,STATUS-304,GPIO 8 ON (Simulated)
-5.80,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-5.80,ERROR-03,Incorrect Keybind
-5.90,STATUS-03,Key Registered: W
-5.90,STATUS-304,GPIO 0 ON (Simulated)
-5.90,STATUS-304,GPIO 8 ON (Simulated)
-6.00,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-6.00,ERROR-03,Incorrect Keybind
-6.10,STATUS-03,Key Registered: W
-6.10,STATUS-304,GPIO 0 ON (Simulated)
-6.10,STATUS-304,GPIO 8 ON (Simulated)
-6.20,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-6.20,ERROR-03,Incorrect Keybind
-6.30,STATUS-03,Key Registered: W
-6.30,STATUS-304,GPIO 0 ON (Simulated)
-6.30,STATUS-304,GPIO 8 ON (Simulated)
-6.40,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-6.40,ERROR-03,Incorrect Keybind
-6.50,STATUS-03,Key Registered: W
-6.50,STATUS-304,GPIO 0 ON (Simulated)
-6.50,STATUS-304,GPIO 8 ON (Simulated)
-6.60,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-6.60,ERROR-03,Incorrect Keybind
-6.70,STATUS-03,Key Registered: W
-6.70,STATUS-304,GPIO 0 ON (Simulated)
-6.70,STATUS-304,GPIO 8 ON (Simulated)
-6.80,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-6.80,ERROR-03,Incorrect Keybind
-6.90,STATUS-03,Key Registered: W
-6.90,STATUS-304,GPIO 0 ON (Simulated)
-6.90,STATUS-304,GPIO 8 ON (Simulated)
-7.00,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-7.00,ERROR-03,Incorrect Keybind
-7.10,STATUS-03,Key Registered: W
-7.10,STATUS-304,GPIO 0 ON (Simulated)
-7.10,STATUS-304,GPIO 8 ON (Simulated)
-7.20,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-7.20,ERROR-03,Incorrect Keybind
-7.30,STATUS-03,Key Registered: W
-7.30,STATUS-304,GPIO 0 ON (Simulated)
-7.30,STATUS-304,GPIO 8 ON (Simulated)
-7.40,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-7.40,ERROR-03,Incorrect Keybind
-7.50,STATUS-03,Key Registered: W
-7.50,STATUS-304,GPIO 0 ON (Simulated)
-7.50,STATUS-304,GPIO 8 ON (Simulated)
-7.60,STATUS-300,Mode Changed: Continuous Mode (Caps Lock OFF)
-7.60,STATUS-03,Key Registered: W
-7.60,STATUS-304,GPIO 0 ON (Simulated)
-7.60,STATUS-304,GPIO 8 ON (Simulated)
-7.70,STATUS-03,Key Registered: W
-7.70,STATUS-304,GPIO 0 ON (Simulated)
-7.70,STATUS-304,GPIO 8 ON (Simulated)
-7.80,STATUS-03,Key Registered: W
-7.80,STATUS-304,GPIO 0 ON (Simulated)
-7.80,STATUS-304,GPIO 8 ON (Simulated)
-7.90,STATUS-03,Key Registered: W
-7.90,STATUS-304,GPIO 0 ON (Simulated)
-7.90,STATUS-304,GPIO 8 ON (Simulated)
-8.00,STATUS-03,Key Registered: W
-8.00,STATUS-304,GPIO 0 ON (Simulated)
-8.00,STATUS-304,GPIO 8 ON (Simulated)
-8.10,STATUS-03,Key Registered: W
-8.10,STATUS-304,GPIO 0 ON (Simulated)
-8.10,STATUS-304,GPIO 8 ON (Simulated)
-8.20,STATUS-03,Key Registered: W
-8.20,STATUS-304,GPIO 0 ON (Simulated)
-8.20,STATUS-304,GPIO 8 ON (Simulated)
-8.30,STATUS-03,Key Registered: W
-8.30,STATUS-304,GPIO 0 ON (Simulated)
-8.30,STATUS-304,GPIO 8 ON (Simulated)
-8.40,STATUS-03,Key Registered: W
-8.40,STATUS-304,GPIO 0 ON (Simulated)
-8.40,STATUS-304,GPIO 8 ON (Simulated)
-0.00,STATUS-103,Directory Created: Log storage ready
-0.00,STATUS-101,Path Validated: File Open Successful
-0.00,STATUS-000,Startup Successful: Files Ready
-0.00,STATUS-001,Session Started
-0.00,STATUS-402,UI Redraw: Menu refreshed
-0.00,STATUS-300,Mode Changed: Operational Mode Active
-0.00,STATUS-402,UI Redraw: Menu refreshed
-5.40,STATUS-03,Key Registered: E
-5.40,STATUS-304,GPIO 4 ON (Simulated)
-5.40,STATUS-304,GPIO 10 ON (Simulated)
-5.90,STATUS-03,Key Registered: E
-5.90,STATUS-304,GPIO 4 ON (Simulated)
-5.90,STATUS-304,GPIO 10 ON (Simulated)
-6.60,STATUS-002,Session Ended
-6.60,STATUS-003,Shutdown Successful
-0.00,STATUS-103,Directory Created: Log storage ready
-0.00,STATUS-101,Path Validated: File Open Successful
-0.00,STATUS-000,Startup Successful: Files Ready
-0.00,STATUS-001,Session Started
-0.00,STATUS-402,UI Redraw: Menu refreshed
-0.00,STATUS-300,Mode Changed: Operational Mode Active
-0.00,STATUS-402,UI Redraw: Menu refreshed
-1.60,STATUS-03,Key Registered: W
-1.60,STATUS-304,GPIO 0 ON (Simulated)
-1.60,STATUS-304,GPIO 8 ON (Simulated)
-2.00,STATUS-03,Key Registered: W
-2.00,STATUS-304,GPIO 0 ON (Simulated)
-2.00,STATUS-304,GPIO 8 ON (Simulated)
-2.20,STATUS-03,Key Registered: W
-2.20,STATUS-304,GPIO 0 ON (Simulated)
-2.20,STATUS-304,GPIO 8 ON (Simulated)
-2.40,STATUS-03,Key Registered: A
-2.40,STATUS-304,GPIO 1 ON (Simulated)
-2.40,STATUS-304,GPIO 7 ON (Simulated)
-2.50,STATUS-03,Key Registered: S
-2.50,STATUS-304,GPIO 5 ON (Simulated)
-2.50,STATUS-304,GPIO 11 ON (Simulated)
-2.60,STATUS-03,Key Registered: D
-2.60,STATUS-304,GPIO 2 ON (Simulated)
-2.60,STATUS-304,GPIO 6 ON (Simulated)
-3.00,STATUS-03,Key Registered: A
-3.00,STATUS-304,GPIO 1 ON (Simulated)
-3.00,STATUS-304,GPIO 7 ON (Simulated)
-3.20,STATUS-03,Key Registered: S
-3.20,STATUS-304,GPIO 5 ON (Simulated)
-3.20,STATUS-304,GPIO 11 ON (Simulated)
-3.30,STATUS-03,Key Registered: D
-3.30,STATUS-304,GPIO 2 ON (Simulated)
-3.30,STATUS-304,GPIO 6 ON (Simulated)
-3.60,ERROR-03,Incorrect Keybind
-3.70,ERROR-03,Incorrect Keybind
-3.90,ERROR-03,Incorrect Keybind
-4.00,ERROR-03,Incorrect Keybind
-4.20,ERROR-03,Incorrect Keybind
-4.30,ERROR-03,Incorrect Keybind
-4.40,ERROR-03,Incorrect Keybind
-4.60,ERROR-03,Incorrect Keybind
-4.70,ERROR-03,Incorrect Keybind
-5.30,STATUS-03,Key Registered: W
-5.30,STATUS-304,GPIO 0 ON (Simulated)
-5.30,STATUS-304,GPIO 8 ON (Simulated)
-5.40,STATUS-03,Key Registered: E
-5.40,STATUS-304,GPIO 4 ON (Simulated)
-5.40,STATUS-304,GPIO 10 ON (Simulated)
-5.50,STATUS-03,Key Registered: A
-5.50,STATUS-304,GPIO 1 ON (Simulated)
-5.50,STATUS-304,GPIO 7 ON (Simulated)
-5.60,STATUS-03,Key Registered: S
-5.60,STATUS-304,GPIO 5 ON (Simulated)
-5.60,STATUS-304,GPIO 11 ON (Simulated)
-5.80,STATUS-03,Key Registered: D
-5.80,STATUS-304,GPIO 2 ON (Simulated)
-5.80,STATUS-304,GPIO 6 ON (Simulated)
-5.90,STATUS-03,Key Registered: W
-5.90,STATUS-304,GPIO 0 ON (Simulated)
-5.90,STATUS-304,GPIO 8 ON (Simulated)
-6.00,STATUS-03,Key Registered: A
-6.00,STATUS-304,GPIO 1 ON (Simulated)
-6.00,STATUS-304,GPIO 7 ON (Simulated)
-6.10,STATUS-03,Key Registered: S
-6.10,STATUS-304,GPIO 5 ON (Simulated)
-6.10,STATUS-304,GPIO 11 ON (Simulated)
-6.50,STATUS-300,Mode Changed: Pulse Mode (Caps Lock ON)
-7.00,ERROR-03,Incorrect Keybind
-8.20,STATUS-300,Mode Changed: Continuous Mode (Caps Lock OFF)
-8.60,STATUS-03,Key Registered: W
-8.60,STATUS-304,GPIO 0 ON (Simulated)
-8.60,STATUS-304,GPIO 8 ON (Simulated)
-9.20,STATUS-03,Key Registered: W
-9.20,STATUS-304,GPIO 0 ON (Simulated)
-9.20,STATUS-304,GPIO 8 ON (Simulated)
-9.30,STATUS-03,Key Registered: W
-9.30,STATUS-304,GPIO 0 ON (Simulated)
-9.30,STATUS-304,GPIO 8 ON (Simulated)
-9.40,STATUS-03,Key Registered: W
-9.40,STATUS-304,GPIO 0 ON (Simulated)
-9.40,STATUS-304,GPIO 8 ON (Simulated)
-9.50,STATUS-03,Key Registered: W
-9.50,STATUS-304,GPIO 0 ON (Simulated)
-9.50,STATUS-304,GPIO 8 ON (Simulated)
-9.60,STATUS-03,Key Registered: W
-9.60,STATUS-304,GPIO 0 ON (Simulated)
-9.60,STATUS-304,GPIO 8 ON (Simulated)
-9.70,STATUS-03,Key Registered: W
-9.70,STATUS-304,GPIO 0 ON (Simulated)
-9.70,STATUS-304,GPIO 8 ON (Simulated)
-9.80,STATUS-03,Key Registered: W
-9.80,STATUS-304,GPIO 0 ON (Simulated)
-9.80,STATUS-304,GPIO 8 ON (Simulated)
-9.90,STATUS-03,Key Registered: W
-9.90,STATUS-304,GPIO 0 ON (Simulated)
-9.90,STATUS-304,GPIO 8 ON (Simulated)
-10.00,STATUS-03,Key Registered: W
-10.00,STATUS-304,GPIO 0 ON (Simulated)
-10.00,STATUS-304,GPIO 8 ON (Simulated)
-10.10,STATUS-03,Key Registered: W
-10.10,STATUS-304,GPIO 0 ON (Simulated)
-10.10,STATUS-304,GPIO 8 ON (Simulated)
-10.20,STATUS-03,Key Registered: W
-10.20,STATUS-304,GPIO 0 ON (Simulated)
-10.20,STATUS-304,GPIO 8 ON (Simulated)
-10.30,STATUS-03,Key Registered: W
-10.30,STATUS-304,GPIO 0 ON (Simulated)
-10.30,STATUS-304,GPIO 8 ON (Simulated)
-10.40,STATUS-300,Mode Changed: Pulse Mode (Caps Lock ON)
-10.40,STATUS-03,Key Registered: W
-10.40,STATUS-304,GPIO 0 ON (Simulated)
-10.40,STATUS-304,GPIO 8 ON (Simulated)
-10.50,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-10.50,ERROR-03,Incorrect Keybind
-10.60,STATUS-03,Key Registered: W
-10.60,STATUS-304,GPIO 0 ON (Simulated)
-10.60,STATUS-304,GPIO 8 ON (Simulated)
-10.70,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-10.70,ERROR-03,Incorrect Keybind
-10.80,STATUS-03,Key Registered: W
-10.80,STATUS-304,GPIO 0 ON (Simulated)
-10.80,STATUS-304,GPIO 8 ON (Simulated)
-10.90,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-10.90,ERROR-03,Incorrect Keybind
-11.00,STATUS-03,Key Registered: W
-11.00,STATUS-304,GPIO 0 ON (Simulated)
-11.00,STATUS-304,GPIO 8 ON (Simulated)
-11.10,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-11.10,ERROR-03,Incorrect Keybind
-11.20,STATUS-03,Key Registered: W
-11.20,STATUS-304,GPIO 0 ON (Simulated)
-11.20,STATUS-304,GPIO 8 ON (Simulated)
-11.30,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-11.30,ERROR-03,Incorrect Keybind
-11.40,STATUS-03,Key Registered: W
-11.40,STATUS-304,GPIO 0 ON (Simulated)
-11.40,STATUS-304,GPIO 8 ON (Simulated)
-11.50,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-11.50,ERROR-03,Incorrect Keybind
-11.60,STATUS-03,Key Registered: W
-11.60,STATUS-304,GPIO 0 ON (Simulated)
-11.60,STATUS-304,GPIO 8 ON (Simulated)
-11.70,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-11.70,ERROR-03,Incorrect Keybind
-11.80,STATUS-03,Key Registered: W
-11.80,STATUS-304,GPIO 0 ON (Simulated)
-11.80,STATUS-304,GPIO 8 ON (Simulated)
-11.90,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-11.90,ERROR-03,Incorrect Keybind
-12.00,STATUS-03,Key Registered: W
-12.00,STATUS-304,GPIO 0 ON (Simulated)
-12.00,STATUS-304,GPIO 8 ON (Simulated)
-13.60,STATUS-03,Key Registered: W
-13.60,STATUS-304,GPIO 0 ON (Simulated)
-13.60,STATUS-304,GPIO 8 ON (Simulated)
-14.20,STATUS-03,Key Registered: W
-14.20,STATUS-304,GPIO 0 ON (Simulated)
-14.20,STATUS-304,GPIO 8 ON (Simulated)
-14.30,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-14.30,ERROR-03,Incorrect Keybind
-14.40,STATUS-03,Key Registered: W
-14.40,STATUS-304,GPIO 0 ON (Simulated)
-14.40,STATUS-304,GPIO 8 ON (Simulated)
-14.50,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-14.50,ERROR-03,Incorrect Keybind
-14.60,STATUS-03,Key Registered: W
-14.60,STATUS-304,GPIO 0 ON (Simulated)
-14.60,STATUS-304,GPIO 8 ON (Simulated)
-14.70,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-14.70,ERROR-03,Incorrect Keybind
-14.80,STATUS-03,Key Registered: W
-14.80,STATUS-304,GPIO 0 ON (Simulated)
-14.80,STATUS-304,GPIO 8 ON (Simulated)
-14.90,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-14.90,ERROR-03,Incorrect Keybind
-15.00,STATUS-03,Key Registered: W
-15.00,STATUS-304,GPIO 0 ON (Simulated)
-15.00,STATUS-304,GPIO 8 ON (Simulated)
-15.10,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-15.10,ERROR-03,Incorrect Keybind
-15.20,STATUS-03,Key Registered: W
-15.20,STATUS-304,GPIO 0 ON (Simulated)
-15.20,STATUS-304,GPIO 8 ON (Simulated)
-15.30,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-15.30,ERROR-03,Incorrect Keybind
-15.40,STATUS-03,Key Registered: W
-15.40,STATUS-304,GPIO 0 ON (Simulated)
-15.40,STATUS-304,GPIO 8 ON (Simulated)
-15.50,ERROR-305,Mode Specific Block: Pulse Mode repeat prevented for W
-15.50,ERROR-03,Incorrect Keybind
-15.60,STATUS-03,Key Registered: W
-15.60,STATUS-304,GPIO 0 ON (Simulated)
-15.60,STATUS-304,GPIO 8 ON (Simulated)
-15.70,STATUS-300,Mode Changed: Continuous Mode (Caps Lock OFF)
-15.70,STATUS-03,Key Registered: W
-15.70,STATUS-304,GPIO 0 ON (Simulated)
-15.70,STATUS-304,GPIO 8 ON (Simulated)
-15.80,STATUS-03,Key Registered: W
-15.80,STATUS-304,GPIO 0 ON (Simulated)
-15.80,STATUS-304,GPIO 8 ON (Simulated)
-15.90,STATUS-03,Key Registered: W
-15.90,STATUS-304,GPIO 0 ON (Simulated)
-15.90,STATUS-304,GPIO 8 ON (Simulated)
-16.00,STATUS-03,Key Registered: W
-16.00,STATUS-304,GPIO 0 ON (Simulated)
-16.00,STATUS-304,GPIO 8 ON (Simulated)
-16.10,STATUS-03,Key Registered: W
-16.10,STATUS-304,GPIO 0 ON (Simulated)
-16.10,STATUS-304,GPIO 8 ON (Simulated)
-16.20,STATUS-03,Key Registered: W
-16.20,STATUS-304,GPIO 0 ON (Simulated)
-16.20,STATUS-304,GPIO 8 ON (Simulated)
-16.30,STATUS-03,Key Registered: W
-16.30,STATUS-304,GPIO 0 ON (Simulated)
-16.30,STATUS-304,GPIO 8 ON (Simulated)
-16.40,STATUS-03,Key Registered: W
-16.40,STATUS-304,GPIO 0 ON (Simulated)
-16.40,STATUS-304,GPIO 8 ON (Simulated)
-16.50,STATUS-03,Key Registered: W
-16.50,STATUS-304,GPIO 0 ON (Simulated)
-16.50,STATUS-304,GPIO 8 ON (Simulated)
-16.60,STATUS-03,Key Registered: W
-16.60,STATUS-304,GPIO 0 ON (Simulated)
-16.60,STATUS-304,GPIO 8 ON (Simulated)
-16.70,STATUS-03,Key Registered: W
-16.70,STATUS-304,GPIO 0 ON (Simulated)
-16.70,STATUS-304,GPIO 8 ON (Simulated)
-16.80,STATUS-03,Key Registered: W
-16.80,STATUS-304,GPIO 0 ON (Simulated)
-16.80,STATUS-304,GPIO 8 ON (Simulated)
-16.90,STATUS-03,Key Registered: W
-16.90,STATUS-304,GPIO 0 ON (Simulated)
-16.90,STATUS-304,GPIO 8 ON (Simulated)
-17.00,STATUS-03,Key Registered: W
-17.00,STATUS-304,GPIO 0 ON (Simulated)
-17.00,STATUS-304,GPIO 8 ON (Simulated)
-17.10,STATUS-03,Key Registered: W
-17.10,STATUS-304,GPIO 0 ON (Simulated)
-17.10,STATUS-304,GPIO 8 ON (Simulated)
-17.20,STATUS-03,Key Registered: W
-17.20,STATUS-304,GPIO 0 ON (Simulated)
-17.20,STATUS-304,GPIO 8 ON (Simulated)
-17.30,STATUS-03,Key Registered: W
-17.30,STATUS-304,GPIO 0 ON (Simulated)
-17.30,STATUS-304,GPIO 8 ON (Simulated)
-17.40,STATUS-03,Key Registered: W
-17.40,STATUS-304,GPIO 0 ON (Simulated)
-17.40,STATUS-304,GPIO 8 ON (Simulated)
-17.50,STATUS-03,Key Registered: W
-17.50,STATUS-304,GPIO 0 ON (Simulated)
-17.50,STATUS-304,GPIO 8 ON (Simulated)
-17.60,STATUS-03,Key Registered: W
-17.60,STATUS-304,GPIO 0 ON (Simulated)
-17.60,STATUS-304,GPIO 8 ON (Simulated)
-17.70,STATUS-03,Key Registered: W
-17.70,STATUS-304,GPIO 0 ON (Simulated)
-17.70,STATUS-304,GPIO 8 ON (Simulated)
-17.80,STATUS-03,Key Registered: W
-17.80,STATUS-304,GPIO 0 ON (Simulated)
-17.80,STATUS-304,GPIO 8 ON (Simulated)
-18.40,STATUS-002,Session Ended
-18.40,STATUS-003,Shutdown Successful
+Time(s),Code,Description
+ Opened: Both CSV files opened with headers written
+0:01,STATUS-009,Startup Complete: All files ready for logging
+0:01,STATUS-001,Session Started
+0:01,STATUS-019,Menu Refreshed: displayMenu() called
+0:01,STATUS-102,Raw Input Configured: tcsetattr() disabled ICANON and ECHO
+0:01,STATUS-103,stdin Non-Blocking: fcntl() set O_NONBLOCK flag
+0:00,STATUS-020,Operational Mode: User pressed '2'; polling loop ready
+0:00,STATUS-019,Menu Refreshed: displayMenu() called
+15:62,STATUS-011,Key Registered: W
+16:37,STATUS-106,Thrusters Deactivated (Key Release): W
+16:47,STATUS-011,Key Registered: W
+17:22,STATUS-106,Thrusters Deactivated (Key Release): W
+20:32,STATUS-011,Key Registered: W
+22:18,STATUS-106,Thrusters Deactivated (Key Release): W
+22:53,STATUS-011,Key Registered: W
+24:18,STATUS-106,Thrusters Deactivated (Key Release): W
+37:25,STATUS-011,Key Registered: W
+37:100,STATUS-106,Thrusters Deactivated (Key Release): W
+39:55,STATUS-011,Key Registered: W
+40:30,STATUS-106,Thrusters Deactivated (Key Release): W
+40:85,STATUS-011,Key Registered: W
+43:25,STATUS-106,Thrusters Deactivated (Key Release): W
+71:84,STATUS-011,Key Registered: W
+75:09,STATUS-106,Thrusters Deactivated (Key Release): W
+110:18,STATUS-011,Key Registered: W
+112:28,STATUS-106,Thrusters Deactivated (Key Release): W
+113:88,STATUS-011,Key Registered: S
+115:64,STATUS-106,Thrusters Deactivated (Key Release): S
+119:29,STATUS-011,Key Registered: A
+121:34,STATUS-106,Thrusters Deactivated (Key Release): A
+123:25,STATUS-011,Key Registered: D
+124:70,STATUS-106,Thrusters Deactivated (Key Release): D
+126:60,STATUS-011,Key Registered: E
+128:05,STATUS-106,Thrusters Deactivated (Key Release): E
+129:60,STATUS-011,Key Registered: Q
+131:31,STATUS-106,Thrusters Deactivated (Key Release): Q
+895:53,STATUS-011,Key Registered: U
+896:28,STATUS-106,Thrusters Deactivated (Key Release): U
+897:13,STATUS-011,Key Registered: U
+897:88,STATUS-106,Thrusters Deactivated (Key Release): U
+898:63,STATUS-011,Key Registered: U
+899:39,STATUS-106,Thrusters Deactivated (Key Release): U
+900:74,STATUS-011,Key Registered: W
+902:34,STATUS-106,Thrusters Deactivated (Key Release): W
+904:94,STATUS-011,Key Registered: E
+905:69,STATUS-106,Thrusters Deactivated (Key Release): E
+971:67,STATUS-011,Key Registered: J
+972:42,STATUS-106,Thrusters Deactivated (Key Release): J
+974:17,STATUS-011,Key Registered: J
+974:93,STATUS-106,Thrusters Deactivated (Key Release): J
+976:48,STATUS-011,Key Registered: U
+977:23,STATUS-106,Thrusters Deactivated (Key Release): U
+978:48,STATUS-011,Key Registered: U
+979:23,STATUS-106,Thrusters Deactivated (Key Release): U
+981:53,STATUS-011,Key Registered: J
+982:29,STATUS-106,Thrusters Deactivated (Key Release): J
+982:99,STATUS-011,Key Registered: L
+983:74,STATUS-106,Thrusters Deactivated (Key Release): L
+985:39,STATUS-011,Key Registered: Q
+986:14,STATUS-106,Thrusters Deactivated (Key Release): Q
+986:69,STATUS-011,Key Registered: Q
+987:44,STATUS-106,Thrusters Deactivated (Key Release): Q
+988:59,STATUS-011,Key Registered: Q
+989:35,STATUS-106,Thrusters Deactivated (Key Release): Q
+990:20,STATUS-011,Key Registered: Q
+990:95,STATUS-106,Thrusters Deactivated (Key Release): Q
+992:90,STATUS-011,Key Registered: Q
+993:65,STATUS-106,Thrusters Deactivated (Key Release): Q
+994:15,STATUS-011,Key Registered: J
+994:90,STATUS-106,Thrusters Deactivated (Key Release): J
+995:95,STATUS-011,Key Registered: J
+996:71,STATUS-106,Thrusters Deactivated (Key Release): J
+997:41,STATUS-011,Key Registered: J
+998:16,STATUS-106,Thrusters Deactivated (Key Release): J
+999:06,STATUS-011,Key Registered: L
+999:81,STATUS-106,Thrusters Deactivated (Key Release): L
+1000:41,STATUS-011,Key Registered: L
+1001:16,STATUS-106,Thrusters Deactivated (Key Release): L
+1001:66,STATUS-011,Key Registered: L
+1002:41,STATUS-106,Thrusters Deactivated (Key Release): L
+1002:81,STATUS-011,Key Registered: Q
+1003:57,STATUS-106,Thrusters Deactivated (Key Release): Q
+1003:92,STATUS-011,Key Registered: Q
+1004:67,STATUS-106,Thrusters Deactivated (Key Release): Q
+1004:87,STATUS-011,Key Registered: L
+1005:62,STATUS-106,Thrusters Deactivated (Key Release): L
+1006:02,STATUS-011,Key Registered: L
+1006:77,STATUS-106,Thrusters Deactivated (Key Release): L
+1007:57,STATUS-011,Key Registered: L
+1008:32,STATUS-106,Thrusters Deactivated (Key Release): L
+1008:67,STATUS-011,Key Registered: U
+1009:42,STATUS-106,Thrusters Deactivated (Key Release): U
+1009:82,STATUS-011,Key Registered: L
+1010:58,STATUS-106,Thrusters Deactivated (Key Release): L
+1011:13,STATUS-011,Key Registered: L
+1011:88,STATUS-106,Thrusters Deactivated (Key Release): L
+1012:13,STATUS-011,Key Registered: W
+1012:88,STATUS-106,Thrusters Deactivated (Key Release): W
+1013:23,STATUS-011,Key Registered: W
+1013:98,STATUS-106,Thrusters Deactivated (Key Release): W
+1014:43,STATUS-011,Key Registered: L
+1015:18,STATUS-106,Thrusters Deactivated (Key Release): L
+1015:48,STATUS-011,Key Registered: Q
+1016:23,STATUS-106,Thrusters Deactivated (Key Release): Q
+1017:24,STATUS-011,Key Registered: L
+1017:99,STATUS-106,Thrusters Deactivated (Key Release): L
+1026:85,STATUS-011,Key Registered: L
+1027:60,STATUS-106,Thrusters Deactivated (Key Release): L
+1098:83,STATUS-011,Key Registered: J
+1099:58,STATUS-106,Thrusters Deactivated (Key Release): J
+1099:93,STATUS-011,Key Registered: L
+1100:68,STATUS-106,Thrusters Deactivated (Key Release): L
+1101:08,STATUS-011,Key Registered: L
+1101:83,STATUS-106,Thrusters Deactivated (Key Release): L
+1102:49,STATUS-011,Key Registered: L
+1103:89,STATUS-106,Thrusters Deactivated (Key Release): L
+1104:74,STATUS-011,Key Registered: L
+1105:49,STATUS-106,Thrusters Deactivated (Key Release): L
+1106:64,STATUS-011,Key Registered: L
+1107:39,STATUS-106,Thrusters Deactivated (Key Release): L
+1107:79,STATUS-011,Key Registered: W
+1108:54,STATUS-106,Thrusters Deactivated (Key Release): W
+1110:10,STATUS-011,Key Registered: Q
+1110:85,STATUS-106,Thrusters Deactivated (Key Release): Q
+1112:60,STATUS-011,Key Registered: Q
+1113:35,STATUS-106,Thrusters Deactivated (Key Release): Q
+1115:10,STATUS-011,Key Registered: L
+1115:85,STATUS-106,Thrusters Deactivated (Key Release): L
+1116:15,STATUS-011,Key Registered: J
+1116:91,STATUS-106,Thrusters Deactivated (Key Release): J
+1117:31,STATUS-011,Key Registered: J
+1118:06,STATUS-106,Thrusters Deactivated (Key Release): J
+1120:51,STATUS-011,Key Registered: Q
+1121:26,STATUS-106,Thrusters Deactivated (Key Release): Q
+1130:72,STATUS-011,Key Registered: W
+1131:48,STATUS-106,Thrusters Deactivated (Key Release): W
+1131:98,STATUS-011,Key Registered: W
+1132:73,STATUS-106,Thrusters Deactivated (Key Release): W
+1134:78,STATUS-011,Key Registered: W
+1135:53,STATUS-106,Thrusters Deactivated (Key Release): W
+1136:33,STATUS-011,Key Registered: W
+1137:08,STATUS-106,Thrusters Deactivated (Key Release): W
+1138:84,STATUS-011,Key Registered: W
+1139:59,STATUS-106,Thrusters Deactivated (Key Release): W
+1140:04,STATUS-011,Key Registered: Q
+1140:79,STATUS-106,Thrusters Deactivated (Key Release): Q
+1141:29,STATUS-011,Key Registered: Q
+1142:04,STATUS-106,Thrusters Deactivated (Key Release): Q
+1142:74,STATUS-011,Key Registered: J
+1143:49,STATUS-106,Thrusters Deactivated (Key Release): J
+1144:04,STATUS-011,Key Registered: L
+1144:79,STATUS-106,Thrusters Deactivated (Key Release): L
+1145:70,STATUS-011,Key Registered: L
+1146:45,STATUS-106,Thrusters Deactivated (Key Release): L
+1153:80,STATUS-011,Key Registered: U
+1154:56,STATUS-106,Thrusters Deactivated (Key Release): U
+1155:21,STATUS-011,Key Registered: U
+1155:96,STATUS-106,Thrusters Deactivated (Key Release): U
+1161:11,STATUS-011,Key Registered: U
+1162:52,STATUS-106,Thrusters Deactivated (Key Release): U
+1163:12,STATUS-011,Key Registered: J
+1163:87,STATUS-106,Thrusters Deactivated (Key Release): J
+1164:27,STATUS-011,Key Registered: L
+1165:02,STATUS-106,Thrusters Deactivated (Key Release): L
+1165:57,STATUS-011,Key Registered: L
+1166:32,STATUS-106,Thrusters Deactivated (Key Release): L
+1182:69,STATUS-011,Key Registered: E
+1183:44,STATUS-106,Thrusters Deactivated (Key Release): E
+1183:84,STATUS-011,Key Registered: E
+1184:59,STATUS-106,Thrusters Deactivated (Key Release): E
+1185:64,STATUS-011,Key Registered: J
+1186:40,STATUS-106,Thrusters Deactivated (Key Release): J
+1187:05,STATUS-011,Key Registered: L
+1187:80,STATUS-106,Thrusters Deactivated (Key Release): L
+1188:45,STATUS-011,Key Registered: L
+1189:20,STATUS-106,Thrusters Deactivated (Key Release): L
+1189:70,STATUS-011,Key Registered: L
+1190:45,STATUS-106,Thrusters Deactivated (Key Release): L
+1190:95,STATUS-011,Key Registered: L
+1191:70,STATUS-106,Thrusters Deactivated (Key Release): L
+1193:36,STATUS-011,Key Registered: J
+1194:11,STATUS-106,Thrusters Deactivated (Key Release): J
+1194:56,STATUS-011,Key Registered: L
+1195:31,STATUS-106,Thrusters Deactivated (Key Release): L
+1195:66,STATUS-011,Key Registered: L
+1196:41,STATUS-106,Thrusters Deactivated (Key Release): L
+1196:76,STATUS-011,Key Registered: L
+1197:51,STATUS-106,Thrusters Deactivated (Key Release): L
+1198:06,STATUS-011,Key Registered: W
+1198:81,STATUS-106,Thrusters Deactivated (Key Release): W
+1199:16,STATUS-011,Key Registered: W
+1199:92,STATUS-106,Thrusters Deactivated (Key Release): W
+1200:57,STATUS-011,Key Registered: L
+1201:32,STATUS-106,Thrusters Deactivated (Key Release): L
+1201:67,STATUS-011,Key Registered: W
+1202:42,STATUS-106,Thrusters Deactivated (Key Release): W
+1202:87,STATUS-011,Key Registered: W
+1205:52,STATUS-106,Thrusters Deactivated (Key Release): W
+1205:97,STATUS-011,Key Registered: L
+1206:72,STATUS-106,Thrusters Deactivated (Key Release): L
+1207:28,STATUS-011,Key Registered: L
+1208:03,STATUS-106,Thrusters Deactivated (Key Release): L
+1208:58,STATUS-011,Key Registered: L
+1210:03,STATUS-106,Thrusters Deactivated (Key Release): L
+1210:88,STATUS-011,Key Registered: W
+1213:98,STATUS-106,Thrusters Deactivated (Key Release): W
+1214:79,STATUS-011,Key Registered: L
+1215:54,STATUS-106,Thrusters Deactivated (Key Release): L
+1216:69,STATUS-011,Key Registered: Q
+1217:44,STATUS-106,Thrusters Deactivated (Key Release): Q
+1217:89,STATUS-011,Key Registered: Q
+1219:79,STATUS-106,Thrusters Deactivated (Key Release): Q
+1220:39,STATUS-011,Key Registered: L
+1221:14,STATUS-106,Thrusters Deactivated (Key Release): L
+1221:80,STATUS-011,Key Registered: W
+1222:55,STATUS-106,Thrusters Deactivated (Key Release): W
+1222:80,STATUS-011,Key Registered: L
+1223:55,STATUS-106,Thrusters Deactivated (Key Release): L
+1223:90,STATUS-011,Key Registered: L
+1224:65,STATUS-106,Thrusters Deactivated (Key Release): L
+1225:15,STATUS-011,Key Registered: L
+1225:90,STATUS-106,Thrusters Deactivated (Key Release): L
+1227:00,STATUS-011,Key Registered: W
+1227:75,STATUS-106,Thrusters Deactivated (Key Release): W
+1228:05,STATUS-011,Key Registered: L
+1228:81,STATUS-106,Thrusters Deactivated (Key Release): L
+1241:32,STATUS-011,Key Registered: L
+1242:07,STATUS-106,Thrusters Deactivated (Key Release): L
+1243:12,STATUS-011,Key Registered: L
+1243:87,STATUS-106,Thrusters Deactivated (Key Release): L
+1245:73,STATUS-011,Key Registered: L
+1246:48,STATUS-106,Thrusters Deactivated (Key Release): L
+1247:28,STATUS-011,Key Registered: L
+1248:03,STATUS-106,Thrusters Deactivated (Key Release): L
+1249:78,STATUS-011,Key Registered: Q
+1251:58,STATUS-106,Thrusters Deactivated (Key Release): Q
+1252:03,STATUS-011,Key Registered: Q
+1254:59,STATUS-106,Thrusters Deactivated (Key Release): Q
+1255:14,STATUS-011,Key Registered: Q
+1255:89,STATUS-106,Thrusters Deactivated (Key Release): Q
+1256:59,STATUS-011,Key Registered: L
+1257:34,STATUS-106,Thrusters Deactivated (Key Release): L
+1257:79,STATUS-011,Key Registered: W
+1258:54,STATUS-106,Thrusters Deactivated (Key Release): W
+1259:14,STATUS-011,Key Registered: W
+1260:85,STATUS-106,Thrusters Deactivated (Key Release): W
+1261:25,STATUS-011,Key Registered: L
+1261:100,STATUS-106,Thrusters Deactivated (Key Release): L
+1262:40,STATUS-011,Key Registered: W
+1264:15,STATUS-106,Thrusters Deactivated (Key Release): W
+1264:55,STATUS-011,Key Registered: L
+1266:50,STATUS-106,Thrusters Deactivated (Key Release): L
+1267:16,STATUS-011,Key Registered: W
+1269:81,STATUS-106,Thrusters Deactivated (Key Release): W
+1270:21,STATUS-011,Key Registered: L
+1276:27,STATUS-106,Thrusters Deactivated (Key Release): L
+1276:72,STATUS-011,Key Registered: W
+1277:47,STATUS-106,Thrusters Deactivated (Key Release): W
+1277:92,STATUS-011,Key Registered: L
+1279:52,STATUS-106,Thrusters Deactivated (Key Release): L
+1279:92,STATUS-011,Key Registered: L
+1280:67,STATUS-106,Thrusters Deactivated (Key Release): L
+1281:22,STATUS-011,Key Registered: W
+1282:68,STATUS-106,Thrusters Deactivated (Key Release): W
+1283:18,STATUS-011,Key Registered: L
+1284:63,STATUS-011,Key Registered: W
+1285:38,STATUS-106,Thrusters Deactivated (Key Release): W
+1285:88,STATUS-011,Key Registered: L
+1286:63,STATUS-106,Thrusters Deactivated (Key Release): L
+1677:59,STATUS-011,Key Registered: W
+1678:34,STATUS-106,Thrusters Deactivated (Key Release): W
+1680:14,STATUS-011,Key Registered: L
+1680:89,STATUS-106,Thrusters Deactivated (Key Release): L
+1681:44,STATUS-011,Key Registered: L
+1682:20,STATUS-106,Thrusters Deactivated (Key Release): L
+1683:10,STATUS-011,Key Registered: L
+1683:85,STATUS-106,Thrusters Deactivated (Key Release): L
+1684:100,STATUS-011,Key Registered: E
+1685:75,STATUS-106,Thrusters Deactivated (Key Release): E
+1687:55,STATUS-011,Key Registered: L
+1688:30,STATUS-106,Thrusters Deactivated (Key Release): L
+1688:91,STATUS-011,Key Registered: E
+1689:66,STATUS-106,Thrusters Deactivated (Key Release): E
+1690:06,STATUS-011,Key Registered: E
+1692:11,STATUS-106,Thrusters Deactivated (Key Release): E
+1693:21,STATUS-011,Key Registered: L
+1693:96,STATUS-106,Thrusters Deactivated (Key Release): L
+1699:67,STATUS-011,Key Registered: Q
+1700:42,STATUS-106,Thrusters Deactivated (Key Release): Q
+1701:12,STATUS-011,Key Registered: Q
+1701:87,STATUS-106,Thrusters Deactivated (Key Release): Q
+1714:94,STATUS-011,Key Registered: J
+1715:69,STATUS-106,Thrusters Deactivated (Key Release): J
+1716:49,STATUS-011,Key Registered: J
+1717:24,STATUS-106,Thrusters Deactivated (Key Release): J
+1718:79,STATUS-011,Key Registered: J
+1719:55,STATUS-106,Thrusters Deactivated (Key Release): J
+1720:65,STATUS-011,Key Registered: Q
+1721:40,STATUS-106,Thrusters Deactivated (Key Release): Q
+1721:90,STATUS-011,Key Registered: J
+1722:65,STATUS-106,Thrusters Deactivated (Key Release): J
+1723:85,STATUS-011,Key Registered: J
+1724:60,STATUS-106,Thrusters Deactivated (Key Release): J
+1726:05,STATUS-011,Key Registered: J
+1726:81,STATUS-106,Thrusters Deactivated (Key Release): J
+1746:63,STATUS-011,Key Registered: J
+1747:38,STATUS-106,Thrusters Deactivated (Key Release): J
+1748:18,STATUS-011,Key Registered: J
+1748:93,STATUS-106,Thrusters Deactivated (Key Release): J
+1750:08,STATUS-011,Key Registered: J
+1750:84,STATUS-106,Thrusters Deactivated (Key Release): J
+1751:64,STATUS-011,Key Registered: J
+1752:39,STATUS-106,Thrusters Deactivated (Key Release): J
+1753:04,STATUS-011,Key Registered: J
+1753:79,STATUS-106,Thrusters Deactivated (Key Release): J
+1754:54,STATUS-011,Key Registered: J
+1755:29,STATUS-106,Thrusters Deactivated (Key Release): J
+1755:94,STATUS-011,Key Registered: W
+1756:69,STATUS-106,Thrusters Deactivated (Key Release): W
+1757:30,STATUS-011,Key Registered: W
+1758:05,STATUS-106,Thrusters Deactivated (Key Release): W
+1759:30,STATUS-011,Key Registered: J
+1760:05,STATUS-106,Thrusters Deactivated (Key Release): J
+1761:20,STATUS-011,Key Registered: W
+1761:95,STATUS-106,Thrusters Deactivated (Key Release): W
+1763:35,STATUS-011,Key Registered: W
+1764:10,STATUS-106,Thrusters Deactivated (Key Release): W
+1764:96,STATUS-011,Key Registered: J
+1765:71,STATUS-106,Thrusters Deactivated (Key Release): J
+1767:11,STATUS-011,Key Registered: W
+1767:86,STATUS-106,Thrusters Deactivated (Key Release): W
+1768:61,STATUS-011,Key Registered: W
+1769:36,STATUS-106,Thrusters Deactivated (Key Release): W
+1770:41,STATUS-011,Key Registered: W
+1771:17,STATUS-106,Thrusters Deactivated (Key Release): W
+1772:32,STATUS-011,Key Registered: W
+1773:07,STATUS-106,Thrusters Deactivated (Key Release): W
+1774:47,STATUS-011,Key Registered: Q
+1775:22,STATUS-106,Thrusters Deactivated (Key Release): Q
+1775:77,STATUS-011,Key Registered: Q
+1777:67,STATUS-106,Thrusters Deactivated (Key Release): Q
+1777:77,STATUS-011,Key Registered: Q
+1779:18,STATUS-106,Thrusters Deactivated (Key Release): Q
+1780:28,STATUS-011,Key Registered: W
+1781:03,STATUS-106,Thrusters Deactivated (Key Release): W
+1781:43,STATUS-011,Key Registered: W
+1783:03,STATUS-106,Thrusters Deactivated (Key Release): W
+1784:18,STATUS-011,Key Registered: L
+1784:93,STATUS-106,Thrusters Deactivated (Key Release): L
+1785:29,STATUS-011,Key Registered: W
+1786:04,STATUS-106,Thrusters Deactivated (Key Release): W
+1786:49,STATUS-011,Key Registered: W
+1788:69,STATUS-106,Thrusters Deactivated (Key Release): W
+1789:19,STATUS-011,Key Registered: L
+1789:94,STATUS-106,Thrusters Deactivated (Key Release): L
+1791:14,STATUS-011,Key Registered: W
+1793:30,STATUS-106,Thrusters Deactivated (Key Release): W
+1831:04,STATUS-011,Key Registered: Q
+1831:79,STATUS-106,Thrusters Deactivated (Key Release): Q
+1834:70,STATUS-011,Key Registered: L
+1835:45,STATUS-106,Thrusters Deactivated (Key Release): L
+1836:25,STATUS-011,Key Registered: L
+1836:100,STATUS-106,Thrusters Deactivated (Key Release): L
+1837:95,STATUS-011,Key Registered: Q
+1838:70,STATUS-106,Thrusters Deactivated (Key Release): Q
+1839:95,STATUS-011,Key Registered: L
+1840:71,STATUS-106,Thrusters Deactivated (Key Release): L
+1841:31,STATUS-011,Key Registered: L
+1842:06,STATUS-106,Thrusters Deactivated (Key Release): L
+1842:61,STATUS-011,Key Registered: L
+1843:36,STATUS-106,Thrusters Deactivated (Key Release): L
+1844:11,STATUS-011,Key Registered: Q
+1844:86,STATUS-106,Thrusters Deactivated (Key Release): Q
+1845:41,STATUS-011,Key Registered: Q
+1847:97,STATUS-106,Thrusters Deactivated (Key Release): Q
+1852:77,STATUS-011,Key Registered: L
+1853:52,STATUS-106,Thrusters Deactivated (Key Release): L
+1854:12,STATUS-011,Key Registered: Q
+1854:87,STATUS-106,Thrusters Deactivated (Key Release): Q
+1855:43,STATUS-011,Key Registered: W
+1856:18,STATUS-106,Thrusters Deactivated (Key Release): W
+1856:53,STATUS-011,Key Registered: W
+1857:98,STATUS-106,Thrusters Deactivated (Key Release): W
+1858:48,STATUS-011,Key Registered: L
+1859:23,STATUS-106,Thrusters Deactivated (Key Release): L
+1859:69,STATUS-011,Key Registered: W
+1860:44,STATUS-106,Thrusters Deactivated (Key Release): W
+1861:39,STATUS-011,Key Registered: Q
+1870:46,STATUS-106,Thrusters Deactivated (Key Release): Q
+1871:81,STATUS-011,Key Registered: W
+1872:56,STATUS-106,Thrusters Deactivated (Key Release): W
+1873:01,STATUS-011,Key Registered: W
+1873:76,STATUS-106,Thrusters Deactivated (Key Release): W
+1874:26,STATUS-011,Key Registered: W
+1875:01,STATUS-106,Thrusters Deactivated (Key Release): W
+1875:61,STATUS-011,Key Registered: L
+1876:36,STATUS-106,Thrusters Deactivated (Key Release): L
+1876:87,STATUS-011,Key Registered: W
+1877:92,STATUS-011,Key Registered: L
+1878:67,STATUS-106,Thrusters Deactivated (Key Release): L
+1879:02,STATUS-011,Key Registered: L
+1880:37,STATUS-106,Thrusters Deactivated (Key Release): L
+1881:02,STATUS-011,Key Registered: L
+1881:77,STATUS-106,Thrusters Deactivated (Key Release): L
+1882:17,STATUS-011,Key Registered: W
+1882:92,STATUS-106,Thrusters Deactivated (Key Release): W
+1883:38,STATUS-011,Key Registered: W
+1884:73,STATUS-011,Key Registered: L
+1885:48,STATUS-106,Thrusters Deactivated (Key Release): L
+1886:03,STATUS-011,Key Registered: L
+1887:53,STATUS-106,Thrusters Deactivated (Key Release): L
+1889:34,STATUS-011,Key Registered: L
+1890:09,STATUS-106,Thrusters Deactivated (Key Release): L
+1890:34,STATUS-011,Key Registered: W
+1892:10,STATUS-106,Thrusters Deactivated (Key Release): W
+1892:55,STATUS-011,Key Registered: Q
+1893:30,STATUS-106,Thrusters Deactivated (Key Release): Q
+1894:45,STATUS-011,Key Registered: Q
+1896:16,STATUS-011,Key Registered: L
+1896:91,STATUS-106,Thrusters Deactivated (Key Release): L
+1897:26,STATUS-011,Key Registered: Q
+1898:01,STATUS-106,Thrusters Deactivated (Key Release): Q
+1898:41,STATUS-011,Key Registered: W
+1899:16,STATUS-106,Thrusters Deactivated (Key Release): W
+1899:66,STATUS-011,Key Registered: Q
+1900:41,STATUS-106,Thrusters Deactivated (Key Release): Q
+1900:66,STATUS-011,Key Registered: L
+1901:42,STATUS-106,Thrusters Deactivated (Key Release): L
+1901:57,STATUS-011,Key Registered: W
+1902:32,STATUS-106,Thrusters Deactivated (Key Release): W
+1902:62,STATUS-011,Key Registered: W
+1904:47,STATUS-106,Thrusters Deactivated (Key Release): W
+1904:57,STATUS-011,Key Registered: L
+1905:32,STATUS-106,Thrusters Deactivated (Key Release): L
+1905:72,STATUS-011,Key Registered: Q
+1907:27,STATUS-106,Thrusters Deactivated (Key Release): Q
+1908:38,STATUS-011,Key Registered: L
+1909:13,STATUS-106,Thrusters Deactivated (Key Release): L
+1909:54,STATUS-011,Key Registered: W
+1910:94,STATUS-106,Thrusters Deactivated (Key Release): W
+1911:64,STATUS-011,Key Registered: L
+1912:39,STATUS-106,Thrusters Deactivated (Key Release): L
+1912:79,STATUS-011,Key Registered: W
+1914:29,STATUS-106,Thrusters Deactivated (Key Release): W
+1914:79,STATUS-011,Key Registered: Q
+1920:00,STATUS-106,Thrusters Deactivated (Key Release): Q
+1920:90,STATUS-011,Key Registered: L
+1921:65,STATUS-106,Thrusters Deactivated (Key Release): L
+1924:76,STATUS-011,Key Registered: L
+1925:51,STATUS-106,Thrusters Deactivated (Key Release): L
+1926:07,STATUS-011,Key Registered: L
+1926:82,STATUS-106,Thrusters Deactivated (Key Release): L
+1927:32,STATUS-011,Key Registered: L
+1928:07,STATUS-106,Thrusters Deactivated (Key Release): L
+1928:97,STATUS-011,Key Registered: L
+1929:72,STATUS-106,Thrusters Deactivated (Key Release): L
+1930:83,STATUS-011,Key Registered: Q
+1936:08,STATUS-106,Thrusters Deactivated (Key Release): Q
+1936:63,STATUS-011,Key Registered: L
+1937:39,STATUS-106,Thrusters Deactivated (Key Release): L
+1938:29,STATUS-011,Key Registered: L
+1939:04,STATUS-106,Thrusters Deactivated (Key Release): L
+1940:24,STATUS-011,Key Registered: W
+1941:59,STATUS-106,Thrusters Deactivated (Key Release): W
+1941:95,STATUS-011,Key Registered: L
+1942:70,STATUS-106,Thrusters Deactivated (Key Release): L
+1943:25,STATUS-011,Key Registered: L
+1943:100,STATUS-106,Thrusters Deactivated (Key Release): L
+1944:40,STATUS-011,Key Registered: W
+1945:15,STATUS-106,Thrusters Deactivated (Key Release): W
+1945:45,STATUS-011,Key Registered: L
+1947:00,STATUS-106,Thrusters Deactivated (Key Release): L
+1947:46,STATUS-011,Key Registered: L
+1948:21,STATUS-106,Thrusters Deactivated (Key Release): L
+1948:56,STATUS-011,Key Registered: W
+1949:31,STATUS-106,Thrusters Deactivated (Key Release): W
+1949:66,STATUS-011,Key Registered: L
+1950:41,STATUS-106,Thrusters Deactivated (Key Release): L
+1951:06,STATUS-011,Key Registered: Q
+1953:61,STATUS-106,Thrusters Deactivated (Key Release): Q
+1953:76,STATUS-011,Key Registered: L
+1954:52,STATUS-106,Thrusters Deactivated (Key Release): L
+1954:92,STATUS-011,Key Registered: W
+1956:72,STATUS-011,Key Registered: L
+1958:82,STATUS-106,Thrusters Deactivated (Key Release): L
+1960:57,STATUS-011,Key Registered: L
+1962:18,STATUS-106,Thrusters Deactivated (Key Release): L
+1963:33,STATUS-011,Key Registered: L
+1964:83,STATUS-106,Thrusters Deactivated (Key Release): L
+1970:54,STATUS-011,Key Registered: L
+1971:29,STATUS-106,Thrusters Deactivated (Key Release): L
+1972:34,STATUS-011,Key Registered: Q
+1973:09,STATUS-106,Thrusters Deactivated (Key Release): Q
+2000:72,STATUS-011,Key Registered: L
+2001:47,STATUS-106,Thrusters Deactivated (Key Release): L
+2002:47,STATUS-011,Key Registered: L
+2003:23,STATUS-106,Thrusters Deactivated (Key Release): L
+2003:83,STATUS-011,Key Registered: L
+2004:58,STATUS-106,Thrusters Deactivated (Key Release): L
+2005:48,STATUS-011,Key Registered: L
+2006:24,STATUS-106,Thrusters Deactivated (Key Release): L
+2006:84,STATUS-011,Key Registered: L
+2007:59,STATUS-106,Thrusters Deactivated (Key Release): L
+2008:34,STATUS-011,Key Registered: L
+2009:09,STATUS-106,Thrusters Deactivated (Key Release): L
+2009:99,STATUS-011,Key Registered: Q
+2012:19,STATUS-106,Thrusters Deactivated (Key Release): Q
+2012:59,ERROR-004,Invalid Keybind
+2013:35,STATUS-106,Thrusters Deactivated (Key Release): ;
+2014:15,STATUS-011,Key Registered: L
+2014:90,STATUS-106,Thrusters Deactivated (Key Release): L
+2015:30,STATUS-011,Key Registered: Q
+2016:05,STATUS-106,Thrusters Deactivated (Key Release): Q
+2016:65,STATUS-011,Key Registered: L
+2018:05,STATUS-106,Thrusters Deactivated (Key Release): L
+2018:50,STATUS-011,Key Registered: L
+2019:25,STATUS-106,Thrusters Deactivated (Key Release): L
+2019:60,STATUS-011,Key Registered: Q
+2020:36,STATUS-106,Thrusters Deactivated (Key Release): Q
+2020:86,STATUS-011,Key Registered: L
+2023:76,STATUS-106,Thrusters Deactivated (Key Release): L
+2024:26,STATUS-011,Key Registered: L
+2026:51,STATUS-106,Thrusters Deactivated (Key Release): L
+2026:91,STATUS-011,Key Registered: W
+2028:32,STATUS-106,Thrusters Deactivated (Key Release): W
+2028:62,STATUS-011,Key Registered: L
+2030:32,STATUS-106,Thrusters Deactivated (Key Release): L
+2030:52,STATUS-011,Key Registered: L
+2031:87,STATUS-106,Thrusters Deactivated (Key Release): L
+2032:47,STATUS-011,Key Registered: W
+2034:73,STATUS-106,Thrusters Deactivated (Key Release): W
+2035:08,STATUS-011,Key Registered: L
+2040:18,STATUS-011,Key Registered: W
+2043:94,STATUS-106,Thrusters Deactivated (Key Release): W
+2045:79,STATUS-011,Key Registered: D
+2046:54,STATUS-106,Thrusters Deactivated (Key Release): D
+2046:79,STATUS-011,Key Registered: A
+2049:44,STATUS-106,Thrusters Deactivated (Key Release): A
+2049:99,STATUS-011,Key Registered: A
+2051:45,STATUS-106,Thrusters Deactivated (Key Release): A
+2051:80,STATUS-011,Key Registered: L
+2052:55,STATUS-106,Thrusters Deactivated (Key Release): L
+2052:95,STATUS-011,Key Registered: L
+2055:25,STATUS-106,Thrusters Deactivated (Key Release): L
+2056:00,STATUS-011,Key Registered: L
+2056:76,STATUS-106,Thrusters Deactivated (Key Release): L
+2057:46,STATUS-011,Key Registered: A
+2059:36,STATUS-106,Thrusters Deactivated (Key Release): A
+2060:06,STATUS-011,Key Registered: L
+2060:81,STATUS-106,Thrusters Deactivated (Key Release): L
+2062:51,STATUS-011,Key Registered: L
+2064:02,STATUS-106,Thrusters Deactivated (Key Release): L
+2064:17,STATUS-011,Key Registered: A
+2066:37,STATUS-106,Thrusters Deactivated (Key Release): A
+2067:27,STATUS-011,Key Registered: W
+2068:02,STATUS-106,Thrusters Deactivated (Key Release): W
+2068:57,STATUS-011,Key Registered: L
+2069:32,STATUS-106,Thrusters Deactivated (Key Release): L
+2073:58,STATUS-011,Key Registered: W
+2074:33,STATUS-106,Thrusters Deactivated (Key Release): W
+2074:78,STATUS-011,Key Registered: L
+2075:53,STATUS-106,Thrusters Deactivated (Key Release): L
+2076:33,STATUS-011,Key Registered: Q
+2077:09,STATUS-106,Thrusters Deactivated (Key Release): Q
+2077:99,STATUS-011,Key Registered: Q
+2078:74,STATUS-106,Thrusters Deactivated (Key Release): Q
+2078:99,STATUS-011,Key Registered: Q
+2079:74,STATUS-106,Thrusters Deactivated (Key Release): Q
+2080:09,STATUS-011,Key Registered: L
+2080:84,STATUS-106,Thrusters Deactivated (Key Release): L
+2081:29,STATUS-011,Key Registered: L
+2082:04,STATUS-106,Thrusters Deactivated (Key Release): L
+2082:49,STATUS-011,Key Registered: L
+2083:25,STATUS-106,Thrusters Deactivated (Key Release): L
+2083:95,STATUS-011,Key Registered: L
+2084:70,STATUS-106,Thrusters Deactivated (Key Release): L
+2085:15,STATUS-011,Key Registered: W
+2086:50,STATUS-106,Thrusters Deactivated (Key Release): W
+2086:60,STATUS-011,Key Registered: L
+2087:35,STATUS-106,Thrusters Deactivated (Key Release): L
+2089:66,STATUS-011,Key Registered: L
+2090:41,STATUS-106,Thrusters Deactivated (Key Release): L
+2091:76,STATUS-011,Key Registered: L
+2092:51,STATUS-106,Thrusters Deactivated (Key Release): L
+2094:26,STATUS-011,Key Registered: L
+2095:62,STATUS-106,Thrusters Deactivated (Key Release): L
+2096:27,STATUS-011,Key Registered: Q
+2098:67,STATUS-106,Thrusters Deactivated (Key Release): Q
+2100:32,STATUS-011,Key Registered: L
+2101:07,STATUS-106,Thrusters Deactivated (Key Release): L
+2182:77,STATUS-011,Key Registered: L
+2183:52,STATUS-106,Thrusters Deactivated (Key Release): L
+2184:12,STATUS-011,Key Registered: E
+2184:87,STATUS-106,Thrusters Deactivated (Key Release): E
+2185:77,STATUS-011,Key Registered: L
+2186:52,STATUS-106,Thrusters Deactivated (Key Release): L
+2186:97,STATUS-011,Key Registered: L
+2187:72,STATUS-106,Thrusters Deactivated (Key Release): L
+2188:33,STATUS-011,Key Registered: L
+2189:08,STATUS-106,Thrusters Deactivated (Key Release): L
+2190:13,STATUS-011,Key Registered: L
+2190:88,STATUS-106,Thrusters Deactivated (Key Release): L
+2191:33,STATUS-011,Key Registered: L
+2192:08,STATUS-106,Thrusters Deactivated (Key Release): L
+2193:28,STATUS-011,Key Registered: U
+2194:03,STATUS-106,Thrusters Deactivated (Key Release): U
+2194:28,STATUS-011,Key Registered: W
+2195:04,STATUS-106,Thrusters Deactivated (Key Release): W
+2195:49,STATUS-011,Key Registered: E
+2198:54,STATUS-106,Thrusters Deactivated (Key Release): E
+2203:05,STATUS-011,Key Registered: E
+2203:80,STATUS-106,Thrusters Deactivated (Key Release): E
+2204:95,STATUS-011,Key Registered: W
+2205:70,STATUS-106,Thrusters Deactivated (Key Release): W
+2206:85,STATUS-011,Key Registered: W
+2207:60,STATUS-106,Thrusters Deactivated (Key Release): W
+2207:95,STATUS-011,Key Registered: W
+2210:56,STATUS-106,Thrusters Deactivated (Key Release): W
+2211:26,STATUS-011,Key Registered: L
+2214:41,STATUS-106,Thrusters Deactivated (Key Release): L
+2214:56,STATUS-011,Key Registered: L
+2215:31,STATUS-106,Thrusters Deactivated (Key Release): L
+2215:81,STATUS-011,Key Registered: L
+2217:21,STATUS-106,Thrusters Deactivated (Key Release): L
+2217:47,STATUS-011,Key Registered: W
+2221:42,STATUS-106,Thrusters Deactivated (Key Release): W
+2221:87,STATUS-011,Key Registered: E
+2222:62,STATUS-106,Thrusters Deactivated (Key Release): E
+2223:07,STATUS-011,Key Registered: E
+2225:73,STATUS-106,Thrusters Deactivated (Key Release): E
+2226:18,STATUS-011,Key Registered: W
+2228:58,STATUS-106,Thrusters Deactivated (Key Release): W
+2231:13,STATUS-011,Key Registered: W
+2231:89,STATUS-106,Thrusters Deactivated (Key Release): W
+2232:44,STATUS-011,Key Registered: E
+2233:39,STATUS-106,Thrusters Deactivated (Key Release): E
+2235:34,STATUS-011,Key Registered: U
+2236:09,STATUS-106,Thrusters Deactivated (Key Release): U
+2236:59,STATUS-011,Key Registered: W
+2239:95,STATUS-106,Thrusters Deactivated (Key Release): W
+2260:17,STATUS-011,Key Registered: E
+2260:92,STATUS-106,Thrusters Deactivated (Key Release): E
+2261:32,STATUS-011,Key Registered: E
+2261:72,STATUS-011,Key Registered: W
+2262:47,STATUS-106,Thrusters Deactivated (Key Release): W
+2262:72,STATUS-011,Key Registered: E
+2265:58,STATUS-106,Thrusters Deactivated (Key Release): E
+2266:18,STATUS-011,Key Registered: E
+2266:93,STATUS-106,Thrusters Deactivated (Key Release): E
+2267:78,STATUS-011,Key Registered: E
+2269:33,STATUS-106,Thrusters Deactivated (Key Release): E
+2269:73,STATUS-011,Key Registered: E
+2271:49,STATUS-106,Thrusters Deactivated (Key Release): E
+2272:29,STATUS-011,Key Registered: L
+2273:04,STATUS-106,Thrusters Deactivated (Key Release): L
+2273:74,STATUS-011,Key Registered: L
+2274:49,STATUS-106,Thrusters Deactivated (Key Release): L
+2274:89,STATUS-011,Key Registered: W
+2275:64,STATUS-106,Thrusters Deactivated (Key Release): W
+2276:14,STATUS-011,Key Registered: L
+2277:70,STATUS-106,Thrusters Deactivated (Key Release): L
+2277:100,STATUS-011,Key Registered: L
+2279:75,STATUS-106,Thrusters Deactivated (Key Release): L
+2280:05,STATUS-011,Key Registered: L
+2294:02,STATUS-106,Thrusters Deactivated (Key Release): L
+2294:62,STATUS-011,Key Registered: E
+2295:37,STATUS-106,Thrusters Deactivated (Key Release): E
+2296:92,STATUS-011,Key Registered: W
+2300:08,STATUS-106,Thrusters Deactivated (Key Release): W
+2300:58,STATUS-011,Key Registered: L
+2303:53,STATUS-106,Thrusters Deactivated (Key Release): L
+2307:18,STATUS-011,Key Registered: L
+2307:94,STATUS-106,Thrusters Deactivated (Key Release): L
+2308:44,STATUS-011,Key Registered: E
+2309:19,STATUS-106,Thrusters Deactivated (Key Release): E
+2312:44,STATUS-011,Key Registered: W
+2313:19,STATUS-106,Thrusters Deactivated (Key Release): W
+2314:04,STATUS-011,Key Registered: W
+2316:25,STATUS-106,Thrusters Deactivated (Key Release): W
+2318:20,STATUS-011,Key Registered: L
+2318:95,STATUS-106,Thrusters Deactivated (Key Release): L
+2319:30,STATUS-011,Key Registered: W
+2320:05,STATUS-106,Thrusters Deactivated (Key Release): W
+2320:50,STATUS-011,Key Registered: L
+2321:25,STATUS-106,Thrusters Deactivated (Key Release): L
+2321:60,STATUS-011,Key Registered: W
+2322:36,STATUS-106,Thrusters Deactivated (Key Release): W
+2322:71,STATUS-011,Key Registered: L
+2323:46,STATUS-106,Thrusters Deactivated (Key Release): L
+2323:86,STATUS-011,Key Registered: W
+2324:61,STATUS-106,Thrusters Deactivated (Key Release): W
+2325:06,STATUS-011,Key Registered: L
+2325:81,STATUS-106,Thrusters Deactivated (Key Release): L
+2326:26,STATUS-011,Key Registered: W
+2328:36,STATUS-106,Thrusters Deactivated (Key Release): W
+2328:97,STATUS-011,Key Registered: U
+2329:72,STATUS-106,Thrusters Deactivated (Key Release): U
+2331:22,STATUS-011,Key Registered: W
+2338:93,STATUS-106,Thrusters Deactivated (Key Release): W
+2339:33,STATUS-011,Key Registered: L
+2340:08,STATUS-106,Thrusters Deactivated (Key Release): L
+2340:53,STATUS-011,Key Registered: W
+2344:44,STATUS-106,Thrusters Deactivated (Key Release): W
+2344:79,STATUS-011,Key Registered: E
+2347:44,STATUS-106,Thrusters Deactivated (Key Release): E
+2348:09,STATUS-011,Key Registered: E
+2349:49,STATUS-106,Thrusters Deactivated (Key Release): E
+2349:59,STATUS-011,Key Registered: O
+2351:05,STATUS-106,Thrusters Deactivated (Key Release): O
+2351:65,STATUS-011,Key Registered: O
+2352:100,STATUS-106,Thrusters Deactivated (Key Release): O
+2353:40,STATUS-011,Key Registered: U
+2356:95,STATUS-106,Thrusters Deactivated (Key Release): U
+2357:70,STATUS-011,Key Registered: U
+2359:86,STATUS-011,Key Registered: E
+2362:66,STATUS-106,Thrusters Deactivated (Key Release): E
+2364:06,STATUS-011,Key Registered: L
+2364:81,STATUS-106,Thrusters Deactivated (Key Release): L
+2365:21,STATUS-011,Key Registered: J
+2365:97,STATUS-106,Thrusters Deactivated (Key Release): J
+2366:57,STATUS-011,Key Registered: J
+2367:32,STATUS-106,Thrusters Deactivated (Key Release): J
+2367:77,STATUS-011,Key Registered: J
+2368:52,STATUS-106,Thrusters Deactivated (Key Release): J
+2369:67,STATUS-011,Key Registered: W
+2371:08,STATUS-106,Thrusters Deactivated (Key Release): W
+2371:38,STATUS-011,Key Registered: J
+2372:13,STATUS-106,Thrusters Deactivated (Key Release): J
+2372:53,STATUS-011,Key Registered: W
+2374:78,STATUS-106,Thrusters Deactivated (Key Release): W
+2375:33,STATUS-011,Key Registered: W
+2377:43,STATUS-106,Thrusters Deactivated (Key Release): W
+2377:83,STATUS-011,Key Registered: J
+2378:59,STATUS-106,Thrusters Deactivated (Key Release): J
+2379:19,STATUS-011,Key Registered: U
+2379:94,STATUS-106,Thrusters Deactivated (Key Release): U
+2380:44,STATUS-011,Key Registered: U
+2381:19,STATUS-106,Thrusters Deactivated (Key Release): U
+2381:54,STATUS-011,Key Registered: E
+2382:29,STATUS-106,Thrusters Deactivated (Key Release): E
+2383:24,STATUS-011,Key Registered: O
+2384:70,STATUS-106,Thrusters Deactivated (Key Release): O
+2385:25,STATUS-011,Key Registered: W
+2388:95,STATUS-106,Thrusters Deactivated (Key Release): W
+2391:10,STATUS-011,Key Registered: W
+2393:01,STATUS-106,Thrusters Deactivated (Key Release): W
+2393:46,STATUS-011,Key Registered: L
+2394:21,STATUS-106,Thrusters Deactivated (Key Release): L
+2394:66,STATUS-011,Key Registered: L
+2395:41,STATUS-106,Thrusters Deactivated (Key Release): L
+2395:81,STATUS-011,Key Registered: W
+2399:32,STATUS-106,Thrusters Deactivated (Key Release): W
+2399:72,STATUS-011,Key Registered: L
+2401:52,STATUS-106,Thrusters Deactivated (Key Release): L
+2401:72,STATUS-011,Key Registered: L
+2402:47,STATUS-106,Thrusters Deactivated (Key Release): L
+2402:82,STATUS-011,Key Registered: E
+2403:57,STATUS-106,Thrusters Deactivated (Key Release): E
+2404:88,STATUS-011,Key Registered: E
+2407:28,STATUS-106,Thrusters Deactivated (Key Release): E
+2411:28,STATUS-011,Key Registered: W
+2414:19,STATUS-011,Key Registered: L
+2414:94,STATUS-106,Thrusters Deactivated (Key Release): L
+2415:34,STATUS-011,Key Registered: L
+2417:04,STATUS-106,Thrusters Deactivated (Key Release): L
+2417:14,STATUS-011,Key Registered: L
+2418:59,STATUS-106,Thrusters Deactivated (Key Release): L
+2422:50,STATUS-011,Key Registered: L
+2423:25,STATUS-106,Thrusters Deactivated (Key Release): L
+2423:65,STATUS-011,Key Registered: J
+2426:66,STATUS-011,Key Registered: W
+2428:71,STATUS-106,Thrusters Deactivated (Key Release): W
+2429:71,STATUS-011,Key Registered: J
+2431:56,STATUS-106,Thrusters Deactivated (Key Release): J
+2432:31,STATUS-011,Key Registered: W
+2433:67,STATUS-106,Thrusters Deactivated (Key Release): W
+2434:27,STATUS-011,Key Registered: W
+2436:12,STATUS-106,Thrusters Deactivated (Key Release): W
+2436:37,STATUS-011,Key Registered: W
+2439:47,STATUS-106,Thrusters Deactivated (Key Release): W
+2439:52,STATUS-011,Key Registered: W
+2443:13,STATUS-106,Thrusters Deactivated (Key Release): W
+2444:23,STATUS-011,Key Registered: W
+2446:88,STATUS-106,Thrusters Deactivated (Key Release): W
+2446:93,STATUS-011,Key Registered: W
+2447:69,STATUS-106,Thrusters Deactivated (Key Release): W
+2448:39,STATUS-011,Key Registered: L
+2449:14,STATUS-106,Thrusters Deactivated (Key Release): L
+2449:49,STATUS-011,Key Registered: L
+2450:24,STATUS-106,Thrusters Deactivated (Key Release): L
+2450:69,STATUS-011,Key Registered: W
+2455:60,STATUS-106,Thrusters Deactivated (Key Release): W
+2456:15,STATUS-011,Key Registered: L
+2456:90,STATUS-106,Thrusters Deactivated (Key Release): L
+2457:25,STATUS-011,Key Registered: W
+2458:70,STATUS-106,Thrusters Deactivated (Key Release): W
+2459:20,STATUS-011,Key Registered: L
+2459:95,STATUS-106,Thrusters Deactivated (Key Release): L
+2460:15,STATUS-011,Key Registered: W
+2461:71,STATUS-106,Thrusters Deactivated (Key Release): W
+2462:21,STATUS-011,Key Registered: L
+2462:96,STATUS-106,Thrusters Deactivated (Key Release): L
+2463:31,STATUS-011,Key Registered: W
+2466:06,STATUS-106,Thrusters Deactivated (Key Release): W
+2466:51,STATUS-011,Key Registered: L
+2467:96,STATUS-106,Thrusters Deactivated (Key Release): L
+2468:47,STATUS-011,Key Registered: W
+2471:37,STATUS-106,Thrusters Deactivated (Key Release): W
+2471:82,STATUS-011,Key Registered: L
+2472:57,STATUS-106,Thrusters Deactivated (Key Release): L
+2472:77,STATUS-011,Key Registered: J
+2473:52,STATUS-106,Thrusters Deactivated (Key Release): J
+2473:82,STATUS-011,Key Registered: J
+2474:58,STATUS-106,Thrusters Deactivated (Key Release): J
+2475:98,STATUS-011,Key Registered: W
+2480:83,STATUS-106,Thrusters Deactivated (Key Release): W
+2481:43,STATUS-011,Key Registered: W
+2483:04,STATUS-106,Thrusters Deactivated (Key Release): W
+2483:54,STATUS-011,Key Registered: J
+2484:29,STATUS-106,Thrusters Deactivated (Key Release): J
+2484:54,STATUS-011,Key Registered: J
+2485:29,STATUS-106,Thrusters Deactivated (Key Release): J
+2485:89,STATUS-011,Key Registered: W
+2488:50,STATUS-106,Thrusters Deactivated (Key Release): W
+2488:60,STATUS-011,Key Registered: J
+2489:35,STATUS-106,Thrusters Deactivated (Key Release): J
+2489:75,STATUS-011,Key Registered: J
+2490:50,STATUS-106,Thrusters Deactivated (Key Release): J
+2490:75,STATUS-011,Key Registered: W
+2492:90,STATUS-106,Thrusters Deactivated (Key Release): W
+2493:20,STATUS-011,Key Registered: J
+2493:95,STATUS-106,Thrusters Deactivated (Key Release): J
+2494:25,STATUS-011,Key Registered: W
+2496:06,STATUS-011,Key Registered: J
+2496:81,STATUS-106,Thrusters Deactivated (Key Release): J
+2497:21,STATUS-011,Key Registered: J
+2498:96,STATUS-106,Thrusters Deactivated (Key Release): J
+2499:11,STATUS-011,Key Registered: W
+2499:86,STATUS-106,Thrusters Deactivated (Key Release): W
+2500:31,STATUS-011,Key Registered: W
+2502:62,STATUS-106,Thrusters Deactivated (Key Release): W
+2503:12,STATUS-011,Key Registered: W
+2503:87,STATUS-106,Thrusters Deactivated (Key Release): W
+2504:52,STATUS-011,Key Registered: L
+2505:27,STATUS-106,Thrusters Deactivated (Key Release): L
+2506:07,STATUS-011,Key Registered: W
+2506:82,STATUS-106,Thrusters Deactivated (Key Release): W
+2507:32,STATUS-011,Key Registered: W
+2508:08,STATUS-106,Thrusters Deactivated (Key Release): W
+2509:63,STATUS-011,Key Registered: L
+2510:38,STATUS-106,Thrusters Deactivated (Key Release): L
+2510:78,STATUS-011,Key Registered: J
+2511:53,STATUS-106,Thrusters Deactivated (Key Release): J
+2512:58,STATUS-011,Key Registered: W
+2513:33,STATUS-106,Thrusters Deactivated (Key Release): W
+2513:93,STATUS-011,Key Registered: W
+2516:19,STATUS-106,Thrusters Deactivated (Key Release): W
+2516:34,STATUS-011,Key Registered: W
+2517:09,STATUS-106,Thrusters Deactivated (Key Release): W
+2517:49,STATUS-011,Key Registered: L
+2518:24,STATUS-106,Thrusters Deactivated (Key Release): L
+2519:74,STATUS-011,Key Registered: L
+2520:49,STATUS-106,Thrusters Deactivated (Key Release): L
+2520:94,STATUS-011,Key Registered: D
+2521:70,STATUS-106,Thrusters Deactivated (Key Release): D
+2521:100,STATUS-011,Key Registered: A
+2522:75,STATUS-106,Thrusters Deactivated (Key Release): A
+2523:10,STATUS-011,Key Registered: A
+2526:10,STATUS-106,Thrusters Deactivated (Key Release): A
+2527:16,STATUS-011,Key Registered: A
+2528:61,STATUS-106,Thrusters Deactivated (Key Release): A
+2529:16,STATUS-011,Key Registered: L
+2529:91,STATUS-106,Thrusters Deactivated (Key Release): L
+2530:26,STATUS-011,Key Registered: W
+2531:01,STATUS-106,Thrusters Deactivated (Key Release): W
+2531:46,STATUS-011,Key Registered: W
+2532:86,STATUS-106,Thrusters Deactivated (Key Release): W
+2533:12,STATUS-011,Key Registered: A
+2533:87,STATUS-106,Thrusters Deactivated (Key Release): A
+2534:37,STATUS-011,Key Registered: A
+2535:12,STATUS-106,Thrusters Deactivated (Key Release): A
+2536:47,STATUS-011,Key Registered: L
+2537:22,STATUS-106,Thrusters Deactivated (Key Release): L
+2538:87,STATUS-011,Key Registered: W
+2543:23,STATUS-106,Thrusters Deactivated (Key Release): W
+2543:68,STATUS-011,Key Registered: L
+2544:43,STATUS-106,Thrusters Deactivated (Key Release): L
+2545:23,STATUS-011,Key Registered: L
+2545:98,STATUS-106,Thrusters Deactivated (Key Release): L
+2546:83,STATUS-011,Key Registered: L
+2547:59,STATUS-106,Thrusters Deactivated (Key Release): L
+2548:24,STATUS-011,Key Registered: W
+2552:04,STATUS-106,Thrusters Deactivated (Key Release): W
+2553:34,STATUS-011,Key Registered: L
+2554:10,STATUS-106,Thrusters Deactivated (Key Release): L
+2554:70,STATUS-011,Key Registered: W
+2559:35,STATUS-106,Thrusters Deactivated (Key Release): W
+2559:80,STATUS-011,Key Registered: L
+2560:55,STATUS-106,Thrusters Deactivated (Key Release): L
+2561:81,STATUS-011,Key Registered: J
+2562:56,STATUS-106,Thrusters Deactivated (Key Release): J
+2563:26,STATUS-011,Key Registered: J
+2564:01,STATUS-106,Thrusters Deactivated (Key Release): J
+2564:76,STATUS-011,Key Registered: E
+2565:51,STATUS-106,Thrusters Deactivated (Key Release): E
+2570:22,STATUS-011,Key Registered: J
+2570:97,STATUS-106,Thrusters Deactivated (Key Release): J
+2575:33,STATUS-011,Key Registered: J
+2576:08,STATUS-106,Thrusters Deactivated (Key Release): J
+2577:03,STATUS-011,Key Registered: E
+2577:78,STATUS-106,Thrusters Deactivated (Key Release): E
+2582:64,STATUS-011,Key Registered: D
+2583:39,STATUS-106,Thrusters Deactivated (Key Release): D
+2584:69,STATUS-011,Key Registered: W
+2585:44,STATUS-106,Thrusters Deactivated (Key Release): W
+2585:84,STATUS-011,Key Registered: W
+2586:59,STATUS-106,Thrusters Deactivated (Key Release): W
+2587:14,STATUS-011,Key Registered: E
+2587:90,STATUS-106,Thrusters Deactivated (Key Release): E
+2590:60,STATUS-011,Key Registered: J
+2591:35,STATUS-106,Thrusters Deactivated (Key Release): J
+2594:85,STATUS-011,Key Registered: J
+2595:61,STATUS-106,Thrusters Deactivated (Key Release): J
+2598:46,STATUS-011,Key Registered: J
+2599:21,STATUS-106,Thrusters Deactivated (Key Release): J
+2602:01,STATUS-011,Key Registered: W
+2602:76,STATUS-106,Thrusters Deactivated (Key Release): W
+2605:52,STATUS-011,Key Registered: D
+2606:27,STATUS-106,Thrusters Deactivated (Key Release): D
+2606:72,STATUS-011,Key Registered: D
+2607:47,STATUS-106,Thrusters Deactivated (Key Release): D
+2608:02,STATUS-011,Key Registered: J
+2608:77,STATUS-106,Thrusters Deactivated (Key Release): J
+2609:17,STATUS-011,Key Registered: L
+2609:92,STATUS-106,Thrusters Deactivated (Key Release): L
+2610:33,STATUS-011,Key Registered: L
+2611:08,STATUS-106,Thrusters Deactivated (Key Release): L
+2611:63,STATUS-011,Key Registered: L
+2612:38,STATUS-106,Thrusters Deactivated (Key Release): L
+2613:28,STATUS-011,Key Registered: D
+2614:03,STATUS-106,Thrusters Deactivated (Key Release): D
+2614:38,STATUS-011,Key Registered: D
+2615:13,STATUS-106,Thrusters Deactivated (Key Release): D
+2615:58,STATUS-011,Key Registered: L
+2616:33,STATUS-106,Thrusters Deactivated (Key Release): L
+2616:73,STATUS-011,Key Registered: J
+2617:49,STATUS-106,Thrusters Deactivated (Key Release): J
+2617:84,STATUS-011,Key Registered: J
+2618:59,STATUS-106,Thrusters Deactivated (Key Release): J
+2619:29,STATUS-011,Key Registered: J
+2620:04,STATUS-106,Thrusters Deactivated (Key Release): J
+2620:89,STATUS-011,Key Registered: L
+2621:64,STATUS-106,Thrusters Deactivated (Key Release): L
+2622:04,STATUS-011,Key Registered: E
+2622:79,STATUS-106,Thrusters Deactivated (Key Release): E
+2629:65,STATUS-011,Key Registered: K
+2630:40,STATUS-106,Thrusters Deactivated (Key Release): K
+2630:95,STATUS-011,Key Registered: I
+2631:70,STATUS-106,Thrusters Deactivated (Key Release): I
+2632:06,STATUS-011,Key Registered: I
+2633:76,STATUS-106,Thrusters Deactivated (Key Release): I
+2636:11,STATUS-011,Key Registered: Q
+2636:86,STATUS-106,Thrusters Deactivated (Key Release): Q
+2637:66,STATUS-011,Key Registered: Q
+2638:41,STATUS-106,Thrusters Deactivated (Key Release): Q
+2655:03,STATUS-011,Key Registered: D
+2655:78,STATUS-106,Thrusters Deactivated (Key Release): D
+2656:69,STATUS-011,Key Registered: W
+2657:44,STATUS-106,Thrusters Deactivated (Key Release): W
+2657:84,STATUS-011,Key Registered: W
+2658:59,STATUS-106,Thrusters Deactivated (Key Release): W
+2658:99,STATUS-011,Key Registered: W
+2662:04,STATUS-106,Thrusters Deactivated (Key Release): W
+2662:39,STATUS-011,Key Registered: W
+2663:100,STATUS-106,Thrusters Deactivated (Key Release): W
+2665:20,STATUS-011,Key Registered: J
+2665:95,STATUS-106,Thrusters Deactivated (Key Release): J
+2667:25,STATUS-011,Key Registered: W
+2668:65,STATUS-106,Thrusters Deactivated (Key Release): W
+2669:40,STATUS-011,Key Registered: Q
+2670:16,STATUS-106,Thrusters Deactivated (Key Release): Q
+2671:11,STATUS-011,Key Registered: Q
+2671:86,STATUS-106,Thrusters Deactivated (Key Release): Q
+2672:26,STATUS-011,Key Registered: J
+2673:01,STATUS-106,Thrusters Deactivated (Key Release): J
+2673:36,STATUS-011,Key Registered: Q
+2675:01,STATUS-106,Thrusters Deactivated (Key Release): Q
+2675:61,STATUS-011,Key Registered: Q
+2677:62,STATUS-106,Thrusters Deactivated (Key Release): Q
+2678:07,STATUS-011,Key Registered: Q
+2679:97,STATUS-106,Thrusters Deactivated (Key Release): Q
+2680:02,STATUS-011,Key Registered: Q
+2680:77,STATUS-106,Thrusters Deactivated (Key Release): Q
+2681:37,STATUS-011,Key Registered: J
+2682:12,STATUS-106,Thrusters Deactivated (Key Release): J
+2685:33,STATUS-011,Key Registered: J
+2686:08,STATUS-106,Thrusters Deactivated (Key Release): J
+2688:68,STATUS-011,Key Registered: W
+2689:43,STATUS-106,Thrusters Deactivated (Key Release): W
+2694:49,STATUS-011,Key Registered: W
+2696:04,STATUS-106,Thrusters Deactivated (Key Release): W
+2696:14,STATUS-011,Key Registered: W
+2696:89,STATUS-106,Thrusters Deactivated (Key Release): W
+2711:06,STATUS-011,Key Registered: E
+2711:81,STATUS-106,Thrusters Deactivated (Key Release): E
+2863:18,STATUS-011,Key Registered: L
+2863:94,STATUS-106,Thrusters Deactivated (Key Release): L
+2864:34,STATUS-011,Key Registered: L
+2865:09,STATUS-106,Thrusters Deactivated (Key Release): L
+2865:59,STATUS-011,Key Registered: E
+2866:34,STATUS-106,Thrusters Deactivated (Key Release): E
+2866:64,STATUS-011,Key Registered: E
+2867:39,STATUS-106,Thrusters Deactivated (Key Release): E
+2873:10,STATUS-011,Key Registered: E
+2873:85,STATUS-106,Thrusters Deactivated (Key Release): E
+2876:75,STATUS-011,Key Registered: W
+2877:50,STATUS-106,Thrusters Deactivated (Key Release): W
+2877:90,STATUS-011,Key Registered: L
+2878:65,STATUS-106,Thrusters Deactivated (Key Release): L
+2879:01,STATUS-011,Key Registered: W
+2879:76,STATUS-106,Thrusters Deactivated (Key Release): W
+2880:31,STATUS-011,Key Registered: W
+2881:06,STATUS-106,Thrusters Deactivated (Key Release): W
+2881:46,STATUS-011,Key Registered: L
+2882:21,STATUS-106,Thrusters Deactivated (Key Release): L
+2882:76,STATUS-011,Key Registered: L
+2883:51,STATUS-106,Thrusters Deactivated (Key Release): L
+2884:16,STATUS-011,Key Registered: W
+2884:92,STATUS-106,Thrusters Deactivated (Key Release): W
+2885:17,STATUS-011,Key Registered: L
+2885:92,STATUS-106,Thrusters Deactivated (Key Release): L
+2886:27,STATUS-011,Key Registered: W
+2887:02,STATUS-106,Thrusters Deactivated (Key Release): W
+2887:32,STATUS-011,Key Registered: L
+2888:07,STATUS-106,Thrusters Deactivated (Key Release): L
+2888:52,STATUS-011,Key Registered: W
+2889:27,STATUS-106,Thrusters Deactivated (Key Release): W
+2889:62,STATUS-011,Key Registered: L
+2890:38,STATUS-106,Thrusters Deactivated (Key Release): L
+2890:73,STATUS-011,Key Registered: W
+2891:48,STATUS-106,Thrusters Deactivated (Key Release): W
+2891:63,STATUS-011,Key Registered: W
+2893:58,STATUS-106,Thrusters Deactivated (Key Release): W
+2893:88,STATUS-011,Key Registered: L
+2897:39,STATUS-106,Thrusters Deactivated (Key Release): L
+2897:84,STATUS-011,Key Registered: W
+2899:79,STATUS-011,Key Registered: L
+2902:84,STATUS-106,Thrusters Deactivated (Key Release): L
+2903:79,STATUS-011,Key Registered: L
+2906:25,STATUS-106,Thrusters Deactivated (Key Release): L
+2906:75,STATUS-011,Key Registered: L
+2907:50,STATUS-106,Thrusters Deactivated (Key Release): L
+2907:95,STATUS-011,Key Registered: W
+2908:70,STATUS-106,Thrusters Deactivated (Key Release): W
+2909:20,STATUS-011,Key Registered: L
+2911:40,STATUS-106,Thrusters Deactivated (Key Release): L
+2911:90,STATUS-011,Key Registered: L
+2912:66,STATUS-106,Thrusters Deactivated (Key Release): L
+2912:96,STATUS-011,Key Registered: W
+2913:71,STATUS-106,Thrusters Deactivated (Key Release): W
+2914:16,STATUS-011,Key Registered: E
+2914:91,STATUS-106,Thrusters Deactivated (Key Release): E
+2917:11,STATUS-011,Key Registered: L
+2917:86,STATUS-106,Thrusters Deactivated (Key Release): L
+2919:01,STATUS-011,Key Registered: L
+2919:77,STATUS-106,Thrusters Deactivated (Key Release): L
+2920:37,STATUS-011,Key Registered: W
+2921:12,STATUS-106,Thrusters Deactivated (Key Release): W
+2921:42,STATUS-011,Key Registered: W
+2922:17,STATUS-106,Thrusters Deactivated (Key Release): W
+2922:67,STATUS-011,Key Registered: L
+2923:42,STATUS-106,Thrusters Deactivated (Key Release): L
+2923:77,STATUS-011,Key Registered: W
+2925:67,STATUS-106,Thrusters Deactivated (Key Release): W
+2926:13,STATUS-011,Key Registered: W
+2926:88,STATUS-106,Thrusters Deactivated (Key Release): W
+2927:38,STATUS-011,Key Registered: L
+2928:93,STATUS-106,Thrusters Deactivated (Key Release): L
+2929:43,STATUS-011,Key Registered: W
+2932:88,STATUS-106,Thrusters Deactivated (Key Release): W
+2933:29,STATUS-011,Key Registered: L
+2935:34,STATUS-106,Thrusters Deactivated (Key Release): L
+2935:79,STATUS-011,Key Registered: W
+2937:69,STATUS-106,Thrusters Deactivated (Key Release): W
+2938:09,STATUS-011,Key Registered: Q
+2938:84,STATUS-106,Thrusters Deactivated (Key Release): Q
+2939:39,STATUS-011,Key Registered: Q
+2941:35,STATUS-106,Thrusters Deactivated (Key Release): Q
+2941:45,STATUS-011,Key Registered: J
+2942:20,STATUS-106,Thrusters Deactivated (Key Release): J
+2942:60,STATUS-011,Key Registered: W
+2943:35,STATUS-106,Thrusters Deactivated (Key Release): W
+2954:76,STATUS-011,Key Registered: J
+2955:51,STATUS-106,Thrusters Deactivated (Key Release): J
+2956:17,STATUS-011,Key Registered: J
+2956:92,STATUS-106,Thrusters Deactivated (Key Release): J
+2957:37,STATUS-011,Key Registered: J
+2960:87,STATUS-106,Thrusters Deactivated (Key Release): J
+2961:92,STATUS-011,Key Registered: Q
+2962:67,STATUS-106,Thrusters Deactivated (Key Release): Q
+2974:54,STATUS-011,Key Registered: J
+2975:29,STATUS-106,Thrusters Deactivated (Key Release): J
+2976:34,STATUS-011,Key Registered: J
+2977:09,STATUS-106,Thrusters Deactivated (Key Release): J
+2977:69,STATUS-011,Key Registered: W
+2978:44,STATUS-106,Thrusters Deactivated (Key Release): W
+2978:85,STATUS-011,Key Registered: W
+2979:60,STATUS-106,Thrusters Deactivated (Key Release): W
+2980:35,STATUS-011,Key Registered: W
+2981:10,STATUS-106,Thrusters Deactivated (Key Release): W
+2982:45,STATUS-011,Key Registered: W
+2983:20,STATUS-106,Thrusters Deactivated (Key Release): W
+2985:15,STATUS-011,Key Registered: J
+2985:91,STATUS-106,Thrusters Deactivated (Key Release): J
+2989:06,STATUS-011,Key Registered: L
+2989:81,STATUS-106,Thrusters Deactivated (Key Release): L
+2991:56,STATUS-011,Key Registered: W
+2992:31,STATUS-106,Thrusters Deactivated (Key Release): W
+2993:22,STATUS-011,Key Registered: L
+2993:97,STATUS-106,Thrusters Deactivated (Key Release): L
+2996:92,STATUS-011,Key Registered: L
+2997:67,STATUS-106,Thrusters Deactivated (Key Release): L
+2999:32,STATUS-011,Key Registered: W
+3000:07,STATUS-106,Thrusters Deactivated (Key Release): W
+3000:98,STATUS-011,Key Registered: Q
+3001:73,STATUS-106,Thrusters Deactivated (Key Release): Q
+3002:23,STATUS-011,Key Registered: Q
+3002:98,STATUS-106,Thrusters Deactivated (Key Release): Q
+3003:63,STATUS-011,Key Registered: L
+3004:38,STATUS-106,Thrusters Deactivated (Key Release): L
+3005:13,STATUS-011,Key Registered: L
+3005:88,STATUS-106,Thrusters Deactivated (Key Release): L
+3007:69,STATUS-011,Key Registered: J
+3008:44,STATUS-106,Thrusters Deactivated (Key Release): J
+3009:54,STATUS-011,Key Registered: L
+3010:29,STATUS-106,Thrusters Deactivated (Key Release): L
+3010:69,STATUS-011,Key Registered: W
+3011:44,STATUS-106,Thrusters Deactivated (Key Release): W
+3011:69,STATUS-011,Key Registered: W
+3012:44,STATUS-106,Thrusters Deactivated (Key Release): W
+3012:85,STATUS-011,Key Registered: W
+3013:60,STATUS-106,Thrusters Deactivated (Key Release): W
+3014:05,STATUS-011,Key Registered: W
+3014:80,STATUS-106,Thrusters Deactivated (Key Release): W
+3015:35,STATUS-011,Key Registered: W
+3016:10,STATUS-106,Thrusters Deactivated (Key Release): W
+3016:60,STATUS-011,Key Registered: W
+3018:30,STATUS-106,Thrusters Deactivated (Key Release): W
+3018:85,STATUS-011,Key Registered: J
+3019:61,STATUS-106,Thrusters Deactivated (Key Release): J
+3020:81,STATUS-011,Key Registered: W
+3022:26,STATUS-106,Thrusters Deactivated (Key Release): W
+3022:76,STATUS-011,Key Registered: J
+3023:51,STATUS-106,Thrusters Deactivated (Key Release): J
+3023:91,STATUS-011,Key Registered: W
+3025:91,STATUS-106,Thrusters Deactivated (Key Release): W
+3026:72,STATUS-011,Key Registered: W
+3027:47,STATUS-106,Thrusters Deactivated (Key Release): W
+3028:22,STATUS-011,Key Registered: E
+3028:97,STATUS-106,Thrusters Deactivated (Key Release): E
+3037:83,STATUS-011,Key Registered: L
+3038:58,STATUS-106,Thrusters Deactivated (Key Release): L
+3039:88,STATUS-011,Key Registered: L
+3040:63,STATUS-106,Thrusters Deactivated (Key Release): L
+3044:94,STATUS-011,Key Registered: L
+3045:69,STATUS-106,Thrusters Deactivated (Key Release): L
+3047:24,STATUS-011,Key Registered: E
+3047:99,STATUS-106,Thrusters Deactivated (Key Release): E
+3054:35,STATUS-011,Key Registered: E
+3055:10,STATUS-106,Thrusters Deactivated (Key Release): E
+3073:77,STATUS-011,Key Registered: E
+3074:52,STATUS-106,Thrusters Deactivated (Key Release): E
+3075:48,STATUS-011,Key Registered: E
+3076:23,STATUS-106,Thrusters Deactivated (Key Release): E
+3076:88,STATUS-011,Key Registered: E
+3078:68,STATUS-106,Thrusters Deactivated (Key Release): E
+3079:18,STATUS-011,Key Registered: E
+3079:93,STATUS-106,Thrusters Deactivated (Key Release): E
+3082:09,STATUS-011,Key Registered: E
+3084:14,STATUS-106,Thrusters Deactivated (Key Release): E
+3084:19,STATUS-011,Key Registered: W
+3086:34,STATUS-106,Thrusters Deactivated (Key Release): W
+3087:29,STATUS-011,Key Registered: E
+3088:04,STATUS-106,Thrusters Deactivated (Key Release): E
+3091:70,STATUS-011,Key Registered: J
+3092:45,STATUS-106,Thrusters Deactivated (Key Release): J
+3094:15,STATUS-011,Key Registered: W
+3094:90,STATUS-106,Thrusters Deactivated (Key Release): W
+3095:25,STATUS-011,Key Registered: W
+3096:01,STATUS-106,Thrusters Deactivated (Key Release): W
+3096:46,STATUS-011,Key Registered: W
+3097:21,STATUS-106,Thrusters Deactivated (Key Release): W
+3097:46,STATUS-011,Key Registered: J
+3098:21,STATUS-106,Thrusters Deactivated (Key Release): J
+3099:06,STATUS-011,Key Registered: L
+3099:81,STATUS-106,Thrusters Deactivated (Key Release): L
+3100:06,STATUS-011,Key Registered: J
+3100:81,STATUS-106,Thrusters Deactivated (Key Release): J
+3101:71,STATUS-011,Key Registered: E
+3102:47,STATUS-106,Thrusters Deactivated (Key Release): E
+3103:82,STATUS-011,Key Registered: J
+3104:57,STATUS-106,Thrusters Deactivated (Key Release): J
+3105:57,STATUS-011,Key Registered: W
+3106:32,STATUS-106,Thrusters Deactivated (Key Release): W
+3107:37,STATUS-011,Key Registered: W
+3108:12,STATUS-106,Thrusters Deactivated (Key Release): W
+3108:58,STATUS-011,Key Registered: W
+3109:33,STATUS-106,Thrusters Deactivated (Key Release): W
+3109:88,STATUS-011,Key Registered: W
+3110:63,STATUS-106,Thrusters Deactivated (Key Release): W
+3112:73,STATUS-011,Key Registered: J
+3113:48,STATUS-106,Thrusters Deactivated (Key Release): J
+3114:38,STATUS-011,Key Registered: W
+3115:13,STATUS-106,Thrusters Deactivated (Key Release): W
+3115:54,STATUS-011,Key Registered: W
+3116:29,STATUS-106,Thrusters Deactivated (Key Release): W
+3117:24,STATUS-011,Key Registered: W
+3117:99,STATUS-106,Thrusters Deactivated (Key Release): W
+3118:64,STATUS-011,Key Registered: L
+3119:39,STATUS-106,Thrusters Deactivated (Key Release): L
+3120:04,STATUS-011,Key Registered: W
+3120:79,STATUS-106,Thrusters Deactivated (Key Release): W
+3121:14,STATUS-011,Key Registered: L
+3121:90,STATUS-106,Thrusters Deactivated (Key Release): L
+3122:80,STATUS-011,Key Registered: L
+3123:55,STATUS-106,Thrusters Deactivated (Key Release): L
+3123:95,STATUS-011,Key Registered: L
+3124:70,STATUS-106,Thrusters Deactivated (Key Release): L
+3125:20,STATUS-011,Key Registered: W
+3125:95,STATUS-106,Thrusters Deactivated (Key Release): W
+3127:70,STATUS-011,Key Registered: L
+3128:45,STATUS-106,Thrusters Deactivated (Key Release): L
+3129:46,STATUS-011,Key Registered: L
+3130:21,STATUS-106,Thrusters Deactivated (Key Release): L
+3133:01,STATUS-011,Key Registered: E
+3133:76,STATUS-106,Thrusters Deactivated (Key Release): E
+3139:97,STATUS-011,Key Registered: L
+3140:72,STATUS-106,Thrusters Deactivated (Key Release): L
+3141:52,STATUS-011,Key Registered: L
+3142:27,STATUS-106,Thrusters Deactivated (Key Release): L
+3152:19,STATUS-011,Key Registered: E
+3154:39,STATUS-106,Thrusters Deactivated (Key Release): E
+3168:46,ERROR-004,Invalid Keybind
+3169:21,STATUS-106,Thrusters Deactivated (Key Release): H
+3170:26,STATUS-011,Key Registered: J
+3171:01,STATUS-106,Thrusters Deactivated (Key Release): J
+3251:80,STATUS-011,Key Registered: L
+3252:56,STATUS-106,Thrusters Deactivated (Key Release): L
+3252:91,STATUS-011,Key Registered: J
+3253:66,STATUS-106,Thrusters Deactivated (Key Release): J
+3254:06,STATUS-011,Key Registered: W
+3254:81,STATUS-106,Thrusters Deactivated (Key Release): W
+3255:11,STATUS-011,Key Registered: J
+3255:86,STATUS-106,Thrusters Deactivated (Key Release): J
+3256:26,STATUS-011,Key Registered: W
+3257:01,STATUS-106,Thrusters Deactivated (Key Release): W
+3257:31,STATUS-011,Key Registered: W
+3258:07,STATUS-106,Thrusters Deactivated (Key Release): W
+3258:37,STATUS-011,Key Registered: J
+3259:12,STATUS-106,Thrusters Deactivated (Key Release): J
+3259:32,STATUS-011,Key Registered: W
+3260:07,STATUS-106,Thrusters Deactivated (Key Release): W
+3260:32,STATUS-011,Key Registered: W
+3261:07,STATUS-106,Thrusters Deactivated (Key Release): W
+3261:42,STATUS-011,Key Registered: J
+3262:17,STATUS-106,Thrusters Deactivated (Key Release): J
+3262:32,STATUS-011,Key Registered: W
+3263:08,STATUS-106,Thrusters Deactivated (Key Release): W
+3263:98,STATUS-011,Key Registered: Q
+3264:73,STATUS-106,Thrusters Deactivated (Key Release): Q
+3265:18,STATUS-011,Key Registered: Q
+3265:93,STATUS-106,Thrusters Deactivated (Key Release): Q
+3266:58,STATUS-011,Key Registered: J
+3267:33,STATUS-106,Thrusters Deactivated (Key Release): J
+3267:58,STATUS-011,Key Registered: W
+3268:33,STATUS-106,Thrusters Deactivated (Key Release): W
+3268:63,STATUS-011,Key Registered: L
+3269:38,STATUS-106,Thrusters Deactivated (Key Release): L
+3269:59,STATUS-011,Key Registered: W
+3270:34,STATUS-106,Thrusters Deactivated (Key Release): W
+3270:69,STATUS-011,Key Registered: W
+3272:24,STATUS-106,Thrusters Deactivated (Key Release): W
+3272:59,STATUS-011,Key Registered: Q
+3275:24,STATUS-106,Thrusters Deactivated (Key Release): Q
+3275:65,STATUS-011,Key Registered: J
+3276:40,STATUS-106,Thrusters Deactivated (Key Release): J
+3298:17,STATUS-011,Key Registered: K
+3298:92,STATUS-106,Thrusters Deactivated (Key Release): K
+3299:17,STATUS-011,Key Registered: I
+3299:93,STATUS-106,Thrusters Deactivated (Key Release): I
+3313:64,STATUS-011,Key Registered: Q
+3314:39,STATUS-106,Thrusters Deactivated (Key Release): Q
+3315:69,STATUS-011,Key Registered: L
+3316:45,STATUS-106,Thrusters Deactivated (Key Release): L
+3316:75,STATUS-011,Key Registered: J
+3317:50,STATUS-106,Thrusters Deactivated (Key Release): J
+3317:80,STATUS-011,Key Registered: J
+3318:55,STATUS-106,Thrusters Deactivated (Key Release): J
+3320:65,STATUS-011,Key Registered: J
+3321:40,STATUS-106,Thrusters Deactivated (Key Release): J
+3321:85,STATUS-011,Key Registered: W
+3322:61,STATUS-106,Thrusters Deactivated (Key Release): W
+3322:96,STATUS-011,Key Registered: W
+3323:71,STATUS-106,Thrusters Deactivated (Key Release): W
+3324:11,STATUS-011,Key Registered: W
+3325:56,STATUS-106,Thrusters Deactivated (Key Release): W
+3326:26,STATUS-011,Key Registered: W
+3327:01,STATUS-106,Thrusters Deactivated (Key Release): W
+3336:92,STATUS-011,Key Registered: Q
+3337:67,STATUS-106,Thrusters Deactivated (Key Release): Q
+3340:48,STATUS-011,Key Registered: W
+3341:23,STATUS-106,Thrusters Deactivated (Key Release): W
+3341:78,STATUS-011,Key Registered: W
+3342:53,STATUS-106,Thrusters Deactivated (Key Release): W
+3346:54,STATUS-011,Key Registered: I
+3347:29,STATUS-106,Thrusters Deactivated (Key Release): I
+3347:69,STATUS-011,Key Registered: W
+3349:44,STATUS-106,Thrusters Deactivated (Key Release): W
+3352:75,STATUS-011,Key Registered: W
+3353:50,STATUS-106,Thrusters Deactivated (Key Release): W
+3355:05,STATUS-011,Key Registered: J
+3355:80,STATUS-106,Thrusters Deactivated (Key Release): J
+3356:20,STATUS-011,Key Registered: W
+3356:95,STATUS-106,Thrusters Deactivated (Key Release): W
+3366:91,STATUS-011,Key Registered: Q
+3367:67,STATUS-106,Thrusters Deactivated (Key Release): Q
+3369:02,STATUS-011,Key Registered: Q
+3369:77,STATUS-106,Thrusters Deactivated (Key Release): Q
+3370:92,STATUS-011,Key Registered: J
+3371:67,STATUS-106,Thrusters Deactivated (Key Release): J
+3373:12,STATUS-011,Key Registered: W
+3373:87,STATUS-106,Thrusters Deactivated (Key Release): W
+3374:33,STATUS-011,Key Registered: W
+3375:08,STATUS-106,Thrusters Deactivated (Key Release): W
+3378:13,STATUS-011,Key Registered: Q
+3385:49,STATUS-106,Thrusters Deactivated (Key Release): Q
+3433:70,STATUS-011,Key Registered: L
+3434:45,STATUS-106,Thrusters Deactivated (Key Release): L
+3434:55,STATUS-011,Key Registered: J
+3435:30,STATUS-106,Thrusters Deactivated (Key Release): J
+3435:50,STATUS-011,Key Registered: W
+3436:25,STATUS-106,Thrusters Deactivated (Key Release): W
+3436:60,STATUS-011,Key Registered: W
+3437:35,STATUS-106,Thrusters Deactivated (Key Release): W
+3438:00,STATUS-011,Key Registered: J
+3438:75,STATUS-106,Thrusters Deactivated (Key Release): J
+3439:01,STATUS-011,Key Registered: W
+3439:76,STATUS-106,Thrusters Deactivated (Key Release): W
+3440:01,STATUS-011,Key Registered: W
+3440:76,STATUS-106,Thrusters Deactivated (Key Release): W
+3441:21,STATUS-011,Key Registered: J
+3441:96,STATUS-106,Thrusters Deactivated (Key Release): J
+3442:21,STATUS-011,Key Registered: W
+3442:96,STATUS-106,Thrusters Deactivated (Key Release): W
+3443:26,STATUS-011,Key Registered: J
+3444:01,STATUS-106,Thrusters Deactivated (Key Release): J
+3444:12,STATUS-011,Key Registered: W
+3444:87,STATUS-106,Thrusters Deactivated (Key Release): W
+3445:17,STATUS-011,Key Registered: J
+3446:77,STATUS-106,Thrusters Deactivated (Key Release): J
+3447:22,STATUS-011,Key Registered: W
+3449:92,STATUS-106,Thrusters Deactivated (Key Release): W
+3450:07,STATUS-011,Key Registered: W
+3451:48,STATUS-106,Thrusters Deactivated (Key Release): W
+3451:88,STATUS-011,Key Registered: J
+3452:63,STATUS-106,Thrusters Deactivated (Key Release): J
+3453:08,STATUS-011,Key Registered: J
+3453:83,STATUS-106,Thrusters Deactivated (Key Release): J
+3454:18,STATUS-011,Key Registered: W
+3457:28,STATUS-106,Thrusters Deactivated (Key Release): W
+3457:63,STATUS-011,Key Registered: J
+3458:39,STATUS-106,Thrusters Deactivated (Key Release): J
+3459:19,STATUS-011,Key Registered: D
+3459:94,STATUS-106,Thrusters Deactivated (Key Release): D
+3460:44,STATUS-011,Key Registered: D
+3463:14,STATUS-106,Thrusters Deactivated (Key Release): D
+3463:54,STATUS-011,Key Registered: W
+3466:55,STATUS-106,Thrusters Deactivated (Key Release): W
+3466:70,STATUS-011,Key Registered: W
+3469:25,STATUS-106,Thrusters Deactivated (Key Release): W
+3470:20,STATUS-011,Key Registered: W
+3470:95,STATUS-106,Thrusters Deactivated (Key Release): W
+3471:60,STATUS-011,Key Registered: W
+3472:35,STATUS-106,Thrusters Deactivated (Key Release): W
+3472:55,STATUS-011,Key Registered: W
+3474:91,STATUS-106,Thrusters Deactivated (Key Release): W
+3475:26,STATUS-011,Key Registered: W
+3476:01,STATUS-106,Thrusters Deactivated (Key Release): W
+3476:56,STATUS-011,Key Registered: W
+3478:91,STATUS-011,Key Registered: J
+3479:66,STATUS-106,Thrusters Deactivated (Key Release): J
+3480:52,STATUS-011,Key Registered: W
+3481:27,STATUS-106,Thrusters Deactivated (Key Release): W
+3481:87,STATUS-011,Key Registered: W
+3483:82,STATUS-106,Thrusters Deactivated (Key Release): W
+3486:32,STATUS-011,Key Registered: E
+3487:07,STATUS-106,Thrusters Deactivated (Key Release): E
+3490:93,STATUS-011,Key Registered: E
+3491:68,STATUS-106,Thrusters Deactivated (Key Release): E
+3497:94,STATUS-011,Key Registered: L
+3498:69,STATUS-106,Thrusters Deactivated (Key Release): L
+3499:44,STATUS-011,Key Registered: L
+3500:19,STATUS-106,Thrusters Deactivated (Key Release): L
+3500:69,STATUS-011,Key Registered: L
+3501:44,STATUS-106,Thrusters Deactivated (Key Release): L
+3501:84,STATUS-011,Key Registered: D
+3502:59,STATUS-106,Thrusters Deactivated (Key Release): D
+3502:95,STATUS-011,Key Registered: L
+3503:70,STATUS-106,Thrusters Deactivated (Key Release): L
+3504:20,STATUS-011,Key Registered: W
+3504:95,STATUS-106,Thrusters Deactivated (Key Release): W
+3505:60,STATUS-011,Key Registered: L
+3506:35,STATUS-106,Thrusters Deactivated (Key Release): L
+3506:75,STATUS-011,Key Registered: L
+3507:50,STATUS-106,Thrusters Deactivated (Key Release): L
+3508:00,STATUS-011,Key Registered: L
+3508:76,STATUS-106,Thrusters Deactivated (Key Release): L
+3509:11,STATUS-011,Key Registered: W
+3509:86,STATUS-106,Thrusters Deactivated (Key Release): W
+3510:26,STATUS-011,Key Registered: L
+3511:01,STATUS-106,Thrusters Deactivated (Key Release): L
+3511:86,STATUS-011,Key Registered: L
+3512:61,STATUS-106,Thrusters Deactivated (Key Release): L
+3513:21,STATUS-011,Key Registered: W
+3513:97,STATUS-106,Thrusters Deactivated (Key Release): W
+3514:72,STATUS-011,Key Registered: L
+3515:47,STATUS-106,Thrusters Deactivated (Key Release): L
+3516:77,STATUS-011,Key Registered: W
+3517:52,STATUS-106,Thrusters Deactivated (Key Release): W
+3517:92,STATUS-011,Key Registered: L
+3518:67,STATUS-106,Thrusters Deactivated (Key Release): L
+3519:32,STATUS-011,Key Registered: L
+3520:07,STATUS-106,Thrusters Deactivated (Key Release): L
+3521:33,STATUS-011,Key Registered: W
+3522:08,STATUS-106,Thrusters Deactivated (Key Release): W
+3522:53,STATUS-011,Key Registered: W
+3523:28,STATUS-106,Thrusters Deactivated (Key Release): W
+3523:73,STATUS-011,Key Registered: L
+3524:48,STATUS-106,Thrusters Deactivated (Key Release): L
+3524:88,STATUS-011,Key Registered: W
+3525:64,STATUS-106,Thrusters Deactivated (Key Release): W
+3525:89,STATUS-011,Key Registered: L
+3526:64,STATUS-106,Thrusters Deactivated (Key Release): L
+3526:99,STATUS-011,Key Registered: W
+3528:69,STATUS-106,Thrusters Deactivated (Key Release): W
+3530:45,STATUS-011,Key Registered: I
+3531:20,STATUS-106,Thrusters Deactivated (Key Release): I
+3532:35,STATUS-011,Key Registered: K
+3533:10,STATUS-106,Thrusters Deactivated (Key Release): K
+3533:85,STATUS-011,Key Registered: W
+3534:60,STATUS-106,Thrusters Deactivated (Key Release): W
+3535:00,STATUS-011,Key Registered: L
+3535:75,STATUS-106,Thrusters Deactivated (Key Release): L
+3536:15,STATUS-011,Key Registered: L
+3536:90,STATUS-106,Thrusters Deactivated (Key Release): L
+3537:26,STATUS-011,Key Registered: L
+3538:01,STATUS-106,Thrusters Deactivated (Key Release): L
+3538:21,STATUS-011,Key Registered: W
+3538:96,STATUS-106,Thrusters Deactivated (Key Release): W
+3539:36,STATUS-011,Key Registered: K
+3540:11,STATUS-106,Thrusters Deactivated (Key Release): K
+3541:36,STATUS-011,Key Registered: L
+3543:97,STATUS-106,Thrusters Deactivated (Key Release): L
+3544:62,STATUS-011,Key Registered: L
+3545:37,STATUS-106,Thrusters Deactivated (Key Release): L
+3545:77,STATUS-011,Key Registered: L
+3546:52,STATUS-106,Thrusters Deactivated (Key Release): L
+3547:07,STATUS-011,Key Registered: L
+3547:82,STATUS-106,Thrusters Deactivated (Key Release): L
+3548:37,STATUS-011,Key Registered: L
+3549:13,STATUS-106,Thrusters Deactivated (Key Release): L
+3549:38,STATUS-011,Key Registered: W
+3550:13,STATUS-106,Thrusters Deactivated (Key Release): W
+3551:23,STATUS-011,Key Registered: L
+3551:98,STATUS-106,Thrusters Deactivated (Key Release): L
+3553:58,STATUS-011,Key Registered: L
+3554:33,STATUS-106,Thrusters Deactivated (Key Release): L
+3555:09,STATUS-011,Key Registered: L
+3555:84,STATUS-106,Thrusters Deactivated (Key Release): L
+3556:54,STATUS-011,Key Registered: K
+3557:29,STATUS-106,Thrusters Deactivated (Key Release): K
+3558:39,STATUS-011,Key Registered: K
+3559:14,STATUS-106,Thrusters Deactivated (Key Release): K
+3560:04,STATUS-011,Key Registered: L
+3561:54,STATUS-106,Thrusters Deactivated (Key Release): L
+3561:89,STATUS-011,Key Registered: L
+3562:65,STATUS-106,Thrusters Deactivated (Key Release): L
+3563:75,STATUS-011,Key Registered: L
+3564:50,STATUS-106,Thrusters Deactivated (Key Release): L
+3564:95,STATUS-011,Key Registered: L
+3565:70,STATUS-106,Thrusters Deactivated (Key Release): L
+3566:15,STATUS-011,Key Registered: K
+3566:90,STATUS-106,Thrusters Deactivated (Key Release): K
+3567:50,STATUS-011,Key Registered: L
+3568:26,STATUS-106,Thrusters Deactivated (Key Release): L
+3568:76,STATUS-011,Key Registered: L
+3569:51,STATUS-106,Thrusters Deactivated (Key Release): L
+3571:96,STATUS-011,Key Registered: L
+3572:71,STATUS-106,Thrusters Deactivated (Key Release): L
+3574:46,STATUS-011,Key Registered: K
+3575:21,STATUS-106,Thrusters Deactivated (Key Release): K
+3577:47,STATUS-011,Key Registered: L
+3578:22,STATUS-106,Thrusters Deactivated (Key Release): L
+3580:02,STATUS-011,Key Registered: L
+3580:78,STATUS-106,Thrusters Deactivated (Key Release): L
+3583:83,STATUS-011,Key Registered: L
+3584:58,STATUS-106,Thrusters Deactivated (Key Release): L
+3585:43,STATUS-011,Key Registered: E
+3586:18,STATUS-106,Thrusters Deactivated (Key Release): E
+3588:08,STATUS-011,Key Registered: L
+3588:84,STATUS-106,Thrusters Deactivated (Key Release): L
+3589:84,STATUS-011,Key Registered: L
+3590:59,STATUS-106,Thrusters Deactivated (Key Release): L
+3591:84,STATUS-011,Key Registered: L
+3592:59,STATUS-106,Thrusters Deactivated (Key Release): L
+3594:64,STATUS-011,Key Registered: L
+3595:40,STATUS-106,Thrusters Deactivated (Key Release): L
+3597:85,STATUS-011,Key Registered: L
+3598:60,STATUS-106,Thrusters Deactivated (Key Release): L
+3599:80,STATUS-011,Key Registered: W
+3600:55,STATUS-106,Thrusters Deactivated (Key Release): W
+3601:15,STATUS-011,Key Registered: O
+3601:91,STATUS-106,Thrusters Deactivated (Key Release): O
+3602:31,STATUS-011,Key Registered: L
+3603:06,STATUS-106,Thrusters Deactivated (Key Release): L
+3603:56,STATUS-011,Key Registered: K
+3604:31,STATUS-106,Thrusters Deactivated (Key Release): K
+3606:16,STATUS-011,Key Registered: K
+3606:91,STATUS-106,Thrusters Deactivated (Key Release): K
+3608:82,STATUS-011,Key Registered: L
+3609:57,STATUS-106,Thrusters Deactivated (Key Release): L
+3611:57,STATUS-011,Key Registered: K
+3612:32,STATUS-106,Thrusters Deactivated (Key Release): K
+3613:57,STATUS-011,Key Registered: L
+3614:32,STATUS-106,Thrusters Deactivated (Key Release): L
+3615:42,STATUS-011,Key Registered: L
+3616:18,STATUS-106,Thrusters Deactivated (Key Release): L
+3616:63,STATUS-011,Key Registered: W
+3617:38,STATUS-106,Thrusters Deactivated (Key Release): W
+3619:43,STATUS-011,Key Registered: K
+3620:18,STATUS-106,Thrusters Deactivated (Key Release): K
+3623:74,STATUS-011,Key Registered: L
+3624:49,STATUS-106,Thrusters Deactivated (Key Release): L
+3624:59,STATUS-011,Key Registered: K
+3625:34,STATUS-106,Thrusters Deactivated (Key Release): K
+3626:29,STATUS-011,Key Registered: W
+3627:04,STATUS-106,Thrusters Deactivated (Key Release): W
+3629:85,STATUS-011,Key Registered: K
+3630:60,STATUS-106,Thrusters Deactivated (Key Release): K
+3632:20,STATUS-011,Key Registered: W
+3632:95,STATUS-106,Thrusters Deactivated (Key Release): W
+3637:31,STATUS-011,Key Registered: K
+3638:06,STATUS-106,Thrusters Deactivated (Key Release): K
+3641:51,STATUS-011,Key Registered: W
+3642:26,STATUS-106,Thrusters Deactivated (Key Release): W
+3644:42,STATUS-011,Key Registered: K
+3645:17,STATUS-106,Thrusters Deactivated (Key Release): K
+3646:87,STATUS-011,Key Registered: W
+3647:62,STATUS-106,Thrusters Deactivated (Key Release): W
+3648:07,STATUS-011,Key Registered: W
+3648:82,STATUS-106,Thrusters Deactivated (Key Release): W
+3649:57,STATUS-011,Key Registered: L
+3650:33,STATUS-106,Thrusters Deactivated (Key Release): L
+3653:73,STATUS-011,Key Registered: L
+3654:48,STATUS-106,Thrusters Deactivated (Key Release): L
+3664:19,STATUS-011,Key Registered: J
+3664:94,STATUS-106,Thrusters Deactivated (Key Release): J
+3665:89,STATUS-011,Key Registered: J
+3666:65,STATUS-106,Thrusters Deactivated (Key Release): J
+3668:10,STATUS-011,Key Registered: L
+3668:85,STATUS-106,Thrusters Deactivated (Key Release): L
+3669:30,STATUS-011,Key Registered: L
+3670:05,STATUS-106,Thrusters Deactivated (Key Release): L
+3670:75,STATUS-011,Key Registered: L
+3671:50,STATUS-106,Thrusters Deactivated (Key Release): L
+3671:96,STATUS-011,Key Registered: L
+3672:71,STATUS-106,Thrusters Deactivated (Key Release): L
+3673:11,STATUS-011,Key Registered: L
+3673:86,STATUS-106,Thrusters Deactivated (Key Release): L
+3674:26,STATUS-011,Key Registered: L
+3675:01,STATUS-106,Thrusters Deactivated (Key Release): L
+3675:41,STATUS-011,Key Registered: L
+3676:16,STATUS-106,Thrusters Deactivated (Key Release): L
+3676:56,STATUS-011,Key Registered: W
+3677:31,STATUS-106,Thrusters Deactivated (Key Release): W
+3677:71,STATUS-011,Key Registered: W
+3678:47,STATUS-106,Thrusters Deactivated (Key Release): W
+3678:82,STATUS-011,Key Registered: L
+3679:57,STATUS-106,Thrusters Deactivated (Key Release): L
+3679:87,STATUS-011,Key Registered: W
+3680:62,STATUS-106,Thrusters Deactivated (Key Release): W
+3680:92,STATUS-011,Key Registered: L
+3681:67,STATUS-106,Thrusters Deactivated (Key Release): L
+3682:22,STATUS-011,Key Registered: L
+3682:97,STATUS-106,Thrusters Deactivated (Key Release): L
+3683:38,STATUS-011,Key Registered: W
+3684:13,STATUS-106,Thrusters Deactivated (Key Release): W
+3684:43,STATUS-011,Key Registered: W
+3686:03,STATUS-106,Thrusters Deactivated (Key Release): W
+3686:48,STATUS-011,Key Registered: L
+3687:23,STATUS-106,Thrusters Deactivated (Key Release): L
+3687:53,STATUS-011,Key Registered: W
+3688:28,STATUS-106,Thrusters Deactivated (Key Release): W
+3688:58,STATUS-011,Key Registered: W
+3689:33,STATUS-106,Thrusters Deactivated (Key Release): W
+3689:79,STATUS-011,Key Registered: L
+3690:54,STATUS-106,Thrusters Deactivated (Key Release): L
+3690:79,STATUS-011,Key Registered: W
+3692:14,STATUS-106,Thrusters Deactivated (Key Release): W
+3692:64,STATUS-011,Key Registered: I
+3693:39,STATUS-106,Thrusters Deactivated (Key Release): I
+3693:99,STATUS-011,Key Registered: K
+3694:74,STATUS-106,Thrusters Deactivated (Key Release): K
+3695:19,STATUS-011,Key Registered: W
+3695:94,STATUS-106,Thrusters Deactivated (Key Release): W
+3696:40,STATUS-011,Key Registered: K
+3697:15,STATUS-106,Thrusters Deactivated (Key Release): K
+3697:45,STATUS-011,Key Registered: W
+3698:20,STATUS-106,Thrusters Deactivated (Key Release): W
+3699:25,STATUS-011,Key Registered: J
+3700:00,STATUS-106,Thrusters Deactivated (Key Release): J
+3701:05,STATUS-011,Key Registered: K
+3701:80,STATUS-106,Thrusters Deactivated (Key Release): K
+3702:71,STATUS-011,Key Registered: W
+3703:46,STATUS-106,Thrusters Deactivated (Key Release): W
+3704:06,STATUS-011,Key Registered: K
+3704:81,STATUS-106,Thrusters Deactivated (Key Release): K
+3705:46,STATUS-011,Key Registered: J
+3706:21,STATUS-106,Thrusters Deactivated (Key Release): J
+3706:66,STATUS-011,Key Registered: J
+3707:41,STATUS-106,Thrusters Deactivated (Key Release): J
+3707:87,STATUS-011,Key Registered: J
+3708:62,STATUS-106,Thrusters Deactivated (Key Release): J
+3709:17,STATUS-011,Key Registered: J
+3709:92,STATUS-106,Thrusters Deactivated (Key Release): J
+3710:37,STATUS-011,Key Registered: J
+3711:12,STATUS-106,Thrusters Deactivated (Key Release): J
+3711:97,STATUS-011,Key Registered: K
+3712:72,STATUS-106,Thrusters Deactivated (Key Release): K
+3713:07,STATUS-011,Key Registered: J
+3713:83,STATUS-106,Thrusters Deactivated (Key Release): J
+3714:28,STATUS-011,Key Registered: J
+3715:03,STATUS-106,Thrusters Deactivated (Key Release): J
+3715:48,STATUS-011,Key Registered: J
+3716:23,STATUS-106,Thrusters Deactivated (Key Release): J
+3716:53,STATUS-011,Key Registered: W
+3717:28,STATUS-106,Thrusters Deactivated (Key Release): W
+3717:48,STATUS-011,Key Registered: J
+3718:23,STATUS-106,Thrusters Deactivated (Key Release): J
+3718:53,STATUS-011,Key Registered: K
+3719:28,STATUS-106,Thrusters Deactivated (Key Release): K
+3719:49,STATUS-011,Key Registered: J
+3720:24,STATUS-106,Thrusters Deactivated (Key Release): J
+3720:89,STATUS-011,Key Registered: W
+3721:64,STATUS-106,Thrusters Deactivated (Key Release): W
+3721:94,STATUS-011,Key Registered: J
+3722:69,STATUS-106,Thrusters Deactivated (Key Release): J
+3722:89,STATUS-011,Key Registered: W
+3723:64,STATUS-106,Thrusters Deactivated (Key Release): W
+3724:04,STATUS-011,Key Registered: Q
+3724:80,STATUS-106,Thrusters Deactivated (Key Release): Q
+3725:30,STATUS-011,Key Registered: Q
+3726:05,STATUS-106,Thrusters Deactivated (Key Release): Q
+3726:60,STATUS-011,Key Registered: Q
+3730:25,STATUS-106,Thrusters Deactivated (Key Release): Q
+3730:75,STATUS-011,Key Registered: J
+3731:50,STATUS-106,Thrusters Deactivated (Key Release): J
+3746:47,STATUS-011,Key Registered: J
+3747:22,STATUS-106,Thrusters Deactivated (Key Release): J
+3748:02,STATUS-011,Key Registered: S
+3748:78,STATUS-106,Thrusters Deactivated (Key Release): S
+3749:18,STATUS-011,Key Registered: S
+3749:93,STATUS-106,Thrusters Deactivated (Key Release): S
+3750:73,STATUS-011,Key Registered: S
+3751:48,STATUS-106,Thrusters Deactivated (Key Release): S
+3760:69,STATUS-011,Key Registered: S
+3763:60,STATUS-106,Thrusters Deactivated (Key Release): S
+3764:40,STATUS-011,Key Registered: J
+3765:15,STATUS-106,Thrusters Deactivated (Key Release): J
+3765:45,STATUS-011,Key Registered: S
+3766:20,STATUS-106,Thrusters Deactivated (Key Release): S
+3766:70,STATUS-011,Key Registered: J
+3767:45,STATUS-106,Thrusters Deactivated (Key Release): J
+3767:70,STATUS-011,Key Registered: S
+3768:45,STATUS-106,Thrusters Deactivated (Key Release): S
+3769:31,STATUS-011,Key Registered: S
+3770:86,STATUS-106,Thrusters Deactivated (Key Release): S
+3775:56,STATUS-011,Key Registered: J
+3776:31,STATUS-106,Thrusters Deactivated (Key Release): J
+3777:22,STATUS-011,Key Registered: J
+3777:97,STATUS-106,Thrusters Deactivated (Key Release): J
+3780:92,STATUS-011,Key Registered: S
+3781:67,STATUS-106,Thrusters Deactivated (Key Release): S
+3781:92,STATUS-011,Key Registered: S
+3785:53,STATUS-106,Thrusters Deactivated (Key Release): S
+3785:88,STATUS-011,Key Registered: S
+3790:08,STATUS-106,Thrusters Deactivated (Key Release): S
+3790:13,STATUS-011,Key Registered: S
+3790:88,STATUS-106,Thrusters Deactivated (Key Release): S
+3791:84,STATUS-011,Key Registered: S
+3793:34,STATUS-106,Thrusters Deactivated (Key Release): S
+3793:79,STATUS-011,Key Registered: J
+3794:54,STATUS-106,Thrusters Deactivated (Key Release): J
+3795:39,STATUS-011,Key Registered: J
+3796:14,STATUS-106,Thrusters Deactivated (Key Release): J
+3796:80,STATUS-011,Key Registered: L
+3797:55,STATUS-106,Thrusters Deactivated (Key Release): L
+3798:45,STATUS-011,Key Registered: L
+3799:20,STATUS-106,Thrusters Deactivated (Key Release): L
+3799:65,STATUS-011,Key Registered: W
+3800:40,STATUS-106,Thrusters Deactivated (Key Release): W
+3801:15,STATUS-011,Key Registered: W
+3801:90,STATUS-106,Thrusters Deactivated (Key Release): W
+3804:96,STATUS-011,Key Registered: J
+3805:71,STATUS-106,Thrusters Deactivated (Key Release): J
+3805:96,STATUS-011,Key Registered: K
+3806:71,STATUS-106,Thrusters Deactivated (Key Release): K
+3807:41,STATUS-011,Key Registered: K
+3808:16,STATUS-106,Thrusters Deactivated (Key Release): K
+3809:37,STATUS-011,Key Registered: J
+3810:12,STATUS-106,Thrusters Deactivated (Key Release): J
+3810:22,STATUS-011,Key Registered: W
+3810:97,STATUS-106,Thrusters Deactivated (Key Release): W
+3811:12,STATUS-011,Key Registered: W
+3811:72,STATUS-011,Key Registered: J
+3812:72,STATUS-011,Key Registered: W
+3813:07,STATUS-011,Key Registered: J
+3813:27,STATUS-011,Key Registered: W
+3813:32,STATUS-011,Key Registered: J
+3813:52,STATUS-011,Key Registered: W
+3813:57,STATUS-011,Key Registered: J
+3813:72,STATUS-011,Key Registered: W
+3813:87,STATUS-011,Key Registered: J
+3813:92,STATUS-011,Key Registered: W
+3814:07,STATUS-011,Key Registered: J
+3814:12,STATUS-011,Key Registered: W
+3814:27,STATUS-011,Key Registered: J
+3814:37,STATUS-011,Key Registered: W
+3814:47,STATUS-011,Key Registered: J
+3814:58,STATUS-011,Key Registered: W
+3814:68,STATUS-011,Key Registered: J
+3815:73,STATUS-011,Key Registered: W
+3815:93,STATUS-011,Key Registered: K
+3815:98,STATUS-011,Key Registered: L
+3816:13,STATUS-011,Key Registered: K
+3816:43,STATUS-011,Key Registered: L
+3817:03,STATUS-011,Key Registered: K
+3817:28,STATUS-011,Key Registered: W
+3817:43,STATUS-011,Key Registered: K
+3817:53,STATUS-011,Key Registered: W
+3818:63,STATUS-106,Thrusters Deactivated (Key Release): W
+3822:69,STATUS-011,Key Registered: J
+3823:44,STATUS-106,Thrusters Deactivated (Key Release): J
+3824:79,STATUS-011,Key Registered: J
+3825:54,STATUS-106,Thrusters Deactivated (Key Release): J
+3830:15,STATUS-011,Key Registered: J
+3830:90,STATUS-106,Thrusters Deactivated (Key Release): J
+3832:35,STATUS-011,Key Registered: J
+3833:10,STATUS-106,Thrusters Deactivated (Key Release): J
+3834:30,STATUS-011,Key Registered: W
+3835:06,STATUS-106,Thrusters Deactivated (Key Release): W
+3835:46,STATUS-011,Key Registered: J
+3836:21,STATUS-106,Thrusters Deactivated (Key Release): J
+3840:81,STATUS-011,Key Registered: D
+3841:57,STATUS-106,Thrusters Deactivated (Key Release): D
+3842:22,STATUS-011,Key Registered: D
+3843:72,STATUS-106,Thrusters Deactivated (Key Release): D
+3844:32,STATUS-011,Key Registered: J
+3845:07,STATUS-106,Thrusters Deactivated (Key Release): J
+3847:92,STATUS-011,Key Registered: D
+3848:68,STATUS-106,Thrusters Deactivated (Key Release): D
+3849:13,STATUS-011,Key Registered: D
+3849:88,STATUS-106,Thrusters Deactivated (Key Release): D
+3850:38,STATUS-011,Key Registered: K
+3850:63,STATUS-011,Key Registered: J
+3851:38,STATUS-106,Thrusters Deactivated (Key Release): J
+3851:43,STATUS-011,Key Registered: W
+3852:18,STATUS-106,Thrusters Deactivated (Key Release): W
+3857:89,STATUS-011,Key Registered: L
+3858:64,STATUS-106,Thrusters Deactivated (Key Release): L
+3859:09,STATUS-011,Key Registered: W
+3859:84,STATUS-106,Thrusters Deactivated (Key Release): W
+3860:09,STATUS-011,Key Registered: W
+3864:65,STATUS-011,Key Registered: L
+3865:40,STATUS-106,Thrusters Deactivated (Key Release): L
+3866:35,STATUS-011,Key Registered: L
+3866:75,STATUS-011,Key Registered: W
+3867:20,STATUS-011,Key Registered: J
+3868:45,STATUS-106,Thrusters Deactivated (Key Release): J
+3868:60,STATUS-011,Key Registered: K
+3869:35,STATUS-106,Thrusters Deactivated (Key Release): K
+3869:86,STATUS-011,Key Registered: J
+3870:31,STATUS-011,Key Registered: W
+3870:86,STATUS-011,Key Registered: J
+3870:96,STATUS-011,Key Registered: W
+3871:11,STATUS-011,Key Registered: J
+3871:16,STATUS-011,Key Registered: W
+3871:81,STATUS-011,Key Registered: L
+3872:01,STATUS-011,Key Registered: W
+3877:22,STATUS-106,Thrusters Deactivated (Key Release): W
+3877:92,STATUS-011,Key Registered: W
+3883:07,STATUS-011,Key Registered: U
+3883:83,STATUS-106,Thrusters Deactivated (Key Release): U
+3890:38,STATUS-011,Key Registered: W
+3891:13,STATUS-106,Thrusters Deactivated (Key Release): W
+3894:49,STATUS-011,Key Registered: I
+3895:24,STATUS-106,Thrusters Deactivated (Key Release): I
+3896:04,STATUS-011,Key Registered: W
+3896:79,STATUS-106,Thrusters Deactivated (Key Release): W
+3897:49,STATUS-011,Key Registered: W
+3898:24,STATUS-106,Thrusters Deactivated (Key Release): W
+3899:55,STATUS-011,Key Registered: J
+3900:30,STATUS-106,Thrusters Deactivated (Key Release): J
+3900:45,STATUS-011,Key Registered: W
+3901:20,STATUS-106,Thrusters Deactivated (Key Release): W
+3902:05,STATUS-011,Key Registered: W
+3902:80,STATUS-106,Thrusters Deactivated (Key Release): W
+3903:60,STATUS-011,Key Registered: W
+3904:70,STATUS-106,Thrusters Deactivated (Key Release): W
+3913:31,STATUS-011,Key Registered: W
+3914:07,STATUS-106,Thrusters Deactivated (Key Release): W
+3914:62,STATUS-011,Key Registered: O
+3915:37,STATUS-106,Thrusters Deactivated (Key Release): O
+3916:02,STATUS-011,Key Registered: W
+3917:37,STATUS-106,Thrusters Deactivated (Key Release): W
+3941:85,STATUS-011,Key Registered: W
+3942:60,STATUS-106,Thrusters Deactivated (Key Release): W
+3943:25,STATUS-011,Key Registered: O
+3944:00,STATUS-106,Thrusters Deactivated (Key Release): O
+3946:20,STATUS-011,Key Registered: I
+3946:96,STATUS-106,Thrusters Deactivated (Key Release): I
+3948:51,STATUS-011,Key Registered: W
+3949:26,STATUS-106,Thrusters Deactivated (Key Release): W
+3949:51,STATUS-011,Key Registered: W
+3950:71,STATUS-106,Thrusters Deactivated (Key Release): W
+3954:47,STATUS-011,Key Registered: I
+3955:22,STATUS-106,Thrusters Deactivated (Key Release): I
+3955:37,STATUS-011,Key Registered: W
+3958:37,STATUS-106,Thrusters Deactivated (Key Release): W
+3960:17,STATUS-011,Key Registered: O
+3960:93,STATUS-106,Thrusters Deactivated (Key Release): O
+3961:43,STATUS-011,Key Registered: U
+3962:18,STATUS-106,Thrusters Deactivated (Key Release): U
+3962:53,STATUS-011,Key Registered: U
+3963:83,STATUS-106,Thrusters Deactivated (Key Release): U
+3965:93,STATUS-011,Key Registered: U
+3966:93,STATUS-106,Thrusters Deactivated (Key Release): U
+3969:79,STATUS-011,Key Registered: O
+3970:54,STATUS-106,Thrusters Deactivated (Key Release): O
+3970:79,STATUS-011,Key Registered: O
+3972:34,STATUS-106,Thrusters Deactivated (Key Release): O
+4193:40,STATUS-011,Key Registered: E
+4194:15,STATUS-106,Thrusters Deactivated (Key Release): E
+4195:45,STATUS-011,Key Registered: J
+4196:20,STATUS-106,Thrusters Deactivated (Key Release): J
+4198:25,STATUS-011,Key Registered: J
+4199:00,STATUS-106,Thrusters Deactivated (Key Release): J
+4199:40,STATUS-011,Key Registered: J
+4200:16,STATUS-106,Thrusters Deactivated (Key Release): J
+4201:11,STATUS-011,Key Registered: J
+4201:86,STATUS-106,Thrusters Deactivated (Key Release): J
+4202:76,STATUS-011,Key Registered: J
+4203:51,STATUS-106,Thrusters Deactivated (Key Release): J
+4204:16,STATUS-011,Key Registered: L
+4213:72,STATUS-106,Thrusters Deactivated (Key Release): L
+4214:17,STATUS-011,Key Registered: W
+4215:53,STATUS-011,Key Registered: L
+4217:28,STATUS-106,Thrusters Deactivated (Key Release): L
+4217:68,STATUS-011,Key Registered: E
+4221:73,STATUS-106,Thrusters Deactivated (Key Release): E
+4223:24,STATUS-011,Key Registered: O
+4223:99,STATUS-106,Thrusters Deactivated (Key Release): O
+4224:19,STATUS-011,Key Registered: E
+4224:94,STATUS-106,Thrusters Deactivated (Key Release): E
+4226:04,STATUS-011,Key Registered: E
+4226:79,STATUS-106,Thrusters Deactivated (Key Release): E
+4227:14,STATUS-011,Key Registered: L
+4227:89,STATUS-106,Thrusters Deactivated (Key Release): L
+4228:34,STATUS-011,Key Registered: L
+4229:09,STATUS-106,Thrusters Deactivated (Key Release): L
+4229:59,STATUS-011,Key Registered: L
+4230:35,STATUS-106,Thrusters Deactivated (Key Release): L
+4230:80,STATUS-011,Key Registered: S
+4234:00,STATUS-106,Thrusters Deactivated (Key Release): S
+4234:35,STATUS-011,Key Registered: J
+4235:10,STATUS-106,Thrusters Deactivated (Key Release): J
+4235:45,STATUS-011,Key Registered: L
+4238:46,STATUS-011,Key Registered: S
+4241:11,STATUS-011,Key Registered: L
+4243:06,STATUS-011,Key Registered: E
+4243:81,STATUS-106,Thrusters Deactivated (Key Release): E
+4244:16,STATUS-011,Key Registered: E
+4244:92,STATUS-106,Thrusters Deactivated (Key Release): E
+4245:97,STATUS-011,Key Registered: L
+4247:47,STATUS-011,Key Registered: S
+4250:27,STATUS-011,Key Registered: L
+4251:47,STATUS-011,Key Registered: S
+4253:23,STATUS-106,Thrusters Deactivated (Key Release): S
+4253:48,STATUS-011,Key Registered: L
+4254:23,STATUS-106,Thrusters Deactivated (Key Release): L
+4255:03,STATUS-011,Key Registered: S
+4257:08,STATUS-106,Thrusters Deactivated (Key Release): S
+4257:48,STATUS-011,Key Registered: E
+4258:83,STATUS-106,Thrusters Deactivated (Key Release): E
+4260:14,STATUS-011,Key Registered: E
+4261:24,STATUS-011,Key Registered: W
+4264:64,STATUS-106,Thrusters Deactivated (Key Release): W
+4266:14,STATUS-011,Key Registered: E
+4266:89,STATUS-106,Thrusters Deactivated (Key Release): E
+4267:90,STATUS-011,Key Registered: A
+4268:65,STATUS-011,Key Registered: D
+4269:40,STATUS-106,Thrusters Deactivated (Key Release): D
+4269:80,STATUS-011,Key Registered: D
+4270:55,STATUS-106,Thrusters Deactivated (Key Release): D
+4272:50,STATUS-011,Key Registered: W
+4273:80,STATUS-106,Thrusters Deactivated (Key Release): W
+4275:41,STATUS-011,Key Registered: W
+4276:16,STATUS-106,Thrusters Deactivated (Key Release): W
+4276:76,STATUS-011,Key Registered: W
+4277:51,STATUS-106,Thrusters Deactivated (Key Release): W
+4278:01,STATUS-011,Key Registered: W
+4279:36,STATUS-106,Thrusters Deactivated (Key Release): W
